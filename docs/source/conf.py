@@ -270,10 +270,3 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None}
-
-
-## The following is needed on conda-forge sagemath
-from sage.repl.user_globals import initialize_globals
-import sage.all
-my_globs = dict()
-initialize_globals(sage.all, my_globs)
