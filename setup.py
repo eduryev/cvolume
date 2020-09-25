@@ -14,7 +14,8 @@ setup(
     version=readfile("VERSION").strip(), # the VERSION file is shared with the documentation
     description="Completed volumes of strata of quadratic differentials with odd zeros",
     long_description=readfile("README.rst"), # get the long description from the README
-    url="",
+    url="https://github.com/eduryev/cvolume",
+    install_requires=['admcycles'],
     author="Vincent Delecroix, Eduard Duryev",
     author_email="edwardduriev@gmail.com",
     license="GPLv2+",
