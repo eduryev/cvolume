@@ -12,3 +12,7 @@ No example are available in the :ref:`tutorial`
 
    tutorial
    cvolumemodule
+   localpolymodule
+   seriesmodule
+   stable_graphsmodule
+   utilsmodule
