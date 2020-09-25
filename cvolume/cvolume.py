@@ -1,4 +1,4 @@
-from sage.all import *
+from sage.all import factorial, Rational, prod, Combinations, zeta, pi
 import itertools
 import time
 from .localpoly import Nlocal
