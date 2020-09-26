@@ -1,4 +1,4 @@
-from sage.all import *
+from sage.all import Graph, ZZ, Combinations, prod, factorial
 import itertools
 import time
 from .utils import float2time

@@ -1,4 +1,4 @@
-from .utils import dfactorial, c_f, dim, float2time
+from .utils import dfactorial, c_f, float2time
 from .series import Fs
 from .localpoly import Nlocal
 from .stable_graphs import stable_lab_graphs
