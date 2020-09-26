@@ -1,3 +1,4 @@
+from sage.all import *
 from .utils import dfactorial, c_f, dim, float2time
 from .series import Fs
 from .localpoly import Nlocal

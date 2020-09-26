@@ -34,4 +34,6 @@ def c_d(stratum):
 def c_f(dim_or_stratum):
     if type(dim_or_stratum) == list:
         d = c_d(dim_or_stratum)
+    else:
+        d = dim_or_stratum
     return 2**(d+1)/factorial(d-1)

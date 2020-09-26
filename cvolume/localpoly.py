@@ -41,13 +41,15 @@ def shift(variables,k):
     return l
 
 def Nlocal(g,n,stratum,labeled=False,mode='derivative'):
+    if not stratum:
+        stratum = [1]*(4*g-4+2*n)
     cache_poly = {}
     cache_labeling = {}
     stratum = tuple(stratum)
     b = list(S.gens())
     def memo_Nlocal(g,n,stratum,labeled,mode):
         #print('Computing for (%s,%s,%s)...Cache size %s' % (g,n,stratum,len(cache_poly)))
-        if not stratum or n != 2-2*g+1/ZZ(2)*sum(stratum) or g<0 or n<1: return 0*b1
+        if not stratum or n != 2-2*g+1/ZZ(2)*sum(stratum) or g<0 or n<1: return S.zero()
         if type(stratum) == list: stratum = tuple(stratum)
         if (g,n,stratum) in cache_poly:
             if labeled: return cache_poly[(g,n,stratum)]

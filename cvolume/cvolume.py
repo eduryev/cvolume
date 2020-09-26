@@ -22,6 +22,7 @@ def graph_poly(edges,loops,kappa,graph):
     variables = list(S.gens())
     b = list(S.gens())
     genus = genera(edges,loops,kappa,graph)
+    edges = graph.edges()
     valency = [vertex_deg(edges,v)+2*loops[v] for v in graph.vertices()]
     used_vars = []
     # dictionary that converts edges to variables
@@ -47,6 +48,11 @@ def graph_poly(edges,loops,kappa,graph):
     for v in graph.vertices():
         plug_in = []
         for v_edge in graph.edges_incident(v):
+            v_edge = tuple( sorted(list(v_edge[:2])) + [v_edge[2]] )
+#             try:
+#                 _ = edge_to_var[v_edge]
+#             except:
+#                 print(edge_to_var, v_edge)
             for var in edge_to_var[v_edge]:
                 plug_in.append(var)
         for var in loop_to_var[v]:

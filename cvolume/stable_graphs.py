@@ -21,7 +21,10 @@ def init_graph(edges):
         graph = Graph(weighted=True, loops=False, multiedges=False)
         graph.add_vertex()
     else:
-        graph = Graph(edges, loops=False, multiedges=False, weighted=True)
+        try:
+            graph = Graph(list(edges), loops=False, multiedges=False, weighted=True)
+        except:
+            print(edges)
     return list(graph.edges()), graph
 
 def genera(edges,loops,kappa,graph):
