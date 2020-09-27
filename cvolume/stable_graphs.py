@@ -3,9 +3,20 @@ import itertools
 import time
 from .utils import float2time
 
+def init_graph(edges):
+    '''
+    Initialize a graph from the list of edges. Return both edges and a graph.
+    '''
+    if not edges:
+        graph = Graph(weighted=True, loops=False, multiedges=False)
+        graph.add_vertex()
+    else:
+        graph = Graph(list(edges), loops=False, multiedges=False, weighted=True)
+    return list(graph.edges()), graph
+
 def vertex_deg(edges,v):
     '''
-    returns sum of weights at vertex v of graph given by edges
+    Return the sum of the weights at the vertex v of the graph given by the list of edges.
     '''
     deg = 0
     for e in edges:
@@ -13,36 +24,21 @@ def vertex_deg(edges,v):
             deg += e[2]
     return deg
 
-def init_graph(edges):
-    '''
-    initialize graph from the edges
-    '''
-    if not edges:
-        graph = Graph(weighted=True, loops=False, multiedges=False)
-        graph.add_vertex()
-    else:
-        try:
-            graph = Graph(list(edges), loops=False, multiedges=False, weighted=True)
-        except:
-            print(edges)
-    return list(graph.edges()), graph
-
 def genera(edges,loops,kappa,graph):
     '''
-    returns a list of genera of vertices of labeled stable graph [edges,loops,kappa]
+    Return a list of genera of vertices of the labeled stable graph (edges,loops,kappa,graph).
     '''
     return [(sum(kappa[v])-2*vertex_deg(edges,v)-4*loops[v]+4)/ZZ(4) for v in graph.vertices()]
 
 def add_loop(edges,loops,kappa,graph):
     '''
-    returns a list of all labeled stable graphs, obtained by the loop-degenerations 
-    of a labeled stable graph [edges, loops, kappa]
+    Return a list of all labeled stable graphs, obtained by adding a loop to the labeled stable graph (edges, loops, kappa, graph).
     '''
     new_graphs = []
     #genus = [(sum(kappa[v])-2*vertex_deg(edges,v)-4*loops[v]+4)/4 for v in graph.vertices()]
     genus = genera(edges,loops,kappa,graph)
     for v in graph.vertices():
-        assert genus[v] in ZZ, 'The genus of %s at vertex %s is not integer' % ((graph.edges(),loops,kappa),v)
+        assert genus[v] in ZZ, f"The genus of graph {(graph.edges(),loops,kappa)} at vertex {v} is not an integer."
         if genus[v]>0:
             new_loops = list(loops)
             new_loops[v] = loops[v]+1
@@ -51,27 +47,21 @@ def add_loop(edges,loops,kappa,graph):
 
 def add_edge(edges,loops,kappa,graph):
     '''
-    returns a list of all labeled stable graphs, obtained by the edge-degenerations 
-    of a labeled stable graph [edges, loops, kappa]
+    Return a list of all labeled stable graphs, obtained by adding an edge to the labeled stable graph (edges, loops, kappa, graph).
     '''
     new_graphs = []
-    #genus = [(sum(kappa[v])-2*graph.degree(v)-4*loops[v]+4)/4 for v in graph.vertices()]
     genus = genera(edges,loops,kappa,graph)
     profile = [sum(kappa[v])+len(kappa[v]) for v in graph.vertices()]
     m = max(profile)
     if profile.count(m) == 1: 
         v = profile.index(m)
-#         m_v = max((e[2]/ZZ(2)).ceil() if e[0] == v or e[1] == v else e[2] for e in graph.edges()) if graph.edges() else 0
         v_edges = graph.edges_incident(v)
         v_edge_weights = [i[2] for i in v_edges]
         v_comb_weights = [[[weight-i,i] for i in range(weight+1)] for weight in v_edge_weights]
-#         v_comb_weights = [[[i[0]-1,i[1]-1] for i in OrderedPartitions(weight+2,2)] for weight in v_edge_weights]
         if not v_comb_weights: v_Split_Weights = [()]
         v_Split_Weights = list(itertools.product(*v_comb_weights))
         v_Split_Loops = [[loops[v]-i-j,j,i] for i in range(loops[v]+1) for j in range(loops[v]+1-i)]
-#         v_Split_Loops = [[i[0]-1,i[1]-1,i[2]-1] for i in OrderedPartitions(loops[v]+3,3)]
         if not v_Split_Loops: v_Split_Loops = [[0,0,0]]
-#         v_Subset_Zeroes = (i for k in range(1,len(kappa[v])) for i in itertools.combinations(kappa[v],k) if sum(i)%2==0)
         v_Subset_Zeroes = [i for i in Combinations(kappa[v]) if sum(i)%2==0][1:-1]
         for split_weights,split_loops,sub_zeroes in itertools.product(v_Split_Weights,v_Split_Loops,v_Subset_Zeroes):
             new_genus_0 = (sum(sub_zeroes)-2*sum(i[0] for i in split_weights)-2*(split_loops[2]+1)-4*split_loops[0]+4)/ZZ(4)
@@ -113,7 +103,7 @@ def add_edge(edges,loops,kappa,graph):
 
 def k_to_p(edges,loops,kappa,graph):
     '''
-    returns a canonical partition of vertices into lists grouped by the same number of loops and zeroes. 
+    Return a canonical partition of vertices of the graph into lists grouped by the same number of loops and zeroes. 
     The order is lexicographical with respect to [kappa,loops,edges]
     '''
     edge_profile = []
@@ -134,8 +124,8 @@ def k_to_p(edges,loops,kappa,graph):
 
 def canonical_stable(edges,loops,kappa,graph):
     '''
-    returns a labeled stable graph, which is the canonical representative of the class of isomorphism of 
-    the labeled stable graphs [edges,loops,kappa], where only vertices with the same number of loops
+    Return a labeled stable graph, which is the canonical representative of the class of isomorphism of 
+    the labeled stable graph (edges,loops,kappa,graph), where only vertices with the same number of loops
     and zero orders are allowed to permute and only edges of the same weight are allowed to permute.
     '''
     can_gr, relab = graph.canonical_label(partition=k_to_p(edges,loops,kappa,graph), certificate=True, edge_labels=True)
@@ -148,8 +138,8 @@ def canonical_stable(edges,loops,kappa,graph):
 
 def degeneration_step(edges,loops,kappa,graph):
     '''
-    returns a list of all canonical representatives of labeled stable graphs obtained
-    by all one step degenerations of the labeled stable graph [gr,loops,kappa]
+    Returns a list of all canonical representatives of labeled stable graphs obtained
+    by all one step degenerations (adding a loop or adding an edge) of the labeled stable graph given by (edges,loops,kappa).
     '''
     degenerations = set()
     if len(loops) == 1:    # add loops only if the graph has a single vertex
@@ -165,9 +155,9 @@ def degeneration_step(edges,loops,kappa,graph):
 
 def stable_lab_graphs(stratum, by_codim=False, one_vertex=False, verbose=False):
     '''
-    returns a list of all labeled stable graphs given by the stratum, where
-    stratum is a list of orders of zeroes
+    Return a list of all labeled stable graphs given by the stratum.
     '''
+    assert sum(stratum)%4 == 0, f"The sum of orders of zeroes of the stratum has to be a multiple of 4."
     kappa = [tuple(sorted(stratum))]
     codim = 0
     g = (sum(stratum)+4)/4
@@ -206,7 +196,7 @@ def stable_lab_graphs(stratum, by_codim=False, one_vertex=False, verbose=False):
 
 def Aut(edges,loops,kappa):
     '''
-    returns the order of the group of automorphisms of the labeled stable graph [edges,loops,kappa]
+    Return the order of the group of automorphisms of the labeled stable graph.
     '''
     edges, graph = init_graph(edges)
     graph_aut = graph.automorphism_group(partition=k_to_p(edges,loops,kappa,graph), \
