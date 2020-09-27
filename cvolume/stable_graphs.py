@@ -35,7 +35,6 @@ def add_loop(edges,loops,kappa,graph):
     Return a list of all labeled stable graphs, obtained by adding a loop to the labeled stable graph (edges, loops, kappa, graph).
     '''
     new_graphs = []
-    #genus = [(sum(kappa[v])-2*vertex_deg(edges,v)-4*loops[v]+4)/4 for v in graph.vertices()]
     genus = genera(edges,loops,kappa,graph)
     for v in graph.vertices():
         assert genus[v] in ZZ, f"The genus of graph {(graph.edges(),loops,kappa)} at vertex {v} is not an integer."
@@ -104,7 +103,7 @@ def add_edge(edges,loops,kappa,graph):
 def k_to_p(edges,loops,kappa,graph):
     '''
     Return a canonical partition of vertices of the graph into lists grouped by the same number of loops and zeroes. 
-    The order is lexicographical with respect to [kappa,loops,edges]
+    The order is lexicographical with respect to kappa -> loops -> edges
     '''
     edge_profile = []
     for v in graph.vertices():
@@ -125,7 +124,7 @@ def k_to_p(edges,loops,kappa,graph):
 def canonical_stable(edges,loops,kappa,graph):
     '''
     Return a labeled stable graph, which is the canonical representative of the class of isomorphism of 
-    the labeled stable graph (edges,loops,kappa,graph), where only vertices with the same number of loops
+    the labeled stable graph (edges, loops, kappa, graph), where only vertices with the same number of loops
     and zero orders are allowed to permute and only edges of the same weight are allowed to permute.
     '''
     can_gr, relab = graph.canonical_label(partition=k_to_p(edges,loops,kappa,graph), certificate=True, edge_labels=True)
@@ -138,8 +137,18 @@ def canonical_stable(edges,loops,kappa,graph):
 
 def degeneration_step(edges,loops,kappa,graph):
     '''
-    Returns a list of all canonical representatives of labeled stable graphs obtained
-    by all one step degenerations (adding a loop or adding an edge) of the labeled stable graph given by (edges,loops,kappa).
+    Returns a list of all canonical representatives of labeled stable graphs obtained by all one step degenerations (adding a loop or adding an edge) of the labeled stable graph given by (edges, loops, kappa, graph).
+        
+    INPUT:
+    
+    - ``edges``  -- tuple of triples, a triple (v1,v2,m) means that the vertices v1 and v2 are connected by m edges
+    - ``loops``  -- list, an integer loops[i] is the number of loops associated to the vertex i
+    - ``kappa``  -- list of lists, a partition of stratum into sublists, where a list kappa[i] is a list of orders of zeroes associated to the vertex i
+    - ``graph``  -- Graph, a graph associated to edges (we keep both graph and edges for the performance of the function)
+    
+    OUTPUT:
+    
+    A set of 4-tuples (edges, loops, kappa, graph), that are canonial representatives of stable labeled graphs obtained by one-step degenerations.
     '''
     degenerations = set()
     if len(loops) == 1:    # add loops only if the graph has a single vertex
