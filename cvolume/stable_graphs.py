@@ -194,7 +194,11 @@ def stable_lab_graphs(stratum, by_codim=False, one_vertex=False, verbose=False):
             # taking a union with all possible one-step degenerations of each graph
             degenerations[codim].update(degeneration_step(*stg))
         toc = time.time()
-        if verbose: print('Generated %s codimension %s graphs in %s' % (len(degenerations[-1]), codim, float2time(toc-tic,5)))
+        if verbose: print(f"Generated {len(degenerations[-1])} codimension {codim} graphs in {float2time(toc-tic,5)}")
+    if verbose:
+        print(f"The total number of stable graphs for stratum {stratum} is: {sum(len(i) for i in degenerations)}.")
+        toc = time.time()
+        print(f"Generated all stable graphs for stratum {stratum} in: {float2time(toc-tic,5)}")  
     if by_codim:
         return degenerations[:-1] # remove the last empty list and return
     else:

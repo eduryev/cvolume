@@ -29,12 +29,15 @@ def approx(x):
 
 # c_f(d) returns the renormalization coefficient 2^(d+1)/(d-1)!
 def c_d(stratum):
-    return sum(stratum)/2+len(stratum)
+    return sum(stratum)/ZZ(2)+len(stratum)
 
 def c_f(dim_or_stratum):
     if type(dim_or_stratum) == list:
         d = c_d(dim_or_stratum)
     else:
         d = dim_or_stratum
-    return 2**(d+1)/factorial(d-1)
+    return ZZ(2**(d+1))/factorial(d-1)
+
+def coeff_2(g,n,M): 
+    return ZZ(1)/2**(5*g-6+2*n-2*M)
 

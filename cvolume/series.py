@@ -1,5 +1,6 @@
 from sage.all import ZZ, diff, factorial, Partitions, Partition, prod
 import time
+import sys
 from .utils import *
 from admcycles import psiclass
 
@@ -131,6 +132,12 @@ class PartitionFunctions:
             toc = time.time()
             if self.verbose: print(f"Done updating Fs function for s = {s_part} from max_weight {Fs_max_weight} to {w} in: {float2time(toc-tic,2)}")     
         return Fs
+    
+    def reset(self):
+        self.F_weights = {}
+        self.Z_weights = {}
+        self.F_series = {}
+        self.Z_series = {}
 
     
 Fs = PartitionFunctions()
