@@ -1,4 +1,4 @@
-from sage.all import *
+from sage.all import PolynomialRing, ZZ, QQ, N, exp, factorial
 
 R = PolynomialRing(QQ, ['t%d' % i for i in range(31)])
 S = PolynomialRing(QQ, ['b%d' % i for i in range(1,31)])
@@ -37,3 +37,4 @@ def c_f(dim_or_stratum):
     else:
         d = dim_or_stratum
     return 2**(d+1)/factorial(d-1)
+

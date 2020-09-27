@@ -1,4 +1,4 @@
-from sage.all import *
+from sage.all import ZZ, factorial, Partitions, prod, Permutations
 from .utils import *
 from .series import Fs
 
@@ -82,8 +82,8 @@ def Nlocal(g,n,stratum,labeled=False,mode='derivative'):
             labeling = prod(factorial(stratum.count(i)) for i in range(1,max(stratum)+1))
             N_lab = ZZ(1)/const*labeling*sum(prod(ZZ(1)/factorial(d-1) for d in par)*\
                             prod(factorial(i) for i in par.to_exp())*\
-                            _Fs.monomial_coefficient(prod(gens(R)[d-1] for d in par))*\
-                            sum(prod(gens(S)[j]**(2*(sympar[j]-1)) for j in range(n)) for sympar in Permutations(par))\
+                            _Fs.monomial_coefficient(prod(R.gen(d-1) for d in par))*\
+                            sum(prod(S.gen(j)**(2*(sympar[j]-1)) for j in range(n)) for sympar in Permutations(par))\
                             for par in mondeg)
             cache_poly[(g,n,stratum)] = N_lab
             cache_labeling[(g,n,stratum)] = ZZ(prod(factorial(stratum.count(i)) for i in range(-1,max(stratum)+1)))

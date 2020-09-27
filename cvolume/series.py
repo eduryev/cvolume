@@ -1,12 +1,11 @@
-from sage.all import *
+from sage.all import ZZ, diff, factorial, Partitions, Partition, prod
 import time
-from admcycles import *
 from .utils import *
-
+from admcycles import psiclass
 
 def monom(par):
     exp = par.to_exp()
-    return prod(ZZ(1)/factorial(k) for k in exp)*prod([gens(R)[i-1] for i in par])
+    return prod(ZZ(1)/factorial(k) for k in exp)*prod([R.gen(i-1) for i in par])
 
 def coeff(par):
     if par == Partition([1,1,1]):
@@ -132,5 +131,6 @@ class PartitionFunctions:
             toc = time.time()
             if self.verbose: print(f"Done updating Fs function for s = {s_part} from max_weight {Fs_max_weight} to {w} in: {float2time(toc-tic,2)}")     
         return Fs
-                             
+
+    
 Fs = PartitionFunctions()
