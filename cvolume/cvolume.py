@@ -29,6 +29,7 @@ def graph_poly(stg):
     Here we compute the polynomial associated with a labeled stable graph with one loop::
     
     sage: from cvolume import LabeledStableGraph
+    sage: from cvolume.cvolume import graph_poly
     sage: stg = LabeledStableGraph([], [1], [[3, 3, -1, -1]])
     sage: graph_poly(stg)
     19/128*b1^5
@@ -42,6 +43,8 @@ def graph_poly(stg):
     Note that the previous example can be expressed through local polynomials associated to vertices::
     
     sage: from cvolume import Nlocal
+    sage: S = PolynomialRing(QQ,['b%d' % i for i in range(1,4)])
+    sage: b1,b2,b3 = S.gens()
     sage: graph_poly(stg) == 1/2*1/8*b1*b2*b3*Nlocal(0,3,[3,-1])(b1=b1,b2=b1,b3=b2)*Nlocal(0,3,[3,-1])(b1=b2,b2=b3,b3=b3)
     True
     '''
@@ -108,14 +111,17 @@ def completed_volume(stratum, with_pi=True, verbose=False, one_vertex=False):
         
     Here we demonstrate the verbose mode by computing completed volume of stratum Q(1,-1)::
         
-        sage: completed_volume([1,-1], verbose = True)
-        Computing completed volume of stratum [1, -1]...
-        Generated 1 codimension 1 graphs in ... s
-        The total number of stable graphs for stratum [1, -1] is: 1.
-        Generated all stable graphs for stratum [1, -1] in: ... s
-        Computed contribution of 1/1 graphs. Time elapsed: ... s
-        Completed volume of [1, -1] is computed in: ... s
-        Completed volume of [1, -1] is: 2/3*pi^2
+        sage: completed_volume([3, 1, 1, -1], verbose = True)
+        Computing completed volume of stratum [3, 1, 1, -1]...
+        Generated 2 codimension 1 graphs in ... s
+        Generated 4 codimension 2 graphs in ... s
+        Generated 3 codimension 3 graphs in ... s
+        The total number of stable graphs for stratum [3, 1, 1, -1] is: 9.
+        Generated all stable graphs for stratum [3, 1, 1, -1] in: ... s
+        Computed contribution of 9/9 graphs. Time elapsed: ... s
+        Completed volume of [3, 1, 1, -1] is computed in: ... s
+        Completed volume of [3, 1, 1, -1] is: 7/60*pi^6
+        7/60*pi^6
         
     Here we compute one-vertex graphs contribution to the completed volume of Q(3,1,1,-1)::
     
@@ -124,9 +130,10 @@ def completed_volume(stratum, with_pi=True, verbose=False, one_vertex=False):
         
     Here are some examples for principal strata, where completed volume coincides with Masur-Veech volume::
     
-        sage: completed_volume([1,-1,-1,-1,-1,-1]) == 1*pi^4
-        True
-        
+        sage: assert completed_volume([1,-1,-1,-1,-1,-1]) == 1*pi^4 
+        sage: assert completed_volume([1,1,-1,-1]) == 1/3*pi^4
+        sage: assert completed_volume([1,-1]) == 2/3*pi^2
+        sage: assert completed_volume([-1,-1,-1,-1]) == 2*pi^2
     '''
     def max_weight(stratum): return sum(stratum)/ZZ(2) + len(stratum)/ZZ(2) + stratum.count(-1) + 1
     higher_part = [i for i in stratum if i > 1]
