@@ -71,7 +71,9 @@ def canonical(edges,loops,kappa,graph):
     for k,v in relab.items():
         can_loops[v] = loops[k] 
         can_kappa[v] = kappa[k]
-    can_kappa = [tuple(sorted(list(l),reverse=True)) for l in can_kappa]
+    #can_kappa = [tuple(sorted(list(l),reverse=True)) for l in can_kappa]
+    can_kappa = [tuple(l) for l in can_kappa]
+    print(can_kappa)
     return tuple(can_gr.edges()), tuple(can_loops), tuple(can_kappa), can_gr.copy(immutable=True)
 
 class LabeledStableGraph:
@@ -90,7 +92,7 @@ class LabeledStableGraph:
             graph.add_vertex()
         else:
             graph = Graph(list(edges), loops=False, multiedges=False, weighted=True)        
-        self.edges, self.loops, self.kappa, self.graph = canonical(edges,loops,kappa,graph)
+        self.edges, self.loops, self.kappa, self.graph = canonical(graph.edges(),loops,kappa,graph)
         self.genera = [(sum(self.kappa[v])-2*self.vertex_deg(v)-4*self.loops[v]+4)/ZZ(4) for v in self.graph.vertices()]
    
     def __repr__(self):
@@ -205,8 +207,13 @@ class LabeledStableGraph:
                             elif v_edges[i][1] == v:
                                 new_graph.add_edge(v_edges[i][0],new_v,split_weights[i][1])
                             else:
-                                print(f"Edge {v_edges[i]} is not adjacent to vertex {v}")  
-                    new_graphs.add(LabeledStableGraph(new_graph.edges(),new_loops,new_kappa))
+                                print(f"Edge {v_edges[i]} is not adjacent to vertex {v}")
+                    new_stg = LabeledStableGraph(list(new_graph.edges()),new_loops,new_kappa)
+                    #if new_stg == LabeledStableGraph(((0, 1, 1), (1, 2, 1)), (0, 0, 0), ((-1, -1), (5, -1), (1, -1, -1, -1))):
+#                     if list(new_graph.edges()) == [(0, 1, 1), (1, 2, 1)]:
+#                         print(new_graph.edges(),new_loops,new_kappa)
+#                         print(new_stg)
+                    new_graphs.add(new_stg)
         return new_graphs
 
 
