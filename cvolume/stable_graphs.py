@@ -63,7 +63,7 @@ def canonical(edges,loops,kappa,graph):
     sage: edges, loops, kappa = [(0,1,1)], [1,1], [[1,3],[1,3,5,-1]]
     sage: graph = Graph(edges)
     sage: canonical(edges,loops,kappa,graph)
-    (((0, 1, 1),), (1, 1), ((1,3), (-1, 1, 3, 5)), Graph on 2 vertices)
+    (((0, 1, 1),), (1, 1), ((1, 3), (-1, 1, 3, 5)), Graph on 2 vertices)
     '''
     can_gr, relab = graph.canonical_label(partition=k_to_p(edges,loops,kappa,graph), certificate=True, edge_labels=True)
     can_loops = list(loops)
@@ -104,7 +104,16 @@ class LabeledStableGraph:
         
     def vertex_deg(self, v):
         '''
-        Return the total number of edges (counted with multiplicities) at the vertex v of this Labeled Stable Graph.
+        Return the total number of non-loop edges (counted with multiplicities) at the vertex v of this Labeled Stable Graph.
+        
+        EXAMPLE:
+        
+        Here is an example of vertices degrees::
+        
+        sage: from cvolume.stable_graphs import LabeledStableGraph
+        sage: stg = LabeledStableGraph([(0, 1, 2), (0, 2, 1), (1, 2, 5)], [0, 0, 0], [[5, 1], [7, 7], [11, 1]])
+        sage: stg.vertex_deg(0), stg.vertex_deg(1), stg.vertex_deg(2)
+        (3, 7, 6)
         '''
         deg = 0
         for e in self.edges:
@@ -124,8 +133,8 @@ class LabeledStableGraph:
         sage: edges, loops, kappa = [(0, 1, 2), (0, 2, 1), (1, 2, 1)], [0,1,0], [[1,1],[5,3,1,1],[7,1]]
         sage: stg = LabeledStableGraph(edges,loops,kappa)
         sage: stg.loop_degenerations()
-        {Labeled Stable Graph with edges = ((0, 1, 2), (0, 2, 1), (1, 2, 1)), loops = (0, 1, 1), kappa = ((1, 1), (1, 1, 5, 3), (1, 7)),
-         Labeled Stable Graph with edges = ((0, 1, 2), (0, 2, 1), (1, 2, 1)), loops = (0, 2, 0), kappa = ((1, 1), (1, 1, 5, 3), (1, 7))}
+        {Labeled Stable Graph with edges = ((0, 1, 2), (0, 2, 1), (1, 2, 1)), loops = (0, 1, 1), kappa = ((1, 1), (1, 1, 3, 5), (1, 7)),
+         Labeled Stable Graph with edges = ((0, 1, 2), (0, 2, 1), (1, 2, 1)), loops = (0, 2, 0), kappa = ((1, 1), (1, 1, 3, 5), (1, 7))}
         '''
         new_graphs = set()
         for v in self.graph.vertices():
@@ -304,9 +313,9 @@ def stable_lab_graphs(stratum, by_codim=False, one_vertex=False, verbose=False):
     Here we generate the same graphs only organized by codimension. Note that we keep the original non-degenerate graph of the stratum as the subset at index 0::
     
         sage: stable_lab_graphs([3,-1,-1,-1], by_codim = True)
-        [{Labeled Stable Graph with edges = (), loops = (0,), kappa = ((3, -1, -1, -1),)},
+        [{Labeled Stable Graph with edges = (), loops = (0,), kappa = ((-1, -1, -1, 3),)},
          {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 0), kappa = ((-1, -1), (-1, 3)),
-          Labeled Stable Graph with edges = (), loops = (1,), kappa = ((3, -1, -1, -1),)},
+          Labeled Stable Graph with edges = (), loops = (1,), kappa = ((-1, -1, -1, 3),)},
          {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 1), kappa = ((-1, -1), (-1, 3))}]
     
     Here we demonstrate verbose mode by generating stable graphs for stratum [3,1,1,-1]::
