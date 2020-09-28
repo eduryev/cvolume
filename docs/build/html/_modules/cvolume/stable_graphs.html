@@ -1,0 +1,452 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>cvolume.stable_graphs &#8212; cvolume 0.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">cvolume 0.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for cvolume.stable_graphs</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">sage.all</span> <span class="k">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">ZZ</span><span class="p">,</span> <span class="n">Combinations</span><span class="p">,</span> <span class="n">prod</span><span class="p">,</span> <span class="n">factorial</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">float2time</span>
+
+<div class="viewcode-block" id="k_to_p"><a class="viewcode-back" href="../../stable_graphsmodule.html#cvolume.stable_graphs.k_to_p">[docs]</a><span class="k">def</span> <span class="nf">k_to_p</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span><span class="n">loops</span><span class="p">,</span><span class="n">kappa</span><span class="p">,</span><span class="n">graph</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Return a canonical partition of vertices of the graph into lists grouped by the same number of loops and orders of zeroes. The order is lexicographical with respect to kappa -&gt; loops -&gt; edges.</span>
+<span class="sd">    </span>
+<span class="sd">    EXAMPLE:</span>
+<span class="sd">    </span>
+<span class="sd">    Here is an example of vertices grouped and sorted according to k_to_p. The graph is a triangle with no loops, by the third vertex is labeled differently from the other two::</span>
+<span class="sd">    </span>
+<span class="sd">    sage: from cvolume.stable_graphs import k_to_p</span>
+<span class="sd">    sage: edges, loops, kappa = [(0, 1, 1), (0, 2, 1), (1, 2, 1)], [0, 0, 0], [[1, 1], [1, 1], [3, 1]]</span>
+<span class="sd">    sage: graph = Graph(edges)</span>
+<span class="sd">    sage: k_to_p(edges,loops,kappa,graph)</span>
+<span class="sd">    [[0, 1], [2]]</span>
+<span class="sd">    </span>
+<span class="sd">    Here is a more complicated example of k_to_p::</span>
+<span class="sd">    </span>
+<span class="sd">    sage: from cvolume.stable_graphs import k_to_p</span>
+<span class="sd">    sage: edges, loops, kappa = [(0, 1, 1), (0, 3, 1), (1, 6, 1), (2, 3, 1), (2, 5, 1), (4, 5, 1), (4, 6, 1)], [0, 0, 3, 2, 2, 0, 1], [(1, -1), (1, -1), (1, -1), (1, 1), (1, 1), (3, 1), (3, 3, 1)]; </span>
+<span class="sd">    sage: graph = Graph(edges)</span>
+<span class="sd">    sage: k_to_p(edges,loops,kappa,graph)</span>
+<span class="sd">    [[0, 1], [2], [3, 4], [5], [6]]</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">edge_profile</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">vertices</span><span class="p">():</span>
+        <span class="n">multi</span> <span class="o">=</span> <span class="p">[</span><span class="n">v_edge</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">v_edge</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">edges_incident</span><span class="p">(</span><span class="n">v</span><span class="p">)]</span>
+        <span class="n">edge_profile</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">multi</span><span class="p">))</span>        
+    <span class="n">klev</span> <span class="o">=</span> <span class="p">[[</span><span class="n">kappa</span><span class="p">[</span><span class="n">v</span><span class="p">],</span><span class="n">loops</span><span class="p">[</span><span class="n">v</span><span class="p">],</span><span class="n">edge_profile</span><span class="p">[</span><span class="n">v</span><span class="p">],</span><span class="n">v</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kappa</span><span class="p">))]</span>
+    <span class="n">klev</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">klev</span><span class="p">)</span>
+    <span class="n">partition</span> <span class="o">=</span> <span class="p">[[</span><span class="n">klev</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">]]]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">klev</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="p">[</span><span class="n">klev</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">klev</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">klev</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">2</span><span class="p">]]</span> <span class="o">==</span> <span class="p">[</span><span class="n">klev</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">klev</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">klev</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]]:</span>
+            <span class="n">last</span> <span class="o">=</span> <span class="n">partition</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+            <span class="n">last</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">klev</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">3</span><span class="p">])</span>
+            <span class="n">partition</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">last</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">partition</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">klev</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">3</span><span class="p">]])</span>
+    <span class="k">return</span> <span class="n">partition</span></div>
+    
+<div class="viewcode-block" id="canonical"><a class="viewcode-back" href="../../stable_graphsmodule.html#cvolume.stable_graphs.canonical">[docs]</a><span class="k">def</span> <span class="nf">canonical</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span><span class="n">loops</span><span class="p">,</span><span class="n">kappa</span><span class="p">,</span><span class="n">graph</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Return a 4-tuple (edges,loops,kappa,graph) of immutable objects, corresponding to the canonical representative of the class of isomorphism of the given labeled stable graph, where only vertices with the same number of loops and zero orders are allowed to permute and only edges of the same weight are allowed to permute.</span>
+
+<span class="sd">    EXAMPLES:</span>
+
+<span class="sd">    Here is an example of canonical representative corresponding to a graph. Note that vertex 1 is switched with vertex 2::</span>
+<span class="sd">    </span>
+<span class="sd">    sage: from cvolume.stable_graphs import canonical</span>
+<span class="sd">    sage: edges, loops, kappa = [(0, 1, 1), (0, 2, 1),(2, 1, 1)], [1,2,1], [[3,1],[7,5],[3,1]]</span>
+<span class="sd">    sage: graph = Graph(edges)</span>
+<span class="sd">    sage: canonical(edges,loops,kappa,graph)</span>
+<span class="sd">    (((0, 1, 1), (0, 2, 1), (1, 2, 1)),</span>
+<span class="sd">     (1, 1, 2),</span>
+<span class="sd">     ((1, 3), (1, 3), (5, 7)),</span>
+<span class="sd">     Graph on 3 vertices)</span>
+<span class="sd">     </span>
+<span class="sd">    Another example of canonical representative. Note that orders of zeros in stratum are sorted::</span>
+<span class="sd">    </span>
+<span class="sd">    sage: edges, loops, kappa = [(0,1,1)], [1,1], [[1,3],[1,3,5,-1]]</span>
+<span class="sd">    sage: graph = Graph(edges)</span>
+<span class="sd">    sage: canonical(edges,loops,kappa,graph)</span>
+<span class="sd">    (((0, 1, 1),), (1, 1), ((1, 3), (-1, 1, 3, 5)), Graph on 2 vertices)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">can_gr</span><span class="p">,</span> <span class="n">relab</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">canonical_label</span><span class="p">(</span><span class="n">partition</span><span class="o">=</span><span class="n">k_to_p</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span><span class="n">loops</span><span class="p">,</span><span class="n">kappa</span><span class="p">,</span><span class="n">graph</span><span class="p">),</span> <span class="n">certificate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">edge_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">can_loops</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">loops</span><span class="p">)</span>
+    <span class="n">can_kappa</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">kappa</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">relab</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">can_loops</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">loops</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> 
+        <span class="n">can_kappa</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">kappa</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+    <span class="n">can_kappa</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">l</span><span class="p">)))</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">can_kappa</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">can_gr</span><span class="o">.</span><span class="n">edges</span><span class="p">()),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">can_loops</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">can_kappa</span><span class="p">),</span> <span class="n">can_gr</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">immutable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LabeledStableGraph"><a class="viewcode-back" href="../../stable_graphsmodule.html#cvolume.stable_graphs.LabeledStableGraph">[docs]</a><span class="k">class</span> <span class="nc">LabeledStableGraph</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">edges</span><span class="p">,</span><span class="n">loops</span><span class="p">,</span><span class="n">kappa</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Construct a Labeled Stable Graph -- the canonical representative of the labeled stable graph given by edges, loops and           kappa, where:</span>
+
+<span class="sd">        - ``edges``  -- tuple of triples, where a triple (v1,v2,m) means that the vertices v1 and v2 are connected by m edges</span>
+<span class="sd">        - ``loops``  -- tuple, where an integer loops[i] is the number of loops associated to the vertex i</span>
+<span class="sd">        - ``kappa``  -- tuple of tuples, a partition of stratum into subpartitions, where kappa[i] is a subpartition of orders of zeroes associated to the vertex i</span>
+<span class="sd">        </span>
+<span class="sd">        Lists can be used instead of tuples, as they will be automatically converted to be immutable.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">edges</span><span class="p">:</span>
+            <span class="n">graph</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">(</span><span class="n">weighted</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">loops</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">multiedges</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">graph</span><span class="o">.</span><span class="n">add_vertex</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">graph</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">edges</span><span class="p">),</span> <span class="n">loops</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">multiedges</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">weighted</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>        
+        <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">loops</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kappa</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">canonical</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">(),</span><span class="n">loops</span><span class="p">,</span><span class="n">kappa</span><span class="p">,</span><span class="n">graph</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">genera</span> <span class="o">=</span> <span class="p">[(</span><span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kappa</span><span class="p">[</span><span class="n">v</span><span class="p">])</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">vertex_deg</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">-</span><span class="mi">4</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">loops</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">+</span><span class="mi">4</span><span class="p">)</span><span class="o">/</span><span class="n">ZZ</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">vertices</span><span class="p">()]</span>
+   
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;Labeled Stable Graph with edges = </span><span class="si">{self.edges}</span><span class="s2">, loops = </span><span class="si">{self.loops}</span><span class="s2">, kappa = </span><span class="si">{self.kappa}</span><span class="s2">&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">edges</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">loops</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">loops</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">kappa</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">kappa</span>
+    
+    <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">loops</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">kappa</span><span class="p">))</span>
+        
+<div class="viewcode-block" id="LabeledStableGraph.vertex_deg"><a class="viewcode-back" href="../../stable_graphsmodule.html#cvolume.stable_graphs.LabeledStableGraph.vertex_deg">[docs]</a>    <span class="k">def</span> <span class="nf">vertex_deg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Return the total number of non-loop edges (counted with multiplicities) at the vertex v of this Labeled Stable Graph.</span>
+<span class="sd">        </span>
+<span class="sd">        EXAMPLE:</span>
+<span class="sd">        </span>
+<span class="sd">        Here is an example of vertices degrees::</span>
+<span class="sd">        </span>
+<span class="sd">        sage: from cvolume.stable_graphs import LabeledStableGraph</span>
+<span class="sd">        sage: stg = LabeledStableGraph([(0, 1, 2), (0, 2, 1), (1, 2, 5)], [0, 0, 0], [[5, 1], [7, 7], [11, 1]])</span>
+<span class="sd">        sage: stg.vertex_deg(0), stg.vertex_deg(1), stg.vertex_deg(2)</span>
+<span class="sd">        (3, 7, 6)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">deg</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="n">v</span> <span class="ow">or</span> <span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="n">v</span><span class="p">:</span>
+                <span class="n">deg</span> <span class="o">+=</span> <span class="n">e</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">deg</span></div>
+    
+<div class="viewcode-block" id="LabeledStableGraph.loop_degenerations"><a class="viewcode-back" href="../../stable_graphsmodule.html#cvolume.stable_graphs.LabeledStableGraph.loop_degenerations">[docs]</a>    <span class="k">def</span> <span class="nf">loop_degenerations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Return the set of all Labeled Stable Graphs, obtained by the degenerations adding a loop to this Labeled Stable Graph.</span>
+<span class="sd">        </span>
+<span class="sd">        EXAMPLE:</span>
+<span class="sd">        </span>
+<span class="sd">        Here we compute all degenerations obtained by adding a loop to the stable graph::</span>
+<span class="sd">        </span>
+<span class="sd">        sage: from cvolume import LabeledStableGraph</span>
+<span class="sd">        sage: edges, loops, kappa = [(0, 1, 2), (0, 2, 1), (1, 2, 1)], [0,1,0], [[1,1],[5,3,1,1],[7,1]]</span>
+<span class="sd">        sage: stg = LabeledStableGraph(edges,loops,kappa)</span>
+<span class="sd">        sage: stg.loop_degenerations()</span>
+<span class="sd">        {Labeled Stable Graph with edges = ((0, 1, 2), (0, 2, 1), (1, 2, 1)), loops = (0, 1, 1), kappa = ((1, 1), (1, 1, 3, 5), (1, 7)),</span>
+<span class="sd">         Labeled Stable Graph with edges = ((0, 1, 2), (0, 2, 1), (1, 2, 1)), loops = (0, 2, 0), kappa = ((1, 1), (1, 1, 3, 5), (1, 7))}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">new_graphs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">vertices</span><span class="p">():</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">genera</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="ow">in</span> <span class="n">ZZ</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;The genus of the {repr(self)} at vertex </span><span class="si">{v}</span><span class="s2"> is not an integer.&quot;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">genera</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+                <span class="n">new_loops</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loops</span><span class="p">)</span>
+                <span class="n">new_loops</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loops</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span>
+                <span class="n">new_graphs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">LabeledStableGraph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">,</span><span class="n">new_loops</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">kappa</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">new_graphs</span></div>
+
+<div class="viewcode-block" id="LabeledStableGraph.edge_degenerations"><a class="viewcode-back" href="../../stable_graphsmodule.html#cvolume.stable_graphs.LabeledStableGraph.edge_degenerations">[docs]</a>    <span class="k">def</span> <span class="nf">edge_degenerations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Return the set of all Labeled Stable Graphs, obtained by *special* degenerations adding an edge to this Labeled Stable Graph. A *special* edge degeneration only adds an edge to the vertex with largest profile, when it&#39;s unique. Profile is the sum of weight and length of the associated zeros partition.</span>
+<span class="sd">        </span>
+<span class="sd">        EXAMPLE:</span>
+<span class="sd">        </span>
+<span class="sd">        Here is an example of all degenerations obtained by adding an adge::</span>
+<span class="sd">        </span>
+<span class="sd">        sage: from cvolume import LabeledStableGraph</span>
+<span class="sd">        sage: edges, loops, kappa = [], [1], [[3,3,1,1]]</span>
+<span class="sd">        sage: stg = LabeledStableGraph(edges,loops,kappa)</span>
+<span class="sd">        sage: stg.edge_degenerations()</span>
+<span class="sd">        {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 1), kappa = ((1, 1), (3, 3)),</span>
+<span class="sd">         Labeled Stable Graph with edges = ((0, 1, 1),), loops = (1, 0), kappa = ((1, 1), (3, 3)),</span>
+<span class="sd">         Labeled Stable Graph with edges = ((0, 1, 2),), loops = (0, 0), kappa = ((1, 3), (1, 3))}</span>
+<span class="sd">         </span>
+<span class="sd">        Here is another example of special edge-degenerations::</span>
+<span class="sd">        </span>
+<span class="sd">        sage: edges, loops, kappa = [(0,1,1)], [0,0], [[1,1],[3,1,1,1]]</span>
+<span class="sd">        sage: stg = LabeledStableGraph(edges,loops,kappa)</span>
+<span class="sd">        sage: stg.edge_degenerations()</span>
+<span class="sd">        {Labeled Stable Graph with edges = ((0, 2, 1), (1, 2, 1)), loops = (0, 0, 0), kappa = ((1, 1), (1, 1), (1, 3))}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">new_graphs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">profile</span> <span class="o">=</span> <span class="p">[</span><span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kappa</span><span class="p">[</span><span class="n">v</span><span class="p">])</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kappa</span><span class="p">[</span><span class="n">v</span><span class="p">])</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">vertices</span><span class="p">()]</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">profile</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">profile</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># add an edge only to the unique vertex with &#39;maximal&#39; zeroes partition</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+            <span class="n">v_edges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">edges_incident</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="n">v_edge_weights</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">v_edges</span><span class="p">]</span>
+            <span class="n">v_comb_weights</span> <span class="o">=</span> <span class="p">[[[</span><span class="n">weight</span><span class="o">-</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">weight</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span> <span class="k">for</span> <span class="n">weight</span> <span class="ow">in</span> <span class="n">v_edge_weights</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">v_comb_weights</span><span class="p">:</span> <span class="n">v_Split_Weights</span> <span class="o">=</span> <span class="p">[()]</span>
+            <span class="n">v_Split_Weights</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">v_comb_weights</span><span class="p">))</span>
+            <span class="n">v_Split_Loops</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">self</span><span class="o">.</span><span class="n">loops</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">-</span><span class="n">i</span><span class="o">-</span><span class="n">j</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loops</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loops</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="o">-</span><span class="n">i</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">v_Split_Loops</span><span class="p">:</span> <span class="n">v_Split_Loops</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="n">v_Subset_Zeroes</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">Combinations</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kappa</span><span class="p">[</span><span class="n">v</span><span class="p">])</span> <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">split_weights</span><span class="p">,</span><span class="n">split_loops</span><span class="p">,</span><span class="n">sub_zeroes</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">v_Split_Weights</span><span class="p">,</span><span class="n">v_Split_Loops</span><span class="p">,</span><span class="n">v_Subset_Zeroes</span><span class="p">):</span>
+                <span class="n">new_genus_0</span> <span class="o">=</span> <span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">sub_zeroes</span><span class="p">)</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="nb">sum</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">split_weights</span><span class="p">)</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">split_loops</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="mi">4</span><span class="o">*</span><span class="n">split_loops</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">4</span><span class="p">)</span><span class="o">/</span><span class="n">ZZ</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+                <span class="n">new_genus_1</span> <span class="o">=</span> <span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kappa</span><span class="p">[</span><span class="n">v</span><span class="p">])</span><span class="o">-</span><span class="nb">sum</span><span class="p">(</span><span class="n">sub_zeroes</span><span class="p">)</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="nb">sum</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">split_weights</span><span class="p">)</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">split_loops</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="mi">4</span><span class="o">*</span><span class="n">split_loops</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">4</span><span class="p">)</span><span class="o">/</span><span class="n">ZZ</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">genera</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">new_genus_0</span><span class="o">&gt;=</span><span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">genera</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">new_genus_1</span><span class="o">&gt;=</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">new_genus_0</span> <span class="ow">in</span> <span class="n">ZZ</span> <span class="ow">and</span> <span class="n">new_genus_1</span> <span class="ow">in</span> <span class="n">ZZ</span><span class="p">:</span>
+                    <span class="c1"># creating copies</span>
+                    <span class="n">new_graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">immutable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="n">new_loops</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loops</span><span class="p">)</span>
+                    <span class="n">new_kappa</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kappa</span><span class="p">)</span>
+                    <span class="n">new_kappa</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">new_kappa</span><span class="p">[</span><span class="n">v</span><span class="p">])</span>
+                    <span class="c1"># add new vertex</span>
+                    <span class="n">new_graph</span><span class="o">.</span><span class="n">add_vertex</span><span class="p">()</span>
+                    <span class="n">new_v</span> <span class="o">=</span> <span class="n">new_graph</span><span class="o">.</span><span class="n">vertices</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="c1"># distribute zeroes</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sub_zeroes</span><span class="p">:</span>
+                        <span class="n">new_kappa</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                    <span class="n">new_kappa</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">new_kappa</span><span class="p">[</span><span class="n">v</span><span class="p">])))</span>
+                    <span class="n">new_kappa</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">sub_zeroes</span><span class="p">))</span>              
+                    <span class="c1"># distribute loops and add an extra edge</span>
+                    <span class="n">new_loops</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">split_loops</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">new_loops</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">split_loops</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> 
+                    <span class="n">new_graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="n">new_v</span><span class="p">,</span><span class="n">split_loops</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="c1"># distribute edges</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v_edges</span><span class="p">)):</span>
+                        <span class="k">if</span> <span class="n">split_weights</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">new_graph</span><span class="o">.</span><span class="n">set_edge_label</span><span class="p">(</span><span class="n">v_edges</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">v_edges</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">split_weights</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">new_graph</span><span class="o">.</span><span class="n">delete_edge</span><span class="p">(</span><span class="n">v_edges</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                        <span class="k">if</span> <span class="n">split_weights</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">v_edges</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">v</span><span class="p">:</span>
+                                <span class="n">new_graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">new_v</span><span class="p">,</span><span class="n">v_edges</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">split_weights</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+                            <span class="k">elif</span> <span class="n">v_edges</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">v</span><span class="p">:</span>
+                                <span class="n">new_graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">v_edges</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">new_v</span><span class="p">,</span><span class="n">split_weights</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Edge </span><span class="si">{v_edges[i]}</span><span class="s2"> is not adjacent to vertex </span><span class="si">{v}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">new_stg</span> <span class="o">=</span> <span class="n">LabeledStableGraph</span><span class="p">(</span><span class="n">new_graph</span><span class="o">.</span><span class="n">edges</span><span class="p">(),</span><span class="n">new_loops</span><span class="p">,</span><span class="n">new_kappa</span><span class="p">)</span>
+                    <span class="n">new_graphs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">new_stg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_graphs</span></div>
+
+<div class="viewcode-block" id="LabeledStableGraph.one_step_degenerations"><a class="viewcode-back" href="../../stable_graphsmodule.html#cvolume.stable_graphs.LabeledStableGraph.one_step_degenerations">[docs]</a>    <span class="k">def</span> <span class="nf">one_step_degenerations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Return the set of all Labeled Stable Graphs, obtained by *special* one step degenerations of this Labeled Stable Graph. A *special* degeneration is adding a loop to a single vertex graph, or adding an edge to any graph.</span>
+<span class="sd">        </span>
+<span class="sd">        EXAMPLES:</span>
+<span class="sd">        </span>
+<span class="sd">        Here we compute all special one step degenerations of a graph with a single vertex labeled by a stratum [3,3,1,1] with a single loop attached to it::</span>
+<span class="sd">        </span>
+<span class="sd">        sage: from cvolume import LabeledStableGraph</span>
+<span class="sd">        sage: edges,loops,kappa = [], [1], [[3,3,1,1]]</span>
+<span class="sd">        sage: stg = LabeledStableGraph(edges,loops,kappa)</span>
+<span class="sd">        sage: stg.one_step_degenerations()</span>
+<span class="sd">        {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 1), kappa = ((1, 1), (3, 3)),</span>
+<span class="sd">         Labeled Stable Graph with edges = ((0, 1, 1),), loops = (1, 0), kappa = ((1, 1), (3, 3)),</span>
+<span class="sd">         Labeled Stable Graph with edges = ((0, 1, 2),), loops = (0, 0), kappa = ((1, 3), (1, 3)),</span>
+<span class="sd">         Labeled Stable Graph with edges = (), loops = (2,), kappa = ((1, 1, 3, 3),)}</span>
+<span class="sd">         </span>
+<span class="sd">        Here we start with a single vertex of genus 0 and therefore obtain no degenerations::</span>
+<span class="sd">        </span>
+<span class="sd">        sage: edges,loops,kappa = [], [2], [[5,-1]]</span>
+<span class="sd">        sage: stg = LabeledStableGraph(edges,loops,kappa)</span>
+<span class="sd">        sage: stg.one_step_degenerations()</span>
+<span class="sd">        set()</span>
+<span class="sd">         </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">degenerations</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loops</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>    <span class="c1"># make loop degeneration only if the graph has a single vertex</span>
+            <span class="n">degenerations</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loop_degenerations</span><span class="p">())</span>
+        <span class="n">degenerations</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edge_degenerations</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">degenerations</span></div>
+    
+<div class="viewcode-block" id="LabeledStableGraph.Aut"><a class="viewcode-back" href="../../stable_graphsmodule.html#cvolume.stable_graphs.LabeledStableGraph.Aut">[docs]</a>    <span class="k">def</span> <span class="nf">Aut</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Return the order of the group of automorphisms of this Labeled Stable Graph.</span>
+<span class="sd">        </span>
+<span class="sd">        EXAMPLES:</span>
+<span class="sd">        </span>
+<span class="sd">        Here we compute the order of automorphism group of a single vertex graph with two loops::</span>
+<span class="sd">        </span>
+<span class="sd">        sage: from cvolume import LabeledStableGraph</span>
+<span class="sd">        sage: edges, loops, kappa = [], [2], [[3,3,1,-1]]</span>
+<span class="sd">        sage: stg = LabeledStableGraph(edges,loops,kappa)</span>
+<span class="sd">        sage: stg.Aut()</span>
+<span class="sd">        8</span>
+<span class="sd">        </span>
+<span class="sd">        Here we compute the order of automorphism group of a two vertex graph with no loops, but a symmetry due to isomorphic vertices::</span>
+<span class="sd">        </span>
+<span class="sd">        sage: edges, loops, kappa = [(0,1,1)], [0,0], [[3,-1],[3,-1]]</span>
+<span class="sd">        sage: stg = LabeledStableGraph(edges,loops,kappa)</span>
+<span class="sd">        sage: stg.Aut()</span>
+<span class="sd">        2</span>
+<span class="sd">        </span>
+<span class="sd">        Here we compute the order of automorphism group of a two vertex graph with no loops, but five edges between non-isomorphic vertices::</span>
+<span class="sd">        </span>
+<span class="sd">        sage: edges, loops, kappa = [(0,1,5)], [0,0], [[5,1],[7,-1]]</span>
+<span class="sd">        sage: stg = LabeledStableGraph(edges,loops,kappa)</span>
+<span class="sd">        sage: stg.Aut()</span>
+<span class="sd">        120</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">partition</span> <span class="o">=</span> <span class="n">k_to_p</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">loops</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">kappa</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span>
+        <span class="n">graph_aut</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">automorphism_group</span><span class="p">(</span><span class="n">partition</span><span class="o">=</span><span class="n">partition</span><span class="p">,</span><span class="n">edge_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">return_group</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">loops_aut</span> <span class="o">=</span> <span class="n">prod</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">i</span><span class="o">*</span><span class="n">factorial</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loops</span><span class="p">)</span>
+        <span class="n">weights_aut</span> <span class="o">=</span> <span class="n">prod</span><span class="p">(</span><span class="n">factorial</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">graph_aut</span><span class="o">*</span><span class="n">loops_aut</span><span class="o">*</span><span class="n">weights_aut</span></div></div>
+
+<div class="viewcode-block" id="stable_lab_graphs"><a class="viewcode-back" href="../../stable_graphsmodule.html#cvolume.stable_graphs.stable_lab_graphs">[docs]</a><span class="k">def</span> <span class="nf">stable_lab_graphs</span><span class="p">(</span><span class="n">stratum</span><span class="p">,</span> <span class="n">by_codim</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">one_vertex</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Return the set of all Labeled Stable Graphs given by the stratum.</span>
+<span class="sd">    </span>
+<span class="sd">    INPUT:</span>
+<span class="sd">    </span>
+<span class="sd">    - ``stratum``    -- list of orders of zeroes (including -1 for simple poles) of the stratum</span>
+<span class="sd">    - ``by_codim``   -- boolean (default `False`), when True returns the list of sets of stable graphs organized by codimension</span>
+<span class="sd">    - ``one_vertex`` -- boolean (default `False`), when True only returns the set of one-vertex stable graphs</span>
+<span class="sd">    - ``verbose``    -- boolean (default `False`), when True prints progress, total time and the number of stable graphs</span>
+<span class="sd">    </span>
+<span class="sd">    OUTPUT:</span>
+<span class="sd">    </span>
+<span class="sd">    - ``graphs``     -- set of Labeled Stable Graphs (if ``by_codim`` is `False`), or list of sets of Labeled Stable Graphs organized by codimension (if ``by_codim`` is `True`). In the first case we exclude original graph with no edges (codimension 0), in the second case we keep it, so that the index of the subset of stable graphs in the output list is their codimension.</span>
+<span class="sd">    </span>
+<span class="sd">    EXAMPLES:</span>
+
+<span class="sd">    Here we generate all labeled stable graphs in stratum [3,-1,-1,-1]::</span>
+<span class="sd">        </span>
+<span class="sd">        sage: from cvolume import stable_lab_graphs</span>
+<span class="sd">        sage: stable_lab_graphs([3,-1,-1,-1])</span>
+<span class="sd">        {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 0), kappa = ((-1, -1), (-1, 3)),</span>
+<span class="sd">         Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 1), kappa = ((-1, -1), (-1, 3)),</span>
+<span class="sd">         Labeled Stable Graph with edges = (), loops = (1,), kappa = ((-1, -1, -1, 3),)}</span>
+<span class="sd">    </span>
+<span class="sd">    Here we generate the same graphs only organized by codimension. Note that we keep the original non-degenerate graph of the stratum as the subset at index 0::</span>
+<span class="sd">    </span>
+<span class="sd">        sage: stable_lab_graphs([3,-1,-1,-1], by_codim = True)</span>
+<span class="sd">        [{Labeled Stable Graph with edges = (), loops = (0,), kappa = ((-1, -1, -1, 3),)},</span>
+<span class="sd">         {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 0), kappa = ((-1, -1), (-1, 3)),</span>
+<span class="sd">          Labeled Stable Graph with edges = (), loops = (1,), kappa = ((-1, -1, -1, 3),)},</span>
+<span class="sd">         {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 1), kappa = ((-1, -1), (-1, 3))}]</span>
+<span class="sd">    </span>
+<span class="sd">    Here we demonstrate verbose mode by generating stable graphs for stratum [3,1,1,-1]::</span>
+<span class="sd">    </span>
+<span class="sd">        sage: graphs = stable_lab_graphs([3,1,1,-1], verbose = True)</span>
+<span class="sd">        Generated 2 codimension 1 graphs in ... s</span>
+<span class="sd">        Generated 4 codimension 2 graphs in ... s</span>
+<span class="sd">        Generated 3 codimension 3 graphs in ... s</span>
+<span class="sd">        The total number of stable graphs for stratum [3, 1, 1, -1] is: 9.</span>
+<span class="sd">        Generated all stable graphs for stratum [3, 1, 1, -1] in: ... s</span>
+<span class="sd">        </span>
+<span class="sd">    Here we compute the number of labeled stable graphs for stratum [3,1,1,1,1,1]::</span>
+<span class="sd">    </span>
+<span class="sd">        sage: len(stable_lab_graphs([3,1,1,1,1,1]))</span>
+<span class="sd">        31</span>
+<span class="sd">        </span>
+<span class="sd">    Here we generate only one-vertex labeled stable graphs for stratum [3,1,1,1,1,1]::</span>
+<span class="sd">    </span>
+<span class="sd">        sage: stable_lab_graphs([3,1,1,1,1,1], one_vertex = True)</span>
+<span class="sd">        {Labeled Stable Graph with edges = (), loops = (1,), kappa = ((1, 1, 1, 1, 1, 3),),</span>
+<span class="sd">         Labeled Stable Graph with edges = (), loops = (2,), kappa = ((1, 1, 1, 1, 1, 3),),</span>
+<span class="sd">         Labeled Stable Graph with edges = (), loops = (3,), kappa = ((1, 1, 1, 1, 1, 3),)}</span>
+<span class="sd">    </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">assert</span> <span class="nb">sum</span><span class="p">(</span><span class="n">stratum</span><span class="p">)</span><span class="o">%</span><span class="mi">4</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;The sum of orders of zeroes of the stratum has to be a multiple of 4.&quot;</span>
+    <span class="n">kappa</span> <span class="o">=</span> <span class="p">[</span><span class="nb">sorted</span><span class="p">(</span><span class="n">stratum</span><span class="p">)]</span>
+    <span class="n">codim</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">stratum</span><span class="p">)</span><span class="o">+</span><span class="mi">4</span><span class="p">)</span><span class="o">/</span><span class="mi">4</span>         
+    <span class="k">if</span> <span class="n">one_vertex</span><span class="p">:</span>
+        <span class="n">degenerations</span> <span class="o">=</span> <span class="p">[{</span><span class="n">LabeledStableGraph</span><span class="p">([],[</span><span class="n">i</span><span class="p">],</span><span class="n">kappa</span><span class="p">)}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">g</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># degenerations[i] is a set of stable graphs of codimension i, we begin with a graph represented by a single vertex of genus g and no edges or loops </span>
+        <span class="n">degenerations</span> <span class="o">=</span> <span class="p">[</span> <span class="p">{</span><span class="n">LabeledStableGraph</span><span class="p">([],[</span><span class="mi">0</span><span class="p">],</span><span class="n">kappa</span><span class="p">)}</span> <span class="p">]</span> 
+        <span class="n">tic_total</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">degenerations</span><span class="p">[</span><span class="n">codim</span><span class="p">]:</span>
+            <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="n">codim</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="c1"># adding empty list for degenerations of the next codimension </span>
+            <span class="n">degenerations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">set</span><span class="p">())</span>
+            <span class="c1"># looping though graphs of previous codimension</span>
+            <span class="k">for</span> <span class="n">stg</span> <span class="ow">in</span> <span class="n">degenerations</span><span class="p">[</span><span class="n">codim</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="c1"># taking a union with all possible one-step degenerations of each graph</span>
+                <span class="n">degenerations</span><span class="p">[</span><span class="n">codim</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">stg</span><span class="o">.</span><span class="n">one_step_degenerations</span><span class="p">())</span>
+            <span class="n">toc</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">verbose</span> <span class="ow">and</span> <span class="n">degenerations</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span> <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Generated {len(degenerations[-1])} codimension </span><span class="si">{codim}</span><span class="s2"> graphs in {float2time(toc-tic,5)}&quot;</span><span class="p">)</span>
+        <span class="n">degenerations</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span> <span class="c1"># remove the last empty list</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;The total number of stable graphs for stratum </span><span class="si">{stratum}</span><span class="s2"> is: {sum(len(i) for i in degenerations)-1}.&quot;</span><span class="p">)</span>
+            <span class="n">toc</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Generated all stable graphs for stratum </span><span class="si">{stratum}</span><span class="s2"> in: {float2time(toc-tic_total,5)}&quot;</span><span class="p">)</span>  
+    <span class="k">if</span> <span class="n">by_codim</span><span class="p">:</span> <span class="k">return</span> <span class="n">degenerations</span> <span class="c1"># keep the original graph at index 0 as codim 0 element</span>
+    <span class="k">else</span><span class="p">:</span> <span class="k">return</span> <span class="nb">set</span><span class="p">()</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="o">*</span><span class="n">degenerations</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="c1"># take union and return, don&#39;t include the original graph</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">cvolume 0.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Vincent Delecroix, Eduard Duryev.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>
