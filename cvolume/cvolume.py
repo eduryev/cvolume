@@ -18,6 +18,7 @@ def graph_poly(edges,loops,kappa,graph):
     '''
     returns 'Kontsevich polynomial' associated to the stable graph
     '''
+    edges, graph = init_graph(edges)
     c = ZZ(1)/2**(len(graph.vertices())-1)*1/ZZ(Aut(edges,loops,kappa))
     variables = list(S.gens())
     b = list(S.gens())
@@ -47,6 +48,10 @@ def graph_poly(edges,loops,kappa,graph):
     for v in graph.vertices():
         plug_in = []
         for v_edge in graph.edges_incident(v):
+            try:
+                _ = edge_to_var[v_edge]
+            except:
+                print(edge_to_var, v_edge)
             for var in edge_to_var[v_edge]:
                 plug_in.append(var)
         for var in loop_to_var[v]:
