@@ -3,6 +3,77 @@ import itertools
 import time
 from .utils import float2time
 
+def k_to_p(edges,loops,kappa,graph):
+    '''
+    Return a canonical partition of vertices of the graph into lists grouped by the same number of loops and orders of zeroes. The order is lexicographical with respect to kappa -> loops -> edges.
+    
+    EXAMPLE:
+    
+    Here is an example of vertices grouped and sorted according to k_to_p. The graph is a triangle with no loops, by the third vertex is labeled differently from the other two::
+    
+    sage: from cvolume.stable_graphs import k_to_p
+    sage: edges, loops, kappa = [(0, 1, 1), (0, 2, 1), (1, 2, 1)], [0, 0, 0], [[1, 1], [1, 1], [3, 1]]
+    sage: graph = Graph(edges)
+    sage: k_to_p(edges,loops,kappa,graph)
+    [[0, 1], [2]]
+    
+    Here is a more complicated example of k_to_p::
+    
+    sage: from cvolume.stable_graphs import k_to_p
+    sage: edges, loops, kappa = [(0, 1, 1), (0, 3, 1), (1, 6, 1), (2, 3, 1), (2, 5, 1), (4, 5, 1), (4, 6, 1)], [0, 0, 3, 2, 2, 0, 1], [(1, -1), (1, -1), (1, -1), (1, 1), (1, 1), (3, 1), (3, 3, 1)]; 
+    sage: graph = Graph(edges)
+    sage: k_to_p(edges,loops,kappa,graph)
+    [[0, 1], [2], [3, 4], [5], [6]]
+    '''
+    edge_profile = []
+    for v in graph.vertices():
+        multi = [v_edge[2] for v_edge in graph.edges_incident(v)]
+        edge_profile.append(sorted(multi))        
+    klev = [[kappa[v],loops[v],edge_profile[v],v] for v in range(len(kappa))]
+    klev = sorted(klev)
+    partition = [[klev[0][3]]]
+    for i in range(1,len(klev)):
+        if [klev[i][0],klev[i][1],klev[i][2]] == [klev[i-1][0],klev[i-1][1],klev[i-1][2]]:
+            last = partition.pop()
+            last.append(klev[i][3])
+            partition.append(last)
+        else:
+            partition.append([klev[i][3]])
+    return partition
+    
+def canonical(edges,loops,kappa,graph):
+    '''
+    Return a 4-tuple (edges,loops,kappa,graph) of immutable objects, corresponding to the canonical representative of the class of isomorphism of the given labeled stable graph, where only vertices with the same number of loops and zero orders are allowed to permute and only edges of the same weight are allowed to permute.
+
+    EXAMPLES:
+
+    Here is an example of canonical representative corresponding to a graph. Note that vertex 1 is switched with vertex 2::
+    
+    sage: from cvolume.stable_graphs import canonical
+    sage: edges, loops, kappa = [(0, 1, 1), (0, 2, 1),(2, 1, 1)], [1,2,1], [[3,1],[7,5],[3,1]]
+    sage: graph = Graph(edges)
+    sage: canonical(edges,loops,kappa,graph)
+    (((0, 1, 1), (0, 2, 1), (1, 2, 1)),
+     (1, 1, 2),
+     ((3, 1), (3, 1), (7, 5)),
+     Graph on 3 vertices)
+     
+    Another example of canonical representative. Note that orders of zeros in stratum are sorted::
+    
+    sage: edges, loops, kappa = [(0,1,1)], [1,1], [[1,3],[1,3,5,-1]]
+    sage: graph = Graph(edges)
+    sage: canonical(edges,loops,kappa,graph)
+    (((0, 1, 1),), (1, 1), ((3, 1), (5, 3, 1, -1)), Graph on 2 vertices)
+    '''
+    can_gr, relab = graph.canonical_label(partition=k_to_p(edges,loops,kappa,graph), certificate=True, edge_labels=True)
+    can_loops = list(loops)
+    can_kappa = list(kappa)
+    for k,v in relab.items():
+        can_loops[v] = loops[k] 
+        can_kappa[v] = kappa[k]
+    can_kappa = [tuple(sorted(list(l),reverse=True)) for l in can_kappa]
+    return tuple(can_gr.edges()), tuple(can_loops), tuple(can_kappa), can_gr.copy(immutable=True)
+
 class LabeledStableGraph:
     def __init__(self,edges,loops,kappa):
         '''
@@ -19,41 +90,8 @@ class LabeledStableGraph:
             graph.add_vertex()
         else:
             graph = Graph(list(edges), loops=False, multiedges=False, weighted=True)        
-        self.edges, self.loops, self.kappa, self.graph = self.canonical(edges,loops,kappa,graph)
+        self.edges, self.loops, self.kappa, self.graph = canonical(edges,loops,kappa,graph)
         self.genera = [(sum(self.kappa[v])-2*self.vertex_deg(v)-4*self.loops[v]+4)/ZZ(4) for v in self.graph.vertices()]
-    
-    def k_to_p(self,edges,loops,kappa,graph):
-        '''
-        Method used by __init__. Return a canonical partition of vertices of the graph into lists grouped by the same number of loops and orders of zeroes. The order is lexicographical with respect to kappa -> loops -> edges.
-        '''
-        edge_profile = []
-        for v in graph.vertices():
-            multi = [v_edge[2] for v_edge in graph.edges_incident(v)]
-            edge_profile.append(sorted(multi))        
-        klev = [[kappa[v],loops[v],edge_profile[v],v] for v in range(len(kappa))]
-        klev = sorted(klev)
-        partition = [[klev[0][3]]]
-        for i in range(1,len(klev)):
-            if [klev[i][0],klev[i][1],klev[i][2]] == [klev[i-1][0],klev[i-1][1],klev[i-1][2]]:
-                last = partition.pop()
-                last.append(klev[i][3])
-                partition.append(last)
-            else:
-                partition.append([klev[i][3]])
-        return partition
-    
-    def canonical(self,edges,loops,kappa,graph):
-        '''
-        Method used by __init__. Return a 4-tuple (edges,loops,kappa,graph) of immutable objects, corresponding to the canonical representative of the class of isomorphism of the given labeled stable graph, where only vertices with the same number of loops and zero orders are allowed to permute and only edges of the same weight are allowed to permute.
-        '''
-        can_gr, relab = graph.canonical_label(partition=self.k_to_p(edges,loops,kappa,graph), certificate=True, edge_labels=True)
-        can_loops = list(loops)
-        can_kappa = list(kappa)
-        for k,v in relab.items():
-            can_loops[v] = loops[k] 
-            can_kappa[v] = kappa[k]
-        can_kappa = [tuple(l) for l in can_kappa]
-        return tuple(can_gr.edges()), tuple(can_loops), tuple(can_kappa), can_gr.copy(immutable=True)
    
     def __repr__(self):
         return f"Labeled Stable Graph with edges = {self.edges}, loops = {self.loops}, kappa = {self.kappa}"
@@ -73,16 +111,21 @@ class LabeledStableGraph:
             if e[0]==v or e[1]==v:
                 deg += e[2]
         return deg
-        
-    def genera(self):
-        '''
-        Return the list of genera of vertices of this Labeled Stable Graph.
-        '''
-        return [(sum(self.kappa[v])-2*self.vertex_deg(v)-4*self.loops[v]+4)/ZZ(4) for v in self.graph.vertices()]
     
     def loop_degenerations(self):
         '''
         Return the set of all Labeled Stable Graphs, obtained by the degenerations adding a loop to this Labeled Stable Graph.
+        
+        EXAMPLE:
+        
+        Here we compute all degenerations obtained by adding a loop to the stable graph::
+        
+        sage: from cvolume import LabeledStableGraph
+        sage: edges, loops, kappa = [(0, 1, 2), (0, 2, 1), (1, 2, 1)], [0,1,0], [[1,1],[5,3,1,1],[7,1]]
+        sage: stg = LabeledStableGraph(edges,loops,kappa)
+        sage: stg.loop_degenerations()
+        {Labeled Stable Graph with edges = ((0, 1, 2), (0, 2, 1), (1, 2, 1)), loops = (0, 1, 1), kappa = ((1, 1), (5, 3, 1, 1), (7, 1)),
+         Labeled Stable Graph with edges = ((0, 1, 2), (0, 2, 1), (1, 2, 1)), loops = (0, 2, 0), kappa = ((1, 1), (5, 3, 1, 1), (7, 1))}
         '''
         new_graphs = set()
         for v in self.graph.vertices():
@@ -96,6 +139,25 @@ class LabeledStableGraph:
     def edge_degenerations(self):
         '''
         Return the set of all Labeled Stable Graphs, obtained by *special* degenerations adding an edge to this Labeled Stable Graph. A *special* edge degeneration only adds an edge to the vertex with largest profile, when it's unique. Profile is the sum of weight and length of the associated zeros partition.
+        
+        EXAMPLE:
+        
+        Here is an example of all degenerations obtained by adding an adge::
+        
+        sage: from cvolume import LabeledStableGraph
+        sage: edges, loops, kappa = [], [1], [[3,3,1,1]]
+        sage: stg = LabeledStableGraph(edges,loops,kappa)
+        sage: stg.edge_degenerations()
+        {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 1), kappa = ((1, 1), (3, 3)),
+         Labeled Stable Graph with edges = ((0, 1, 1),), loops = (1, 0), kappa = ((1, 1), (3, 3)),
+         Labeled Stable Graph with edges = ((0, 1, 2),), loops = (0, 0), kappa = ((3, 1), (3, 1))}
+         
+        Here is another example of special edge-degenerations::
+        
+        sage: edges, loops, kappa = [(0,1,1)], [0,0], [[1,1],[3,1,1,1]]
+        sage: stg = LabeledStableGraph(edges,loops,kappa)
+        sage: stg.edge_degenerations()
+        {Labeled Stable Graph with edges = ((0, 2, 1), (1, 2, 1)), loops = (0, 0, 0), kappa = ((1, 1), (1, 1), (3, 1))}
         '''
         new_graphs = set()
         profile = [sum(self.kappa[v])+len(self.kappa[v]) for v in self.graph.vertices()]
@@ -151,6 +213,27 @@ class LabeledStableGraph:
     def one_step_degenerations(self):
         '''
         Return the set of all Labeled Stable Graphs, obtained by *special* one step degenerations of this Labeled Stable Graph. A *special* degeneration is adding a loop to a single vertex graph, or adding an edge to any graph.
+        
+        EXAMPLES:
+        
+        Here we compute all special one step degenerations of a graph with a single vertex labeled by a stratum [3,3,1,1] with a single loop attached to it::
+        
+        sage: from cvolume import LabeledStableGraph
+        sage: edges,loops,kappa = [], [1], [[3,3,1,1]]
+        sage: stg = LabeledStableGraph(edges,loops,kappa)
+        sage: stg.one_step_degenerations()
+        {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 1), kappa = ((1, 1), (3, 3)),
+         Labeled Stable Graph with edges = ((0, 1, 1),), loops = (1, 0), kappa = ((1, 1), (3, 3)),
+         Labeled Stable Graph with edges = ((0, 1, 2),), loops = (0, 0), kappa = ((3, 1), (3, 1)),
+         Labeled Stable Graph with edges = (), loops = (2,), kappa = ((3, 3, 1, 1),)}
+         
+        Here we start with a single vertex of genus 0 and therefore obtain no degenerations::
+        
+        sage: edges,loops,kappa = [], [2], [[5,-1]]
+        sage: stg = LabeledStableGraph(edges,loops,kappa)
+        sage: stg.one_step_degenerations()
+        set()
+         
         '''
         degenerations = set()
         if len(self.loops) == 1:    # make loop degeneration only if the graph has a single vertex
@@ -166,7 +249,7 @@ class LabeledStableGraph:
         
         Here we compute the order of automorphism group of a single vertex graph with two loops::
         
-        sage: from cvolume import LabeledStableGraph 
+        sage: from cvolume import LabeledStableGraph
         sage: edges, loops, kappa = [], [2], [[3,3,1,-1]]
         sage: stg = LabeledStableGraph(edges,loops,kappa)
         sage: stg.Aut()
@@ -186,7 +269,7 @@ class LabeledStableGraph:
         sage: stg.Aut()
         120
         '''
-        partition = self.k_to_p(self.edges,self.loops,self.kappa,self.graph)
+        partition = k_to_p(self.edges,self.loops,self.kappa,self.graph)
         graph_aut = self.graph.automorphism_group(partition=partition,edge_labels=True,order=True,return_group=False)
         loops_aut = prod(2**i*factorial(i) for i in self.loops)
         weights_aut = prod(factorial(e[2]) for e in self.edges)
@@ -213,17 +296,17 @@ def stable_lab_graphs(stratum, by_codim=False, one_vertex=False, verbose=False):
         
         sage: from cvolume import stable_lab_graphs
         sage: stable_lab_graphs([3,-1,-1,-1])
-        {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 0), kappa = ((-1, -1), (-1, 3)),
-         Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 1), kappa = ((-1, -1), (-1, 3)),
-         Labeled Stable Graph with edges = (), loops = (1,), kappa = ((-1, -1, -1, 3),)}
+        {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 0), kappa = ((-1, -1), (3, -1)),
+         Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 1), kappa = ((-1, -1), (3, -1)),
+         Labeled Stable Graph with edges = (), loops = (1,), kappa = ((3, -1, -1, -1),)}
     
     Here we generate the same graphs only organized by codimension. Note that we keep the original non-degenerate graph of the stratum as the subset at index 0::
     
         sage: stable_lab_graphs([3,-1,-1,-1], by_codim = True)
-        [{Labeled Stable Graph with edges = (), loops = (0,), kappa = ((-1, -1, -1, 3),)},
-         {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 0), kappa = ((-1, -1), (-1, 3)),
-          Labeled Stable Graph with edges = (), loops = (1,), kappa = ((-1, -1, -1, 3),)},
-         {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 1), kappa = ((-1, -1), (-1, 3))}]
+        [{Labeled Stable Graph with edges = (), loops = (0,), kappa = ((3, -1, -1, -1),)},
+         {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 0), kappa = ((-1, -1), (3, -1)),
+          Labeled Stable Graph with edges = (), loops = (1,), kappa = ((3, -1, -1, -1),)},
+         {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 1), kappa = ((-1, -1), (3, -1))}]
     
     Here we demonstrate verbose mode by generating stable graphs for stratum [3,1,1,-1]::
     
@@ -241,10 +324,10 @@ def stable_lab_graphs(stratum, by_codim=False, one_vertex=False, verbose=False):
         
     Here we generate only one-vertex labeled stable graphs for stratum [3,1,1,1,1,1]::
     
-        sage: stable_lab_graphs([3,1,1,1,1,1])
-        {Labeled Stable Graph with edges = (), loops = (1,), kappa = ((1, 1, 1, 1, 1, 3),),
-         Labeled Stable Graph with edges = (), loops = (2,), kappa = ((1, 1, 1, 1, 1, 3),),
-         Labeled Stable Graph with edges = (), loops = (3,), kappa = ((1, 1, 1, 1, 1, 3),)}
+        sage: stable_lab_graphs([3,1,1,1,1,1], one_vertex = True)
+        {Labeled Stable Graph with edges = (), loops = (1,), kappa = ((3, 1, 1, 1, 1, 1),),
+         Labeled Stable Graph with edges = (), loops = (2,), kappa = ((3, 1, 1, 1, 1, 1),),
+         Labeled Stable Graph with edges = (), loops = (3,), kappa = ((3, 1, 1, 1, 1, 1),)}
     
     '''
     assert sum(stratum)%4 == 0, f"The sum of orders of zeroes of the stratum has to be a multiple of 4."

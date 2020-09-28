@@ -28,7 +28,7 @@ def graph_poly(stg):
     c = ZZ(1)/2**(len(graph.vertices())-1)*1/ZZ(stg.Aut())
     variables = list(S.gens())
     b = list(S.gens())
-    valency = [vertex_deg(edges,v)+2*loops[v] for v in graph.vertices()]
+    valency = [stg.vertex_deg(v)+2*loops[v] for v in graph.vertices()]
     used_vars = []
     # dictionary that converts edges to variables
     edge_to_var = []
