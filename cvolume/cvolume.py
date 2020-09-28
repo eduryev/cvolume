@@ -23,6 +23,27 @@ def operator(Poly):
 def graph_poly(stg):
     '''
     Return the 'Kontsevich polynomial' associated to the Labeled Stable Graph.
+    
+    EXAMPLES:
+    
+    Here we compute the polynomial associated with a labeled stable graph with one loop::
+    
+    sage: from cvolume import LabeledStableGraph
+    sage: stg = LabeledStableGraph([], [1], [[3, 3, -1, -1]])
+    sage: graph_poly(stg)
+    19/128*b1^5
+    
+    Here is another example for a graph with two vertices::
+    
+    sage: stg = LabeledStableGraph([(0,1,1)], [1, 1], [[3, -1], [3, -1]])
+    sage: graph_poly(stg)
+    9/16*b1*b2*b3
+    
+    Note that the previous example can be expressed through local polynomials associated to vertices::
+    
+    sage: from cvolume import Nlocal
+    sage: graph_poly(stg) == 1/2*1/8*b1*b2*b3*Nlocal(0,3,[3,-1])(b1=b1,b2=b1,b3=b2)*Nlocal(0,3,[3,-1])(b1=b2,b2=b3,b3=b3)
+    True
     '''
     edges,loops,kappa,graph = stg.edges,stg.loops,stg.kappa,stg.graph
     c = ZZ(1)/2**(len(graph.vertices())-1)*1/ZZ(stg.Aut())
@@ -75,7 +96,7 @@ def completed_volume(stratum, with_pi=True, verbose=False, one_vertex=False):
     - ``with_pi``    -- boolean (default `True`), when False returns completed volume as a rational number (volume divided by 
       an appropriate degree of pi
     - ``verbose``    -- boolean (default `False`), when True prints progress of the computation: time to generate and the number       of stable graphs in each codimension and in total; progress of computing contribution of stable graphs
-    - ``one_vertex`` -- boolean (default `False`), when True
+    - ``one_vertex`` -- boolean (default `False`), when True only computed contribution of one-vertex labeled stable graphs.
     
     EXAMPLES:
 
@@ -85,17 +106,27 @@ def completed_volume(stratum, with_pi=True, verbose=False, one_vertex=False):
         sage: completed_volume([3,1])
         23/90*pi^4
         
-    Here we demonstrate the verbose mode by computing completed volume of stratum Q(1,-1):
+    Here we demonstrate the verbose mode by computing completed volume of stratum Q(1,-1)::
         
-        sage: completed_volume([1,-1])
+        sage: completed_volume([1,-1], verbose = True)
         Computing completed volume of stratum [1, -1]...
-        Generated 1 codimension 1 graphs in 0.00332 s
-        Generated 0 codimension 2 graphs in 0.00030 s
-        The total number of stable graphs for stratum [1, -1] is: 2.
-        Generated all stable graphs for stratum [1, -1] in: 0.00633 s
-        Computed contribution of 1/1 graphs. Time elapsed: 0.03057 s
-        Completed volume of [1, -1] is computed in: 0.04657 s
+        Generated 1 codimension 1 graphs in ... s
+        The total number of stable graphs for stratum [1, -1] is: 1.
+        Generated all stable graphs for stratum [1, -1] in: ... s
+        Computed contribution of 1/1 graphs. Time elapsed: ... s
+        Completed volume of [1, -1] is computed in: ... s
         Completed volume of [1, -1] is: 2/3*pi^2
+        
+    Here we compute one-vertex graphs contribution to the completed volume of Q(3,1,1,-1)::
+    
+        sage: completed_volume([3,1,1,-1], one_vertex=True)
+        1346/14175*pi^6
+        
+    Here are some examples for principal strata, where completed volume coincides with Masur-Veech volume::
+    
+        sage: completed_volume([1,-1,-1,-1,-1,-1]) == 1*pi^4
+        True
+        
     '''
     def max_weight(stratum): return sum(stratum)/ZZ(2) + len(stratum)/ZZ(2) + stratum.count(-1) + 1
     higher_part = [i for i in stratum if i > 1]
