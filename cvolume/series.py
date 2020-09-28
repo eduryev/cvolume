@@ -1,5 +1,6 @@
 from sage.all import ZZ, diff, factorial, Partitions, Partition, prod
 import time
+import sys
 from .utils import *
 from admcycles import psiclass
 
@@ -23,14 +24,23 @@ t0,t1,t2,t3,t4,t5,t6 = R.gens()[:7]
 def get_Fs2(F):
     return 12*diff(F,t2) - diff(F,t0,2)/2 - diff(F,t0)**2/2
 
+def get_Zs2(Z):
+    return 12*diff(Z,t2) - diff(Z,t0,2)/2
+
 def get_Fs3(F):
     return 120*diff(F,t3) - 6*diff(F,t0,t1) - 6*diff(F,t1)*diff(F,t0) + 5*diff(F,t0)/4
+
+def get_Zs3(Z):
+    return 120*diff(Z,t3) - 6*diff(Z,t0,t1) + 5*diff(Z,t0)/4
 
 def get_Fs4(F):
     return 1680*diff(F, t4) - 18*diff(F, t1, t1) - 18*diff(F, t1)**2 - 60*diff(F, t0, t2) - 60*diff(F, t2)*diff(F, t0) + 7*diff(F, t0, t0, t0)/6 + 7*diff(F, t0)*diff(F, t0, t0)/2 + 7*diff(F, t0)**3/6 + 49*diff(F, t1)/2 - ZZ(35)/96
 
 def get_Fs22(F):
     return ZZ(1)/2*(144*diff(F,t2,t2) - 840*diff(F,t3) - 12*diff(F,t0,t0,t2) - 24*diff(F,t0)*diff(F,t0,t2) + 24*diff(F,t0,t1) + 24*diff(F,t1)*diff(F,t0) + diff(F,t0,4)/4 + diff(F,t0)*diff(F,t0,3) + diff(F,t0,t0)**2/2 + diff(F,t0)**2*diff(F,t0,t0) - 3*diff(F,t0))
+
+def get_Zs22(Z):
+    return ZZ(1)/2*(144*diff(Z,t2,t2) - 840*diff(Z,t3) - 12*diff(Z,t0,t0,t2) + 24*diff(Z,t0,t1) + diff(Z,t0,4)/4 - 3*diff(Z,t0))
 
 def get_Fs5(F):
     return 30240*diff(F, t5) - 360*diff(F, t1, t2) - 360*diff(F, t2)*diff(F, t1) - 840*diff(F, t0, t3) - 840*diff(F, t0)*diff(F, t3) + 27*diff(F, t0, t0, t1) + 27*diff(F, t1)*diff(F, t0, t0) + 54*diff(F, t0)*diff(F, t0, t1) + 27*diff(F, t1)*diff(F, t0)*diff(F, t0) + 585*diff(F, t2) - 105*diff(F, t0, t0)/8 - 105*diff(F, t0)*diff(F, t0)/8
@@ -56,18 +66,34 @@ def get_Fs222(F):
 class PartitionFunctions:
     AC_formulae = {(2,):get_Fs2, (3,):get_Fs3, (4,):get_Fs4, (2,2):get_Fs22, (5,):get_Fs5, (2,3):get_Fs23, (6,):get_Fs6,\
                    (2,4):get_Fs24, (3,3):get_Fs33, (7,):get_Fs7, (2,2,2):get_Fs222}
+    Z_formulae = {(2,):get_Zs2}
+    
     shifts = {(2,):3, (3,):4, (4,):5, (2,2):6, (5,):6, (2,3):7, (6,):7, (2,4):8, (3,3):8, (7,):8, (2,2,2):9}
     times = {():time_for_F, (2,):time_for_Fs2, (3,):time_for_Fs3, (4,):time_for_Fs4, (2,2):time_for_Fs22, (5,):time_for_Fs5,\
              (2,3):time_for_Fs23, (6,):time_for_Fs6,(2,4):time_for_Fs24, (3,3):time_for_Fs33, (7,):time_for_Fs7,\
              (2,2,2):time_for_Fs222}
     def __init__(self):
-        self.max_weights = {}
-        self.polynomials = {}
+        self.F_weights = {}
+        self.Z_weights = {}
+        self.F_series = {}
+        self.Z_series = {}
         self.verbose = False
+        
+#     def log_partition_function(self,w):
+#         Z_max_weight = self.Z_weights.get((),-1)
+#         Z = self.Z_series.get((),R.zero())
+#         if w > Z_max_weight:
+#             F = 
+#             Z = F.log(prec = w)
+#             self.Z_weights[()] = w
+#             self.Z_series[()] = Z
+#             toc = time.time()
+#             if self.verbose: print(f"    Done updating the partition function F from max_weight {F_max_weight} to {w} in: {float2time(toc-tic,2)}")
+#         return F
     
     def partition_function(self,w):
-        F_max_weight = self.max_weights.get((),-1)
-        F = self.polynomials.get((),R.zero()) 
+        F_max_weight = self.F_weights.get((),-1)
+        F = self.F_series.get((),R.zero()) 
         if w > F_max_weight:
             tic = time.time()
             time_est = time_for_F(w) - time_for_F(F_max_weight)
@@ -79,15 +105,17 @@ class PartitionFunctions:
             if self.verbose: print(f"    Updating the partition function F from max_weight {F_max_weight} to {w}...Estimated time: {float2time(time_est,2)}")
             for i in range(max(F_max_weight,0)+1,w+1):
                 F += sum(coeff(par)*monom(par) for par in Partitions(i))
-            self.max_weights[()] = w
-            self.polynomials[()] = F
+            self.F_weights[()] = w
+            self.F_series[()] = F
             toc = time.time()
             if self.verbose: print(f"    Done updating the partition function F from max_weight {F_max_weight} to {w} in: {float2time(toc-tic,2)}")
         return F
     
     def __call__(self, s_part, w):
-        Fs_max_weight = self.max_weights.get(s_part,-1)
-        Fs = self.polynomials.get(s_part,R.zero())             
+        if not s_part:
+            return self.partition_function(w)
+        Fs_max_weight = self.F_weights.get(s_part,-1)
+        Fs = self.F_series.get(s_part,R.zero())             
         if w > Fs_max_weight:
             tic = time.time()
             time_est = self.times[s_part](w)
@@ -99,11 +127,17 @@ class PartitionFunctions:
             if self.verbose: print(f"Updating Fs function for s = {s_part} from max_weight {Fs_max_weight} to {w}...Estimated time: {float2time(time_est,2)}")
             F = self.partition_function(w+self.shifts[s_part])
             Fs = self.AC_formulae[s_part](F)
-            self.max_weights[s_part] = w
-            self.polynomials[s_part] = Fs
+            self.F_weights[s_part] = w
+            self.F_series[s_part] = Fs
             toc = time.time()
             if self.verbose: print(f"Done updating Fs function for s = {s_part} from max_weight {Fs_max_weight} to {w} in: {float2time(toc-tic,2)}")     
         return Fs
-                              
+    
+    def reset(self):
+        self.F_weights = {}
+        self.Z_weights = {}
+        self.F_series = {}
+        self.Z_series = {}
 
+    
 Fs = PartitionFunctions()
