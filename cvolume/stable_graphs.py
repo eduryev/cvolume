@@ -4,16 +4,16 @@ import time
 from .utils import float2time
 
 class LabeledStableGraph:
-    '''
-    Represents Labeled Stable Graph -- the canonical representative of the labeled stable graph given by edges, loops and kappa.
-    
-    INPUT:
-
-        - ``edges``  -- tuple of triples, a triple (v1,v2,m) means that the vertices v1 and v2 are connected by m edges
-        - ``loops``  -- list, an integer loops[i] is the number of loops associated to the vertex i
-        - ``kappa``  -- list of lists, a partition of stratum into sublists, where a list kappa[i] is a list of orders of zeroes           associated to the vertex i
-    '''
     def __init__(self,edges,loops,kappa):
+        '''
+        Construct a Labeled Stable Graph -- the canonical representative of the labeled stable graph given by edges, loops and           kappa, where:
+
+        - ``edges``  -- tuple of triples, where a triple (v1,v2,m) means that the vertices v1 and v2 are connected by m                     edges
+        - ``loops``  -- tuple, where an integer loops[i] is the number of loops associated to the vertex i
+        - ``kappa``  -- tuple of tuples, a partition of stratum into subpartitions, where kappa[i] is a subpartition of orders             of zeroes associated to the vertex i
+        
+        Lists can be used instead of tuples, as they will be automatically converted to be immutable.
+        '''
         if not edges:
             graph = Graph(weighted=True, loops=False, multiedges=False)
             graph.add_vertex()
@@ -24,7 +24,7 @@ class LabeledStableGraph:
     
     def k_to_p(self,edges,loops,kappa,graph):
         '''
-        Return a canonical partition of vertices of the graph into lists grouped by the same number of loops and orders of               zeroes. The order is lexicographical with respect to kappa -> loops -> edges.
+        Method used by __init__. Return a canonical partition of vertices of the graph into lists grouped by the same number of           loops and orders of zeroes. The order is lexicographical with respect to kappa -> loops -> edges.
         '''
         edge_profile = []
         for v in graph.vertices():
@@ -44,8 +44,7 @@ class LabeledStableGraph:
     
     def canonical(self,edges,loops,kappa,graph):
         '''
-        Return a 4-tuple (edges,loops,kappa,graph), corresponding to the canonical representative of the class of isomorphism of 
-        the given labeled stable graph, where only vertices with the same number of loops and zero orders are allowed to permute         and only edges of the same weight are allowed to permute.
+        Method used by __init__. Return a 4-tuple (edges,loops,kappa,graph) of immutable objects, corresponding to the canonical         representative of the class of isomorphism of the given labeled stable graph, where only vertices with the same number of         loops and zero orders are allowed to permute and only edges of the same weight are allowed to permute.
         '''
         can_gr, relab = graph.canonical_label(partition=self.k_to_p(edges,loops,kappa,graph), certificate=True, edge_labels=True)
         can_loops = list(loops)
@@ -57,7 +56,7 @@ class LabeledStableGraph:
         return tuple(can_gr.edges()), tuple(can_loops), tuple(can_kappa), can_gr.copy(immutable=True)
    
     def __repr__(self):
-        return f"Labeled Stable Graph ({self.edges},{self.loops},{self.kappa})"
+        return f"Labeled Stable Graph with edges = {self.edges}, loops = {self.loops}, kappa = {self.kappa}"
     
     def __eq__(self, other):
         return self.edges == other.edges and self.loops == other.loops and self.kappa == other.kappa
@@ -67,7 +66,7 @@ class LabeledStableGraph:
         
     def vertex_deg(self, v):
         '''
-        Return the sum of the weights at the vertex v of the graph given by the list of edges.
+        Return the total number of edges (counted with multiplicities) at the vertex v of this Labeled Stable Graph.
         '''
         deg = 0
         for e in self.edges:
@@ -77,7 +76,7 @@ class LabeledStableGraph:
         
     def genera(self):
         '''
-        Return a list of genera of vertices of the labeled stable graph.
+        Return the list of genera of vertices of this Labeled Stable Graph.
         '''
         return [(sum(self.kappa[v])-2*self.vertex_deg(v)-4*self.loops[v]+4)/ZZ(4) for v in self.graph.vertices()]
     
@@ -161,7 +160,7 @@ class LabeledStableGraph:
     
     def Aut(self):
         '''
-        Return the order of the group of automorphisms of the labeled stable graph.
+        Return the order of the group of automorphisms of this Labeled Stable Graph.
         '''
         graph_aut = self.graph.automorphism_group(partition=self.k_to_p(),edge_labels=True,order=True,return_group=False)
         loops_aut = prod(2**i*factorial(i) for i in self.loops)
@@ -170,7 +169,23 @@ class LabeledStableGraph:
 
 def stable_lab_graphs(stratum, by_codim=False, one_vertex=False, verbose=False):
     '''
-    Return a list of all labeled stable graphs given by the stratum.
+    Return the set of all Labeled Stable Graphs given by the stratum.
+    
+    INPUT:
+    
+    - ``stratum``    -- list of orders of zeroes (including -1 for simple poles) of the stratum
+    - ``by_codim``   -- boolean (default `False`), when True returns the list of sets of stable graphs organized by codimension
+    - ``one_vertex`` -- boolean (default `False`), when True only returns the set of one-vertex stable graphs
+    - ``verbose``    -- boolean (default `False`), when True prints progress, total time and the number of stable graphs
+
+    EXAMPLES:
+
+    Here we generate all labeled stable graphs in stratum [3,1]::
+        
+        sage: from cvolume import stable_lab_graphs 
+        sage: stable_lab_graphs([3,1])
+        {Labeled Stable Graph with edges = (), loops = (1,), kappa = ((1, 3),),
+         Labeled Stable Graph with edges = (), loops = (2,), kappa = ((1, 3),)}
     '''
     assert sum(stratum)%4 == 0, f"The sum of orders of zeroes of the stratum has to be a multiple of 4."
     kappa = [sorted(stratum)]

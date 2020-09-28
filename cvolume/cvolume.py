@@ -81,11 +81,11 @@ def completed_volume(stratum, with_pi=True, verbose=False, one_vertex=False):
     INPUT:
     
     - ``stratum``    -- list, a list of orders of zeros of the stratum
-    - ``with_pi``    -- boolean (default ``True``), when False returns completed volume as a rational number (volume divided by 
+    - ``with_pi``    -- boolean (default `True`), when False returns completed volume as a rational number (volume divided by 
       an appropriate degree of pi
-    - ``verbose``    -- boolean (default False), when True prints progress of the computation: time to generate and the number         and of stable graphs in each codimension and total, time to compute contribution of subsets of stable graphs in chunks
+    - ``verbose``    -- boolean (default `False`), when True prints progress of the computation: time to generate and the number       and of stable graphs in each codimension and total, time to compute contribution of subsets of stable graphs in chunks
       of size chunk_size (optional)
-    - ``one_vertex`` -- boolean (default False), when True
+    - ``one_vertex`` -- boolean (default `False`), when True
     
     EXAMPLES:
 
