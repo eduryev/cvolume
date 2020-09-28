@@ -21,15 +21,14 @@ def operator(Poly):
     return sum(Poly.monomial_coefficient(monom)*prod(replmon(k) for k in monom.exponents()[0]) \
                 for monom in Poly.monomials())     
 
-def graph_poly(edges,loops,kappa,graph):
+def graph_poly(stg):
     '''
-    Return the 'Kontsevich polynomial' associated to the stable graph.
+    Return the 'Kontsevich polynomial' associated to the Labeled Stable Graph.
     '''
-    c = ZZ(1)/2**(len(graph.vertices())-1)*1/ZZ(Aut(edges,loops,kappa))
+    edges,loops,kappa,graph = stg.edges,stg.loops,stg.kappa,stg.graph
+    c = ZZ(1)/2**(len(graph.vertices())-1)*1/ZZ(stg.Aut())
     variables = list(S.gens())
     b = list(S.gens())
-    genus = genera(edges,loops,kappa,graph)
-    edges = graph.edges()
     valency = [vertex_deg(edges,v)+2*loops[v] for v in graph.vertices()]
     used_vars = []
     # dictionary that converts edges to variables
@@ -66,13 +65,10 @@ def graph_poly(edges,loops,kappa,graph):
             plug_in.append(var)
         used_vars = used_vars + plug_in
         plug_in = plug_in + variables[len(plug_in):]
-        Nlocal_at_v = Nlocal(genus[v],valency[v],kappa[v])(*plug_in)
+        Nlocal_at_v = Nlocal(stg.genera[v],valency[v],kappa[v])(*plug_in)
         vert_to_Poly.append(Nlocal_at_v)
     twists = prod(list(set(used_vars)))
     return c*twists*prod(local_poly for local_poly in vert_to_Poly)
-
-# def chunker(seq, size):
-#     return [seq[pos:pos + size] for pos in range(0, len(seq), size)]
 
 def completed_volume(stratum, with_pi=True, verbose=False, one_vertex=False):
     '''
@@ -108,14 +104,12 @@ def completed_volume(stratum, with_pi=True, verbose=False, one_vertex=False):
     stgs = stable_lab_graphs(stratum, one_vertex=one_vertex, verbose=verbose)
     total_num = len(stgs)
     vol = 0
-    #chunks = chunker(stgs,chunk_size)
-    count = 0
-    period = 10
+    count, period = 0, 10
     tic = time.time()
-    for gamma in stgs:      
-        vol += operator(graph_poly(*gamma)) 
+    for stg in stgs:      
+        vol += operator(graph_poly(stg)) 
         count += 1        
-        if verbose and (count%period == 0 or count == len(stgs)):
+        if verbose and (count%period == 0 or count == total_num):
             toc = time.time()
             print(f"\rComputed contribution of {count}/{total_num} graphs. Time elapsed: {float2time(toc-tic,5)}", end = "") 
     if verbose:

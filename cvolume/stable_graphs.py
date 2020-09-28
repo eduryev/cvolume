@@ -162,7 +162,8 @@ class LabeledStableGraph:
         '''
         Return the order of the group of automorphisms of this Labeled Stable Graph.
         '''
-        graph_aut = self.graph.automorphism_group(partition=self.k_to_p(),edge_labels=True,order=True,return_group=False)
+        partition = self.k_to_p(self.edges,self.loops,self.kappa,self.graph)
+        graph_aut = self.graph.automorphism_group(partition=partition,edge_labels=True,order=True,return_group=False)
         loops_aut = prod(2**i*factorial(i) for i in self.loops)
         weights_aut = prod(factorial(e[2]) for e in self.edges)
         return graph_aut*loops_aut*weights_aut
