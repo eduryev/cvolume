@@ -53,10 +53,17 @@ class LabeledStableGraph:
         for k,v in relab.items():
             can_loops[v] = loops[k] 
             can_kappa[v] = kappa[k]
+        can_kappa = [tuple(l) for l in can_kappa]
         return tuple(can_gr.edges()), tuple(can_loops), tuple(can_kappa), can_gr.copy(immutable=True)
    
     def __repr__(self):
         return f"Labeled Stable Graph ({self.edges},{self.loops},{self.kappa})"
+    
+    def __eq__(self, other):
+        return self.edges == other.edges and self.loops == other.loops and self.kappa == other.kappa
+    
+    def __hash__(self):
+        return hash((self.edges,self.loops,self.kappa))
         
     def vertex_deg(self, v):
         '''
