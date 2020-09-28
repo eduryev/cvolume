@@ -189,6 +189,7 @@ def stable_lab_graphs(stratum, by_codim=False, one_vertex=False, verbose=False):
 #             degenerations.append(next_stg)
 #         return degenerations[1:]
     degenerations = [ {LabeledStableGraph([],[0],kappa)} ]
+    tic_total = time.time()
     while degenerations[codim]:
         tic = time.time()
         codim += 1
@@ -203,7 +204,7 @@ def stable_lab_graphs(stratum, by_codim=False, one_vertex=False, verbose=False):
     if verbose:
         print(f"The total number of stable graphs for stratum {stratum} is: {sum(len(i) for i in degenerations)}.")
         toc = time.time()
-        print(f"Generated all stable graphs for stratum {stratum} in: {float2time(toc-tic,5)}")  
+        print(f"Generated all stable graphs for stratum {stratum} in: {float2time(toc-tic_total,5)}")  
     if by_codim:
         return degenerations[:-1] # remove the last empty list and return
     else:
