@@ -18,8 +18,7 @@ def operator(Poly):
     '''
     Return the result of application of Z-operator to the polynomial.
     '''
-    return sum(Poly.monomial_coefficient(monom)*prod(replmon(k) for k in monom.exponents()[0]) \
-                for monom in Poly.monomials())     
+    return sum(Poly.monomial_coefficient(monom)*prod(replmon(k) for k in monom.exponents()[0]) for monom in Poly.monomials())     
 
 def graph_poly(stg):
     '''
@@ -55,10 +54,6 @@ def graph_poly(stg):
         plug_in = []
         for v_edge in graph.edges_incident(v):
             v_edge = tuple( sorted(list(v_edge[:2])) + [v_edge[2]] )
-#             try:
-#                 _ = edge_to_var[v_edge]
-#             except:
-#                 print(edge_to_var, v_edge)
             for var in edge_to_var[v_edge]:
                 plug_in.append(var)
         for var in loop_to_var[v]:
@@ -79,8 +74,7 @@ def completed_volume(stratum, with_pi=True, verbose=False, one_vertex=False):
     - ``stratum``    -- list, a list of orders of zeros of the stratum
     - ``with_pi``    -- boolean (default `True`), when False returns completed volume as a rational number (volume divided by 
       an appropriate degree of pi
-    - ``verbose``    -- boolean (default `False`), when True prints progress of the computation: time to generate and the number       and of stable graphs in each codimension and total, time to compute contribution of subsets of stable graphs in chunks
-      of size chunk_size (optional)
+    - ``verbose``    -- boolean (default `False`), when True prints progress of the computation: time to generate and the number       of stable graphs in each codimension and in total; progress of computing contribution of stable graphs
     - ``one_vertex`` -- boolean (default `False`), when True
     
     EXAMPLES:
@@ -90,10 +84,27 @@ def completed_volume(stratum, with_pi=True, verbose=False, one_vertex=False):
         sage: from cvolume import completed_volume 
         sage: completed_volume([3,1])
         23/90*pi^4
+        
+    Here we demonstrate the verbose mode by computing completed volume of stratum Q(1,-1):
+        
+        sage: completed_volume([1,-1])
+        Computing completed volume of stratum [1, -1]...
+        Generated 1 codimension 1 graphs in 0.00332 s
+        Generated 0 codimension 2 graphs in 0.00030 s
+        The total number of stable graphs for stratum [1, -1] is: 2.
+        Generated all stable graphs for stratum [1, -1] in: 0.00633 s
+        Computed contribution of 1/1 graphs. Time elapsed: 0.03057 s
+        Completed volume of [1, -1] is computed in: 0.04657 s
+        Completed volume of [1, -1] is: 2/3*pi^2
     '''
-    max_weight = sum(stratum)/ZZ(2) + len(stratum)/ZZ(2) + stratum.count(-1) + 1
-    s_part = tuple(sorted((i+1)/ZZ(2) for i in stratum if i > 1))
-    _ = Fs(s_part,max_weight)
+    def max_weight(stratum): return sum(stratum)/ZZ(2) + len(stratum)/ZZ(2) + stratum.count(-1) + 1
+    higher_part = [i for i in stratum if i > 1]
+    lower_part = [i for i in stratum if i not in higher_part]
+    for new_higher_part in reversed(Combinations(higher_part).list()):
+        rest_is_odd = (sum(higher_part) - sum(new_higher_part)) % 2
+        w = max_weight(new_higher_part + lower_part) - rest_is_odd
+        s_part = tuple(sorted((i+1)/ZZ(2) for i in new_higher_part))
+        _ = Fs(s_part,w)
     d = c_d(stratum)
     f = c_f(stratum)
     mu = prod([factorial(stratum.count(i)) for i in range(-1,max(stratum)+1)])        
@@ -126,27 +137,33 @@ def cvolume_by_graphs(stratum, graphs):
     INPUT:
     
     - ``stratum``    -- list, a list of orders of zeros of the stratum
-    - ``graphs``     -- list of tuples, where each tuple starts with (edges,kappa,loops) (see stable_lab_graphs() for details)
+    - ``graphs``     -- iterable, e.g. a set, of Labeled Stable Graphs
     '''
     f = c_f(stratum)
     mu = prod(factorial(stratum.count(i)) for i in range(-1,max(stratum)+1))
-    return f*mu*sum(operator(graph_poly(*gamma[:3])) for gamma in graphs)
+    return f*mu*sum(operator(graph_poly(stg) for stg in graphs))
 
 def cvolume_by_cylinders(stratum):    
-    def num_cyl(graph): return graph[3]
-    stgs = stable_lab_graphs(stratum)
-    stgs = sorted(stgs, key=num_cyl)
-    stgs = [list(v) for k, v in itertools.groupby(stgs, num_cyl)]    
-    for i in range(len(stgs)):
-        print(f"Contribution of {i+1}-cylinder surfaces is {cvolume_by_graphs(stratum, stgs[i])}")
+    '''
+    Return the contributions of k-cylinder surfaces to the completed volume of the stratum for each k.
+    '''
+    stgs = stable_lab_graphs(stratum, by_codim = True)
+    for i in range(1,len(stgs)):    # don't include the 0-th set, as it consists of the original non-degenrated graph
+        print(f"Volume contribution of {i+1}-cylinder surfaces is {cvolume_by_graphs(stratum, stgs[i])}")
         
 def CKazarian(g,k):
+    '''
+    Return Kazarian constant for recursion on volumes of principal strata.
+    '''
     if g<=0 or k<0 or k>g: return 0
     if [g,k] == [1,0]: return ZZ(1)/12
     return ZZ(g-k+1)/(5*g-k-2)*CKazarian(g,k-1) + ZZ(5*g-6-k)*(5*g-4-k)/ZZ(12)*CKazarian(g-1,k)+\
     ZZ(1)/2*sum(CKazarian(g1,k1)*CKazarian(g-g1,k-k1) for g1 in range(1,g) for k1 in range(k+1))
 
 def principal_volume(g_or_stratum,n=-1):
+    '''
+    Return the Masur-Veech volume of the principal stratum. Input can be either a single argument that is a list of orders of zeroes or two arguments g,n, where g is the genus and n is the number of simple poles. 
+    '''
     if g_or_stratum in ZZ:
         assert n != -1, "Input Error: the input must be either g,n or stratum"
         g = g_or_stratum        
@@ -163,4 +180,7 @@ def principal_volume(g_or_stratum,n=-1):
     else: return ZZ(2**(2*g+1))*pi**(6*g-6+2*n)*factorial(4*g-4+n)/factorial(6*g-7+2*n)*sum(dfactorial(5*g-7+2*n-k)/dfactorial(5*g-3-k)*CKazarian(g,k) for k in range(g+1)) 
 
 def asymptotic_volume(stratum):
+    '''
+    Return conjectural asymptotics for the volume of the stratum from [ADGZZ]. Note that formula is only conjectured in the case when the number of poles is logarithmically small compared to the genus.
+    '''
     return ZZ(4)/pi*prod(2**(d+2)/(d+2) for d in stratum)

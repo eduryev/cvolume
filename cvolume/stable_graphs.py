@@ -8,9 +8,9 @@ class LabeledStableGraph:
         '''
         Construct a Labeled Stable Graph -- the canonical representative of the labeled stable graph given by edges, loops and           kappa, where:
 
-        - ``edges``  -- tuple of triples, where a triple (v1,v2,m) means that the vertices v1 and v2 are connected by m                     edges
+        - ``edges``  -- tuple of triples, where a triple (v1,v2,m) means that the vertices v1 and v2 are connected by m edges
         - ``loops``  -- tuple, where an integer loops[i] is the number of loops associated to the vertex i
-        - ``kappa``  -- tuple of tuples, a partition of stratum into subpartitions, where kappa[i] is a subpartition of orders             of zeroes associated to the vertex i
+        - ``kappa``  -- tuple of tuples, a partition of stratum into subpartitions, where kappa[i] is a subpartition of orders of zeroes associated to the vertex i
         
         Lists can be used instead of tuples, as they will be automatically converted to be immutable.
         '''
@@ -24,7 +24,7 @@ class LabeledStableGraph:
     
     def k_to_p(self,edges,loops,kappa,graph):
         '''
-        Method used by __init__. Return a canonical partition of vertices of the graph into lists grouped by the same number of           loops and orders of zeroes. The order is lexicographical with respect to kappa -> loops -> edges.
+        Method used by __init__. Return a canonical partition of vertices of the graph into lists grouped by the same number of loops and orders of zeroes. The order is lexicographical with respect to kappa -> loops -> edges.
         '''
         edge_profile = []
         for v in graph.vertices():
@@ -44,7 +44,7 @@ class LabeledStableGraph:
     
     def canonical(self,edges,loops,kappa,graph):
         '''
-        Method used by __init__. Return a 4-tuple (edges,loops,kappa,graph) of immutable objects, corresponding to the canonical         representative of the class of isomorphism of the given labeled stable graph, where only vertices with the same number of         loops and zero orders are allowed to permute and only edges of the same weight are allowed to permute.
+        Method used by __init__. Return a 4-tuple (edges,loops,kappa,graph) of immutable objects, corresponding to the canonical representative of the class of isomorphism of the given labeled stable graph, where only vertices with the same number of loops and zero orders are allowed to permute and only edges of the same weight are allowed to permute.
         '''
         can_gr, relab = graph.canonical_label(partition=self.k_to_p(edges,loops,kappa,graph), certificate=True, edge_labels=True)
         can_loops = list(loops)
@@ -95,7 +95,7 @@ class LabeledStableGraph:
 
     def edge_degenerations(self):
         '''
-        Return the set of all Labeled Stable Graphs, obtained by *special* degenerations adding an edge to this Labeled Stable           Graph. A *special* edge degeneration only adds an edge to the vertex with largest profile, when it's unique. Profile is           the sum of weight and length of the associated zeros partition.
+        Return the set of all Labeled Stable Graphs, obtained by *special* degenerations adding an edge to this Labeled Stable Graph. A *special* edge degeneration only adds an edge to the vertex with largest profile, when it's unique. Profile is the sum of weight and length of the associated zeros partition.
         '''
         new_graphs = set()
         profile = [sum(self.kappa[v])+len(self.kappa[v]) for v in self.graph.vertices()]
@@ -150,7 +150,7 @@ class LabeledStableGraph:
 
     def one_step_degenerations(self):
         '''
-        Return the set of all Labeled Stable Graphs, obtained by *special* one step degenerations of this Labeled Stable Graph. A         *special* degeneration is adding a loop to a single vertex graph, or adding an edge to any graph.
+        Return the set of all Labeled Stable Graphs, obtained by *special* one step degenerations of this Labeled Stable Graph. A *special* degeneration is adding a loop to a single vertex graph, or adding an edge to any graph.
         '''
         degenerations = set()
         if len(self.loops) == 1:    # make loop degeneration only if the graph has a single vertex
@@ -161,6 +161,30 @@ class LabeledStableGraph:
     def Aut(self):
         '''
         Return the order of the group of automorphisms of this Labeled Stable Graph.
+        
+        EXAMPLES:
+        
+        Here we compute the order of automorphism group of a single vertex graph with two loops::
+        
+        sage: from cvolume import LabeledStableGraph 
+        sage: edges, loops, kappa = [], [2], [[3,3,1,-1]]
+        sage: stg = LabeledStableGraph(edges,loops,kappa)
+        sage: stg.Aut()
+        8
+        
+        Here we compute the order of automorphism group of a two vertex graph with no loops, but a symmetry due to isomorphic vertices::
+        
+        sage: edges, loops, kappa = [(0,1,1)], [0,0], [[3,-1],[3,-1]]
+        sage: stg = LabeledStableGraph(edges,loops,kappa)
+        sage: stg.Aut()
+        2
+        
+        Here we compute the order of automorphism group of a two vertex graph with no loops, but five edges between non-isomorphic vertices::
+        
+        sage: edges, loops, kappa = [(0,1,5)], [0,0], [[5,1],[7,-1]]
+        sage: stg = LabeledStableGraph(edges,loops,kappa)
+        sage: stg.Aut()
+        120
         '''
         partition = self.k_to_p(self.edges,self.loops,self.kappa,self.graph)
         graph_aut = self.graph.automorphism_group(partition=partition,edge_labels=True,order=True,return_group=False)
@@ -178,15 +202,37 @@ def stable_lab_graphs(stratum, by_codim=False, one_vertex=False, verbose=False):
     - ``by_codim``   -- boolean (default `False`), when True returns the list of sets of stable graphs organized by codimension
     - ``one_vertex`` -- boolean (default `False`), when True only returns the set of one-vertex stable graphs
     - ``verbose``    -- boolean (default `False`), when True prints progress, total time and the number of stable graphs
-
+    
+    OUTPUT:
+    
+    - ``graphs``     -- set of Labeled Stable Graphs (if ``by_codim`` is `False`), or list of sets of Labeled Stable Graphs organized by codimension (if ``by_codim`` is `True`). In the first case we exclude original graph with no edges (codimension 0), in the second case we keep it, so that the index of the subset of stable graphs in the output list is their codimension.
+    
     EXAMPLES:
 
     Here we generate all labeled stable graphs in stratum [3,1]::
         
-        sage: from cvolume import stable_lab_graphs 
+        sage: from cvolume import stable_lab_graphs
         sage: stable_lab_graphs([3,1])
         {Labeled Stable Graph with edges = (), loops = (1,), kappa = ((1, 3),),
          Labeled Stable Graph with edges = (), loops = (2,), kappa = ((1, 3),)}
+    
+    Here we generate the same graphs only organized by codimension. Note that the first subset of graphs consist of a graph with no edges, it is the original non-degenerate graph of the stratum::
+    
+        sage: stable_lab_graphs([3,1], by_codim = True)
+        [{Labeled Stable Graph with edges = (), loops = (0,), kappa = ((1, 3),)},
+         {Labeled Stable Graph with edges = (), loops = (1,), kappa = ((1, 3),)},
+         {Labeled Stable Graph with edges = (), loops = (2,), kappa = ((1, 3),)}]
+    
+    Here we demonstrate verbose mode by generating stable graphs for stratum [3,1,1,-1]::
+    
+        sage: graphs = stable_lab_graphs([3,1,1,-1], verbose = True)
+        Generated 2 codimension 1 graphs in ... s
+        Generated 4 codimension 2 graphs in ... s
+        Generated 3 codimension 3 graphs in ... s
+        The total number of stable graphs for stratum [3, 1, 1, -1] is: 9.
+        Generated all stable graphs for stratum [3, 1, 1, -1] in: ... s
+        
+    
     '''
     assert sum(stratum)%4 == 0, f"The sum of orders of zeroes of the stratum has to be a multiple of 4."
     kappa = [sorted(stratum)]
@@ -216,12 +262,12 @@ def stable_lab_graphs(stratum, by_codim=False, one_vertex=False, verbose=False):
             # taking a union with all possible one-step degenerations of each graph
             degenerations[codim].update(stg.one_step_degenerations())
         toc = time.time()
-        if verbose: print(f"Generated {len(degenerations[-1])} codimension {codim} graphs in {float2time(toc-tic,5)}")
+        if verbose and degenerations[-1]: print(f"Generated {len(degenerations[-1])} codimension {codim} graphs in {float2time(toc-tic,5)}")
     if verbose:
-        print(f"The total number of stable graphs for stratum {stratum} is: {sum(len(i) for i in degenerations)}.")
+        print(f"The total number of stable graphs for stratum {stratum} is: {sum(len(i) for i in degenerations)-1}.")
         toc = time.time()
         print(f"Generated all stable graphs for stratum {stratum} in: {float2time(toc-tic_total,5)}")  
     if by_codim:
-        return degenerations[:-1] # remove the last empty list and return
+        return degenerations[:-1] # remove the last empty list and return, keep the original graph at index 0 as codim 0 element
     else:
-        return set().union(*degenerations[1:]) # take union and return
+        return set().union(*degenerations[1:]) # take union and return, don't include the original graph
