@@ -1,38 +1,28 @@
 from sage.all import ZZ, factorial, Partitions, prod, Permutations
 from .utils import *
 from .series import Fs
-
-# def weight_check(g,n,stratum):
-#     if stratum:
-#         max_weight = sum(stratum)/ZZ(4) + len(stratum)/ZZ(2) + stratum.count(-1) + n/ZZ(2)
-#         m = [stratum.count(2*i-1) for i in range((max(stratum)+1)/ZZ(2)+1)]
-#         mcut = tuple(m[i] for i in range(2,len(m)))
-#         mcut2weightvar = {():'w0',(1,):'w2',(0,1):'w3',(0,0,1):'w4',(2,):'w22',(0,0,0,1):'w5',(1,1):'w23',(0,0,0,0,1):'w6',(1,0,1):'w24',(0,2):'w33',(3,):'w222',(0,0,0,0,0,1):'w7'}
-#         mcut2Fvar = {():'Partition function F',(1,):'Fs2',(0,1):'Fs3',(0,0,1):'Fs4',(2,):'Fs22',(0,0,0,1):'Fs5',(1,1):'Fs23',(0,0,0,0,1):'Fs6',(1,0,1):'Fs24',(0,2):'Fs33',(3,):'Fs222',(0,0,0,0,0,1):'Fs7'}
-#         if mcut in mcut2weightvar:
-#             cur_weight = globals()[mcut2weightvar[mcut]]
-#             assert cur_weight >= max_weight, \
-#             '%s does not have enough terms to compute local polynomial for g=%s,n=%s,stratum=%s. \
-#             Current max weight is %s, required weight is %s.' % (mcut2Fvar[mcut], g, n, stratum, cur_weight, max_weight)
-#         else:
-#             return 'Fs for this stratum is unknown.'
-        
-# def weight(tuple):
-#     return sum([tuple[i]*(i+1) for i in range(len(tuple))])
         
 def stratum_to_F(g,n,stratum):
+    '''
+    Return partition function Fs corresponding to the stratum. Function is truncated at a minimal admissible weight.
+    '''
     s_part = tuple(sorted((i+1)/ZZ(2) for i in stratum if i > 1))
     w = sum(stratum)/ZZ(4) + len(stratum)/ZZ(2) + stratum.count(-1) + n/ZZ(2)
     return Fs(s_part,w)
 
-    
 def vanish(variables,indices):
+    '''
+    Return a copy of the list of variables, in which elements at given indices are replaces by 0.
+    '''
     l = variables[:]
     for i in indices:
         l[i-1] = 0
     return l
 
 def shift(variables,k):
+    '''
+    Return a copy of the list of variables shifted k units to the left.
+    '''
     l = variables[:]
     for i in range(len(l)-k):
         l[i] = l[i+k]
@@ -41,6 +31,21 @@ def shift(variables,k):
     return l
 
 def Nlocal(g,n,stratum,labeled=False,mode='derivative'):
+    '''
+    Return a local polynomial N_{g,n}^stratum(b1, ..., bn).
+    
+    INPUT:
+    
+    - ``g``       -- int, genus
+    - ``n``       -- int, number of boundaries
+    - ``stratum`` -- list or tuple, orders of zeros of the stratum
+    - ``labeled`` -- boolean (default `False`), whether to consider labeled zeros or not
+    - ``mode``    -- 'derivative' (default) or 'recursive', 'derivative' uses Arbarello-Cornalba formulae and 'recursive' uses recursion on local polynomials dervied from the same AC formulae
+    
+    OUTPUT:
+    
+    - Sage Multivariate Polynomail in variables b1, b2, ... .
+    '''
     if not stratum:
         stratum = [1]*(4*g-4+2*n)
     cache_poly = {}
@@ -107,4 +112,3 @@ def Nlocal(g,n,stratum,labeled=False,mode='derivative'):
     if labeled: return cache_poly.get((g,n,stratum),0)
     else: return cache_poly.get((g,n,stratum),0)/cache_labeling.get((g,n,stratum),1)
     
- 
