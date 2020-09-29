@@ -1,4 +1,4 @@
-from sage.all import ZZ, factorial, Partitions, prod, Permutations
+from sage.all import ZZ, factorial, prod, Partitions, Permutations, OrderedSetPartitions, diff
 from .utils import *
 from .series import Fs
         
@@ -44,7 +44,34 @@ def Nlocal(g,n,stratum,labeled=False,mode='derivative'):
     
     OUTPUT:
     
-    - Sage Multivariate Polynomail in variables b1, b2, ... .
+    - a symmetric Sage Multivariate Polynomail in variables b1, b2, ... .
+    
+    EXAMPLES:
+    
+    Here we compute local polynomial of genus 2, 2 bondary components and stratum [5, 1, 1, 1]::
+    
+    sage: from cvolume import Nlocal
+    sage: S = PolynomialRing(QQ,['b%d' % i for i in range(1,10)])
+    sage: b1,b2,b3,b4,b5 = S.gens()[:5]
+    sage: Nlocal(2, 2, (5, 1, 1, 1))
+    1/192*b1^6 + 95/3072*b1^4*b2^2 + 95/3072*b1^2*b2^4 + 1/192*b2^6
+   
+    And here is the same local polynomial, but with labeled zeros::
+    
+    sage: Nlocal(2, 2, (5, 1, 1, 1), labeled = True)
+    1/32*b1^6 + 95/512*b1^4*b2^2 + 95/512*b1^2*b2^4 + 1/32*b2^6
+    
+    Another example for a different stratum::
+    
+    sage: Nlocal(2, 2, (7, 1))
+    35/192*b1^4 + 35/64*b1^2*b2^2 + 35/192*b2^4
+    
+    Here we show that `recursive` and `derivative` methods give consistent answers::
+    
+    sage: assert Nlocal(0, 5, [3, 1, 1, 1], mode = 'recursive') == Nlocal(0, 5, [3, 1, 1, 1])
+    sage: assert Nlocal(1, 3, [3, 1, 1, 1], mode = 'recursive') == Nlocal(1, 3, [3, 1, 1, 1])
+    sage: assert Nlocal(0, 4, [3, 1, 1, -1], mode = 'recursive') == Nlocal(0, 4, [3, 1, 1, -1])
+    sage: assert Nlocal(0, 3, [3, 1, -1, -1], mode = 'recursive') == Nlocal(0, 3, [3, 1, -1, -1])
     '''
     if not stratum:
         stratum = [1]*(4*g-4+2*n)
@@ -95,7 +122,7 @@ def Nlocal(g,n,stratum,labeled=False,mode='derivative'):
             return cache_poly[(g,n,stratum)]
         elif mode == 'recursive':
             assert m[2] == 1 and len(m) == 3, "'recursive' mode is only available for stratum = [3,1,1,...,-1,-1]"  
-            first_term = 2**4*derivative(memo_Nlocal(g,n+1,[1]*(m[1]+5),False,mode), b[n], 4)(*vanish(b,[n+1]))
+            first_term = 2**4*diff(memo_Nlocal(g,n+1,[1]*(m[1]+5),False,mode), b[n], 4)(*vanish(b,[n+1]))
             second_term = -ZZ(1)/2*2*memo_Nlocal(g-1,n+2,[1]*(m[1]+3),False,mode)(*vanish(b,[n+1,n+2]))
             third_term = 0
             for par in OrderedSetPartitions(b[:n], 2):
