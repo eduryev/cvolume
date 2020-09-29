@@ -39,41 +39,31 @@
           <div class="body" role="main">
             
   <h1>Source code for cvolume.localpoly</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">sage.all</span> <span class="k">import</span> <span class="n">ZZ</span><span class="p">,</span> <span class="n">factorial</span><span class="p">,</span> <span class="n">Partitions</span><span class="p">,</span> <span class="n">prod</span><span class="p">,</span> <span class="n">Permutations</span>
+<span></span><span class="kn">from</span> <span class="nn">sage.all</span> <span class="k">import</span> <span class="n">ZZ</span><span class="p">,</span> <span class="n">factorial</span><span class="p">,</span> <span class="n">prod</span><span class="p">,</span> <span class="n">Partitions</span><span class="p">,</span> <span class="n">Permutations</span><span class="p">,</span> <span class="n">OrderedSetPartitions</span><span class="p">,</span> <span class="n">diff</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">.series</span> <span class="k">import</span> <span class="n">Fs</span>
-
-<span class="c1"># def weight_check(g,n,stratum):</span>
-<span class="c1">#     if stratum:</span>
-<span class="c1">#         max_weight = sum(stratum)/ZZ(4) + len(stratum)/ZZ(2) + stratum.count(-1) + n/ZZ(2)</span>
-<span class="c1">#         m = [stratum.count(2*i-1) for i in range((max(stratum)+1)/ZZ(2)+1)]</span>
-<span class="c1">#         mcut = tuple(m[i] for i in range(2,len(m)))</span>
-<span class="c1">#         mcut2weightvar = {():&#39;w0&#39;,(1,):&#39;w2&#39;,(0,1):&#39;w3&#39;,(0,0,1):&#39;w4&#39;,(2,):&#39;w22&#39;,(0,0,0,1):&#39;w5&#39;,(1,1):&#39;w23&#39;,(0,0,0,0,1):&#39;w6&#39;,(1,0,1):&#39;w24&#39;,(0,2):&#39;w33&#39;,(3,):&#39;w222&#39;,(0,0,0,0,0,1):&#39;w7&#39;}</span>
-<span class="c1">#         mcut2Fvar = {():&#39;Partition function F&#39;,(1,):&#39;Fs2&#39;,(0,1):&#39;Fs3&#39;,(0,0,1):&#39;Fs4&#39;,(2,):&#39;Fs22&#39;,(0,0,0,1):&#39;Fs5&#39;,(1,1):&#39;Fs23&#39;,(0,0,0,0,1):&#39;Fs6&#39;,(1,0,1):&#39;Fs24&#39;,(0,2):&#39;Fs33&#39;,(3,):&#39;Fs222&#39;,(0,0,0,0,0,1):&#39;Fs7&#39;}</span>
-<span class="c1">#         if mcut in mcut2weightvar:</span>
-<span class="c1">#             cur_weight = globals()[mcut2weightvar[mcut]]</span>
-<span class="c1">#             assert cur_weight &gt;= max_weight, \</span>
-<span class="c1">#             &#39;%s does not have enough terms to compute local polynomial for g=%s,n=%s,stratum=%s. \</span>
-<span class="c1">#             Current max weight is %s, required weight is %s.&#39; % (mcut2Fvar[mcut], g, n, stratum, cur_weight, max_weight)</span>
-<span class="c1">#         else:</span>
-<span class="c1">#             return &#39;Fs for this stratum is unknown.&#39;</span>
-        
-<span class="c1"># def weight(tuple):</span>
-<span class="c1">#     return sum([tuple[i]*(i+1) for i in range(len(tuple))])</span>
         
 <div class="viewcode-block" id="stratum_to_F"><a class="viewcode-back" href="../../localpolymodule.html#cvolume.localpoly.stratum_to_F">[docs]</a><span class="k">def</span> <span class="nf">stratum_to_F</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">stratum</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Return partition function Fs corresponding to the stratum. Function is truncated at a minimal admissible weight.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">s_part</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">((</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">ZZ</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">stratum</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">))</span>
     <span class="n">w</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">stratum</span><span class="p">)</span><span class="o">/</span><span class="n">ZZ</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">stratum</span><span class="p">)</span><span class="o">/</span><span class="n">ZZ</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">stratum</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">n</span><span class="o">/</span><span class="n">ZZ</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">Fs</span><span class="p">(</span><span class="n">s_part</span><span class="p">,</span><span class="n">w</span><span class="p">)</span></div>
 
-    
 <div class="viewcode-block" id="vanish"><a class="viewcode-back" href="../../localpolymodule.html#cvolume.localpoly.vanish">[docs]</a><span class="k">def</span> <span class="nf">vanish</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span><span class="n">indices</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Return a copy of the list of variables, in which elements at given indices are replaces by 0.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">l</span> <span class="o">=</span> <span class="n">variables</span><span class="p">[:]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
         <span class="n">l</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">return</span> <span class="n">l</span></div>
 
 <div class="viewcode-block" id="shift"><a class="viewcode-back" href="../../localpolymodule.html#cvolume.localpoly.shift">[docs]</a><span class="k">def</span> <span class="nf">shift</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span><span class="n">k</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Return a copy of the list of variables shifted k units to the left.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">l</span> <span class="o">=</span> <span class="n">variables</span><span class="p">[:]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">)</span><span class="o">-</span><span class="n">k</span><span class="p">):</span>
         <span class="n">l</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">l</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">k</span><span class="p">]</span>
@@ -82,6 +72,48 @@
     <span class="k">return</span> <span class="n">l</span></div>
 
 <div class="viewcode-block" id="Nlocal"><a class="viewcode-back" href="../../localpolymodule.html#cvolume.localpoly.Nlocal">[docs]</a><span class="k">def</span> <span class="nf">Nlocal</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">stratum</span><span class="p">,</span><span class="n">labeled</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;derivative&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Return a local polynomial N_{g,n}^stratum(b1, ..., bn).</span>
+<span class="sd">    </span>
+<span class="sd">    INPUT:</span>
+<span class="sd">    </span>
+<span class="sd">    - ``g``       -- int, genus</span>
+<span class="sd">    - ``n``       -- int, number of boundaries</span>
+<span class="sd">    - ``stratum`` -- list or tuple, orders of zeros of the stratum</span>
+<span class="sd">    - ``labeled`` -- boolean (default `False`), whether to consider labeled zeros or not</span>
+<span class="sd">    - ``mode``    -- &#39;derivative&#39; (default) or &#39;recursive&#39;, &#39;derivative&#39; uses Arbarello-Cornalba formulae and &#39;recursive&#39; uses recursion on local polynomials dervied from the same AC formulae</span>
+<span class="sd">    </span>
+<span class="sd">    OUTPUT:</span>
+<span class="sd">    </span>
+<span class="sd">    - a symmetric Sage Multivariate Polynomail in variables b1, b2, ... .</span>
+<span class="sd">    </span>
+<span class="sd">    EXAMPLES:</span>
+<span class="sd">    </span>
+<span class="sd">    Here we compute local polynomial of genus 2, 2 bondary components and stratum [5, 1, 1, 1]::</span>
+<span class="sd">    </span>
+<span class="sd">    sage: from cvolume import Nlocal</span>
+<span class="sd">    sage: S = PolynomialRing(QQ,[&#39;b%d&#39; % i for i in range(1,10)])</span>
+<span class="sd">    sage: b1,b2,b3,b4,b5 = S.gens()[:5]</span>
+<span class="sd">    sage: Nlocal(2, 2, (5, 1, 1, 1))</span>
+<span class="sd">    1/192*b1^6 + 95/3072*b1^4*b2^2 + 95/3072*b1^2*b2^4 + 1/192*b2^6</span>
+<span class="sd">   </span>
+<span class="sd">    And here is the same local polynomial, but with labeled zeros::</span>
+<span class="sd">    </span>
+<span class="sd">    sage: Nlocal(2, 2, (5, 1, 1, 1), labeled = True)</span>
+<span class="sd">    1/32*b1^6 + 95/512*b1^4*b2^2 + 95/512*b1^2*b2^4 + 1/32*b2^6</span>
+<span class="sd">    </span>
+<span class="sd">    Another example for a different stratum::</span>
+<span class="sd">    </span>
+<span class="sd">    sage: Nlocal(2, 2, (7, 1))</span>
+<span class="sd">    35/192*b1^4 + 35/64*b1^2*b2^2 + 35/192*b2^4</span>
+<span class="sd">    </span>
+<span class="sd">    Here we show that `recursive` and `derivative` methods give consistent answers::</span>
+<span class="sd">    </span>
+<span class="sd">    sage: assert Nlocal(0, 5, [3, 1, 1, 1], mode = &#39;recursive&#39;) == Nlocal(0, 5, [3, 1, 1, 1])</span>
+<span class="sd">    sage: assert Nlocal(1, 3, [3, 1, 1, 1], mode = &#39;recursive&#39;) == Nlocal(1, 3, [3, 1, 1, 1])</span>
+<span class="sd">    sage: assert Nlocal(0, 4, [3, 1, 1, -1], mode = &#39;recursive&#39;) == Nlocal(0, 4, [3, 1, 1, -1])</span>
+<span class="sd">    sage: assert Nlocal(0, 3, [3, 1, -1, -1], mode = &#39;recursive&#39;) == Nlocal(0, 3, [3, 1, -1, -1])</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">stratum</span><span class="p">:</span>
         <span class="n">stratum</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">g</span><span class="o">-</span><span class="mi">4</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">n</span><span class="p">)</span>
     <span class="n">cache_poly</span> <span class="o">=</span> <span class="p">{}</span>
@@ -131,7 +163,7 @@
             <span class="k">return</span> <span class="n">cache_poly</span><span class="p">[(</span><span class="n">g</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">stratum</span><span class="p">)]</span>
         <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;recursive&#39;</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;&#39;recursive&#39; mode is only available for stratum = [3,1,1,...,-1,-1]&quot;</span>  
-            <span class="n">first_term</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">4</span><span class="o">*</span><span class="n">derivative</span><span class="p">(</span><span class="n">memo_Nlocal</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">,[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">5</span><span class="p">),</span><span class="kc">False</span><span class="p">,</span><span class="n">mode</span><span class="p">),</span> <span class="n">b</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="mi">4</span><span class="p">)(</span><span class="o">*</span><span class="n">vanish</span><span class="p">(</span><span class="n">b</span><span class="p">,[</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="n">first_term</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">4</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">memo_Nlocal</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">,[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">5</span><span class="p">),</span><span class="kc">False</span><span class="p">,</span><span class="n">mode</span><span class="p">),</span> <span class="n">b</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="mi">4</span><span class="p">)(</span><span class="o">*</span><span class="n">vanish</span><span class="p">(</span><span class="n">b</span><span class="p">,[</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">]))</span>
             <span class="n">second_term</span> <span class="o">=</span> <span class="o">-</span><span class="n">ZZ</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">memo_Nlocal</span><span class="p">(</span><span class="n">g</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="o">+</span><span class="mi">2</span><span class="p">,[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">3</span><span class="p">),</span><span class="kc">False</span><span class="p">,</span><span class="n">mode</span><span class="p">)(</span><span class="o">*</span><span class="n">vanish</span><span class="p">(</span><span class="n">b</span><span class="p">,[</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="o">+</span><span class="mi">2</span><span class="p">]))</span>
             <span class="n">third_term</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">OrderedSetPartitions</span><span class="p">(</span><span class="n">b</span><span class="p">[:</span><span class="n">n</span><span class="p">],</span> <span class="mi">2</span><span class="p">):</span>
@@ -148,7 +180,6 @@
     <span class="k">if</span> <span class="n">labeled</span><span class="p">:</span> <span class="k">return</span> <span class="n">cache_poly</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">g</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">stratum</span><span class="p">),</span><span class="mi">0</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span> <span class="k">return</span> <span class="n">cache_poly</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">g</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">stratum</span><span class="p">),</span><span class="mi">0</span><span class="p">)</span><span class="o">/</span><span class="n">cache_labeling</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">g</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">stratum</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span></div>
     
- 
 </pre></div>
 
           </div>

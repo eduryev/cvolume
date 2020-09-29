@@ -46,10 +46,32 @@
 <span class="kn">from</span> <span class="nn">admcycles</span> <span class="k">import</span> <span class="n">psiclass</span>
 
 <div class="viewcode-block" id="monom"><a class="viewcode-back" href="../../seriesmodule.html#cvolume.series.monom">[docs]</a><span class="k">def</span> <span class="nf">monom</span><span class="p">(</span><span class="n">par</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Given a partition par = [0^i_0, 1^i_1, ..., n^i_n] return a monomial (in Multivariate Polynomial Ring over Q) t0^i_0...tn^i_n/i_0!...i_n!</span>
+<span class="sd">    </span>
+<span class="sd">    EXAMPLE:</span>
+<span class="sd">    </span>
+<span class="sd">    Here we generate all monomials of weight 5::</span>
+<span class="sd">    </span>
+<span class="sd">    sage: from cvolume.series import monom</span>
+<span class="sd">    sage: [monom(l) for l in Partitions(5)]</span>
+<span class="sd">    [t4, t0*t3, t1*t2, 1/2*t0^2*t2, 1/2*t0*t1^2, 1/6*t0^3*t1, 1/120*t0^5]</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">exp</span> <span class="o">=</span> <span class="n">par</span><span class="o">.</span><span class="n">to_exp</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">prod</span><span class="p">(</span><span class="n">ZZ</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">factorial</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">exp</span><span class="p">)</span><span class="o">*</span><span class="n">prod</span><span class="p">([</span><span class="n">R</span><span class="o">.</span><span class="n">gen</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">par</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="coeff"><a class="viewcode-back" href="../../seriesmodule.html#cvolume.series.coeff">[docs]</a><span class="k">def</span> <span class="nf">coeff</span><span class="p">(</span><span class="n">par</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Return the coefficient of the monomial correspoding to the partition par in the partition function F.</span>
+<span class="sd">    </span>
+<span class="sd">    EXAMPLE:</span>
+<span class="sd">    </span>
+<span class="sd">    Here are some examples of the coefficients of the partition function in low weight::</span>
+<span class="sd">    </span>
+<span class="sd">    sage: from cvolume.series import coeff</span>
+<span class="sd">    sage: [coeff(Partition([1,1,1])),coeff(Partition([2,2,2])),coeff(Partition([4,4,1])),coeff(Partition([1,1,1,1]))]</span>
+<span class="sd">    [1, 1/12, 29/2880, 0]</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">if</span> <span class="n">par</span> <span class="o">==</span> <span class="n">Partition</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]):</span>
         <span class="k">return</span> <span class="mi">1</span>
     <span class="k">elif</span> <span class="p">((</span><span class="nb">sum</span><span class="p">([</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">par</span><span class="p">])</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">par</span><span class="p">)</span><span class="o">+</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="n">ZZ</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span> <span class="ow">in</span> <span class="n">ZZ</span> <span class="ow">and</span> <span class="p">((</span><span class="nb">sum</span><span class="p">([</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">par</span><span class="p">])</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">par</span><span class="p">)</span><span class="o">+</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="n">ZZ</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">:</span>
@@ -133,6 +155,17 @@
 <span class="c1">#         return F</span>
     
 <div class="viewcode-block" id="PartitionFunctions.partition_function"><a class="viewcode-back" href="../../seriesmodule.html#cvolume.series.PartitionFunctions.partition_function">[docs]</a>    <span class="k">def</span> <span class="nf">partition_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">w</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Return the partition function F truncated at weight w.</span>
+<span class="sd">        </span>
+<span class="sd">        EXAMPLE:</span>
+<span class="sd">        </span>
+<span class="sd">        The partition function truncated at weight 10::</span>
+<span class="sd">        </span>
+<span class="sd">        sage: from cvolume import Fs</span>
+<span class="sd">        sage: Fs.partition_function(10)</span>
+<span class="sd">        1/6*t0^3*t1^3 + 1/8*t0^4*t1*t2 + 1/120*t0^5*t3 + 1/6*t0^3*t1^2 + 1/120*t1^5 + 1/24*t0^4*t2 + 1/6*t0*t1^3*t2 + 1/6*t0^2*t1*t2^2 + 1/8*t0^2*t1^2*t3 + 7/144*t0^3*t2*t3 + 1/36*t0^3*t1*t4 + 1/576*t0^4*t5 + 1/6*t0^3*t1 + 1/96*t1^4 + 1/8*t0*t1^2*t2 + 1/24*t0^2*t2^2 + 1/16*t0^2*t1*t3 + 1/144*t0^3*t4 + 1/6*t0^3 + 1/72*t1^3 + 1/12*t0*t1*t2 + 7/1440*t2^3 + 1/48*t0^2*t3 + 29/1440*t1*t2*t3 + 29/5760*t0*t3^2 + 1/192*t1^2*t4 + 11/1440*t0*t2*t4 + 1/288*t0*t1*t5 + 1/2304*t0^2*t6 + 1/48*t1^2 + 1/24*t0*t2 + 29/5760*t2*t3 + 1/384*t1*t4 + 607/2903040*t4^2 + 1/1152*t0*t5 + 503/1451520*t3*t5 + 77/414720*t2*t6 + 5/82944*t1*t7 + 1/82944*t0*t8 + 1/24*t1 + 1/1152*t4 + 1/82944*t7</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">F_max_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">F_weights</span><span class="o">.</span><span class="n">get</span><span class="p">((),</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">F</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">F_series</span><span class="o">.</span><span class="n">get</span><span class="p">((),</span><span class="n">R</span><span class="o">.</span><span class="n">zero</span><span class="p">())</span> 
         <span class="k">if</span> <span class="n">w</span> <span class="o">&gt;</span> <span class="n">F_max_weight</span><span class="p">:</span>

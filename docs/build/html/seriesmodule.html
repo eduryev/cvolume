@@ -64,7 +64,13 @@
 <dl class="method">
 <dt id="cvolume.series.PartitionFunctions.partition_function">
 <code class="descname">partition_function</code><span class="sig-paren">(</span><em>w</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/series.html#PartitionFunctions.partition_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.series.PartitionFunctions.partition_function" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Return the partition function F truncated at weight w.</p>
+<p>EXAMPLE:</p>
+<p>The partition function truncated at weight 10:</p>
+<p>sage: from cvolume import Fs
+sage: Fs.partition_function(10)
+1/6*t0^3*t1^3 + 1/8*t0^4*t1*t2 + 1/120*t0^5*t3 + 1/6*t0^3*t1^2 + 1/120*t1^5 + 1/24*t0^4*t2 + 1/6*t0*t1^3*t2 + 1/6*t0^2*t1*t2^2 + 1/8*t0^2*t1^2*t3 + 7/144*t0^3*t2*t3 + 1/36*t0^3*t1*t4 + 1/576*t0^4*t5 + 1/6*t0^3*t1 + 1/96*t1^4 + 1/8*t0*t1^2*t2 + 1/24*t0^2*t2^2 + 1/16*t0^2*t1*t3 + 1/144*t0^3*t4 + 1/6*t0^3 + 1/72*t1^3 + 1/12*t0*t1*t2 + 7/1440*t2^3 + 1/48*t0^2*t3 + 29/1440*t1*t2*t3 + 29/5760*t0*t3^2 + 1/192*t1^2*t4 + 11/1440*t0*t2*t4 + 1/288*t0*t1*t5 + 1/2304*t0^2*t6 + 1/48*t1^2 + 1/24*t0*t2 + 29/5760*t2*t3 + 1/384*t1*t4 + 607/2903040*t4^2 + 1/1152*t0*t5 + 503/1451520*t3*t5 + 77/414720*t2*t6 + 5/82944*t1*t7 + 1/82944*t0*t8 + 1/24*t1 + 1/1152*t4 + 1/82944*t7</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="cvolume.series.PartitionFunctions.reset">
@@ -86,7 +92,13 @@
 <dl class="function">
 <dt id="cvolume.series.coeff">
 <code class="descclassname">cvolume.series.</code><code class="descname">coeff</code><span class="sig-paren">(</span><em>par</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/series.html#coeff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.series.coeff" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Return the coefficient of the monomial correspoding to the partition par in the partition function F.</p>
+<p>EXAMPLE:</p>
+<p>Here are some examples of the coefficients of the partition function in low weight:</p>
+<p>sage: from cvolume.series import coeff
+sage: [coeff(Partition([1,1,1])),coeff(Partition([2,2,2])),coeff(Partition([4,4,1])),coeff(Partition([1,1,1,1]))]
+[1, 1/12, 29/2880, 0]</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="cvolume.series.get_Fs2">
@@ -161,7 +173,13 @@
 <dl class="function">
 <dt id="cvolume.series.monom">
 <code class="descclassname">cvolume.series.</code><code class="descname">monom</code><span class="sig-paren">(</span><em>par</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/series.html#monom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.series.monom" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Given a partition par = [0^i_0, 1^i_1, …, n^i_n] return a monomial (in Multivariate Polynomial Ring over Q) t0^i_0…tn^i_n/i_0!…i_n!</p>
+<p>EXAMPLE:</p>
+<p>Here we generate all monomials of weight 5:</p>
+<p>sage: from cvolume.series import monom
+sage: [monom(l) for l in Partitions(5)]
+[t4, t0*t3, t1*t2, 1/2*t0^2*t2, 1/2*t0*t1^2, 1/6*t0^3*t1, 1/120*t0^5]</p>
+</dd></dl>
 
 </div>
 

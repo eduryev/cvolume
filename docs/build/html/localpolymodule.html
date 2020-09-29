@@ -50,22 +50,56 @@
 <dl class="function">
 <dt id="cvolume.localpoly.Nlocal">
 <code class="descclassname">cvolume.localpoly.</code><code class="descname">Nlocal</code><span class="sig-paren">(</span><em>g</em>, <em>n</em>, <em>stratum</em>, <em>labeled=False</em>, <em>mode='derivative'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/localpoly.html#Nlocal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.localpoly.Nlocal" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Return a local polynomial N_{g,n}^stratum(b1, …, bn).</p>
+<p>INPUT:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">g</span></code>       – int, genus</li>
+<li><code class="docutils literal notranslate"><span class="pre">n</span></code>       – int, number of boundaries</li>
+<li><code class="docutils literal notranslate"><span class="pre">stratum</span></code> – list or tuple, orders of zeros of the stratum</li>
+<li><code class="docutils literal notranslate"><span class="pre">labeled</span></code> – boolean (default <cite>False</cite>), whether to consider labeled zeros or not</li>
+<li><code class="docutils literal notranslate"><span class="pre">mode</span></code>    – ‘derivative’ (default) or ‘recursive’, ‘derivative’ uses Arbarello-Cornalba formulae and ‘recursive’ uses recursion on local polynomials dervied from the same AC formulae</li>
+</ul>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li>a symmetric Sage Multivariate Polynomail in variables b1, b2, … .</li>
+</ul>
+<p>EXAMPLES:</p>
+<p>Here we compute local polynomial of genus 2, 2 bondary components and stratum [5, 1, 1, 1]:</p>
+<p>sage: from cvolume import Nlocal
+sage: S = PolynomialRing(QQ,[‘b%d’ % i for i in range(1,10)])
+sage: b1,b2,b3,b4,b5 = S.gens()[:5]
+sage: Nlocal(2, 2, (5, 1, 1, 1))
+1/192*b1^6 + 95/3072*b1^4*b2^2 + 95/3072*b1^2*b2^4 + 1/192*b2^6</p>
+<p>And here is the same local polynomial, but with labeled zeros:</p>
+<p>sage: Nlocal(2, 2, (5, 1, 1, 1), labeled = True)
+1/32*b1^6 + 95/512*b1^4*b2^2 + 95/512*b1^2*b2^4 + 1/32*b2^6</p>
+<p>Another example for a different stratum:</p>
+<p>sage: Nlocal(2, 2, (7, 1))
+35/192*b1^4 + 35/64*b1^2*b2^2 + 35/192*b2^4</p>
+<p>Here we show that <cite>recursive</cite> and <cite>derivative</cite> methods give consistent answers:</p>
+<p>sage: assert Nlocal(0, 5, [3, 1, 1, 1], mode = ‘recursive’) == Nlocal(0, 5, [3, 1, 1, 1])
+sage: assert Nlocal(1, 3, [3, 1, 1, 1], mode = ‘recursive’) == Nlocal(1, 3, [3, 1, 1, 1])
+sage: assert Nlocal(0, 4, [3, 1, 1, -1], mode = ‘recursive’) == Nlocal(0, 4, [3, 1, 1, -1])
+sage: assert Nlocal(0, 3, [3, 1, -1, -1], mode = ‘recursive’) == Nlocal(0, 3, [3, 1, -1, -1])</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="cvolume.localpoly.shift">
 <code class="descclassname">cvolume.localpoly.</code><code class="descname">shift</code><span class="sig-paren">(</span><em>variables</em>, <em>k</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/localpoly.html#shift"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.localpoly.shift" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Return a copy of the list of variables shifted k units to the left.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="cvolume.localpoly.stratum_to_F">
 <code class="descclassname">cvolume.localpoly.</code><code class="descname">stratum_to_F</code><span class="sig-paren">(</span><em>g</em>, <em>n</em>, <em>stratum</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/localpoly.html#stratum_to_F"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.localpoly.stratum_to_F" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Return partition function Fs corresponding to the stratum. Function is truncated at a minimal admissible weight.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="cvolume.localpoly.vanish">
 <code class="descclassname">cvolume.localpoly.</code><code class="descname">vanish</code><span class="sig-paren">(</span><em>variables</em>, <em>indices</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/localpoly.html#vanish"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.localpoly.vanish" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Return a copy of the list of variables, in which elements at given indices are replaces by 0.</p>
+</dd></dl>
 
 </div>
 
