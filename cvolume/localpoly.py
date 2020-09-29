@@ -50,28 +50,28 @@ def Nlocal(g,n,stratum,labeled=False,mode='derivative'):
     
     Here we compute local polynomial of genus 2, 2 bondary components and stratum [5, 1, 1, 1]::
     
-    sage: from cvolume import Nlocal
-    sage: S = PolynomialRing(QQ,['b%d' % i for i in range(1,10)])
-    sage: b1,b2,b3,b4,b5 = S.gens()[:5]
-    sage: Nlocal(2, 2, (5, 1, 1, 1))
-    1/192*b1^6 + 95/3072*b1^4*b2^2 + 95/3072*b1^2*b2^4 + 1/192*b2^6
+        sage: from cvolume import Nlocal
+        sage: S = PolynomialRing(QQ,['b%d' % i for i in range(1,10)])
+        sage: b1,b2,b3,b4,b5 = S.gens()[:5]
+        sage: Nlocal(2, 2, (5, 1, 1, 1))
+        1/192*b1^6 + 95/3072*b1^4*b2^2 + 95/3072*b1^2*b2^4 + 1/192*b2^6
    
     And here is the same local polynomial, but with labeled zeros::
     
-    sage: Nlocal(2, 2, (5, 1, 1, 1), labeled = True)
-    1/32*b1^6 + 95/512*b1^4*b2^2 + 95/512*b1^2*b2^4 + 1/32*b2^6
+        sage: Nlocal(2, 2, (5, 1, 1, 1), labeled = True)
+        1/32*b1^6 + 95/512*b1^4*b2^2 + 95/512*b1^2*b2^4 + 1/32*b2^6
     
     Another example for a different stratum::
     
-    sage: Nlocal(2, 2, (7, 1))
-    35/192*b1^4 + 35/64*b1^2*b2^2 + 35/192*b2^4
+        sage: Nlocal(2, 2, (7, 1))
+        35/192*b1^4 + 35/64*b1^2*b2^2 + 35/192*b2^4
     
     Here we show that `recursive` and `derivative` methods give consistent answers::
     
-    sage: assert Nlocal(0, 5, [3, 1, 1, 1], mode = 'recursive') == Nlocal(0, 5, [3, 1, 1, 1])
-    sage: assert Nlocal(1, 3, [3, 1, 1, 1], mode = 'recursive') == Nlocal(1, 3, [3, 1, 1, 1])
-    sage: assert Nlocal(0, 4, [3, 1, 1, -1], mode = 'recursive') == Nlocal(0, 4, [3, 1, 1, -1])
-    sage: assert Nlocal(0, 3, [3, 1, -1, -1], mode = 'recursive') == Nlocal(0, 3, [3, 1, -1, -1])
+        sage: assert Nlocal(0, 5, [3, 1, 1, 1], mode = 'recursive') == Nlocal(0, 5, [3, 1, 1, 1])
+        sage: assert Nlocal(1, 3, [3, 1, 1, 1], mode = 'recursive') == Nlocal(1, 3, [3, 1, 1, 1])
+        sage: assert Nlocal(0, 4, [3, 1, 1, -1], mode = 'recursive') == Nlocal(0, 4, [3, 1, 1, -1])
+        sage: assert Nlocal(0, 3, [3, 1, -1, -1], mode = 'recursive') == Nlocal(0, 3, [3, 1, -1, -1])
     '''
     if not stratum:
         stratum = [1]*(4*g-4+2*n)

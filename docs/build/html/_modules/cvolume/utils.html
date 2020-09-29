@@ -45,6 +45,9 @@
 <span class="n">S</span> <span class="o">=</span> <span class="n">PolynomialRing</span><span class="p">(</span><span class="n">QQ</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;b</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">31</span><span class="p">)])</span>
 
 <div class="viewcode-block" id="float2time"><a class="viewcode-back" href="../../utilsmodule.html#cvolume.utils.float2time">[docs]</a><span class="k">def</span> <span class="nf">float2time</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">precision</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Takes float and precision (int) and return a time string in minutes and seconds.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">minutes</span><span class="p">,</span> <span class="n">seconds</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">t</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="n">precision</span><span class="p">),</span> <span class="mi">60</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="n">precision</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">minutes</span><span class="p">:</span> <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> min </span><span class="si">%.*f</span><span class="s1"> s&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">minutes</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">precision</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">seconds</span><span class="p">)</span><span class="o">/</span><span class="mi">10</span><span class="o">**</span><span class="n">precision</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span> <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%.*f</span><span class="s1"> s&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">precision</span><span class="p">),</span><span class="nb">int</span><span class="p">(</span><span class="n">seconds</span><span class="p">)</span><span class="o">/</span><span class="mi">10</span><span class="o">**</span><span class="n">precision</span><span class="p">)</span></div>
@@ -63,16 +66,21 @@
 <span class="n">time_for_Fs222</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">w</span> <span class="p">:</span> <span class="n">N</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="n">w</span><span class="o">-</span><span class="mf">2.25</span><span class="p">))</span>
 
 <div class="viewcode-block" id="dfactorial"><a class="viewcode-back" href="../../utilsmodule.html#cvolume.utils.dfactorial">[docs]</a><span class="k">def</span> <span class="nf">dfactorial</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Return double-factorial of integer.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">return</span> <span class="n">ZZ</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">.</span><span class="n">multifactorial</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="approx"><a class="viewcode-back" href="../../utilsmodule.html#cvolume.utils.approx">[docs]</a><span class="k">def</span> <span class="nf">approx</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{0:.4f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">N</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span></div>
-
-<span class="c1"># c_f(d) returns the renormalization coefficient 2^(d+1)/(d-1)!</span>
 <div class="viewcode-block" id="c_d"><a class="viewcode-back" href="../../utilsmodule.html#cvolume.utils.c_d">[docs]</a><span class="k">def</span> <span class="nf">c_d</span><span class="p">(</span><span class="n">stratum</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Return the dimension of a stratum.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">stratum</span><span class="p">)</span><span class="o">/</span><span class="n">ZZ</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">stratum</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="c_f"><a class="viewcode-back" href="../../utilsmodule.html#cvolume.utils.c_f">[docs]</a><span class="k">def</span> <span class="nf">c_f</span><span class="p">(</span><span class="n">dim_or_stratum</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Return the renormalization coefficient for stratum: 2^(d+1)/(d-1)! where d is dimension. Input can be a dimension or a stratum itself.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">dim_or_stratum</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">c_d</span><span class="p">(</span><span class="n">dim_or_stratum</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -80,6 +88,9 @@
     <span class="k">return</span> <span class="n">ZZ</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">d</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="n">factorial</span><span class="p">(</span><span class="n">d</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="coeff_2"><a class="viewcode-back" href="../../utilsmodule.html#cvolume.utils.coeff_2">[docs]</a><span class="k">def</span> <span class="nf">coeff_2</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">M</span><span class="p">):</span> 
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Return power-of-2 renormalizing coefficient for local polynomials.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">return</span> <span class="n">ZZ</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="mi">5</span><span class="o">*</span><span class="n">g</span><span class="o">-</span><span class="mi">6</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">M</span><span class="p">)</span></div>
 
 </pre></div>

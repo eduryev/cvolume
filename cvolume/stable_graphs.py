@@ -11,19 +11,19 @@ def k_to_p(edges,loops,kappa,graph):
     
     Here is an example of vertices grouped and sorted according to k_to_p. The graph is a triangle with no loops, by the third vertex is labeled differently from the other two::
     
-    sage: from cvolume.stable_graphs import k_to_p
-    sage: edges, loops, kappa = [(0, 1, 1), (0, 2, 1), (1, 2, 1)], [0, 0, 0], [[1, 1], [1, 1], [3, 1]]
-    sage: graph = Graph(edges)
-    sage: k_to_p(edges,loops,kappa,graph)
-    [[0, 1], [2]]
+        sage: from cvolume.stable_graphs import k_to_p
+        sage: edges, loops, kappa = [(0, 1, 1), (0, 2, 1), (1, 2, 1)], [0, 0, 0], [[1, 1], [1, 1], [3, 1]]
+        sage: graph = Graph(edges)
+        sage: k_to_p(edges,loops,kappa,graph)
+        [[0, 1], [2]]
     
     Here is a more complicated example of k_to_p::
     
-    sage: from cvolume.stable_graphs import k_to_p
-    sage: edges, loops, kappa = [(0, 1, 1), (0, 3, 1), (1, 6, 1), (2, 3, 1), (2, 5, 1), (4, 5, 1), (4, 6, 1)], [0, 0, 3, 2, 2, 0, 1], [(1, -1), (1, -1), (1, -1), (1, 1), (1, 1), (3, 1), (3, 3, 1)]; 
-    sage: graph = Graph(edges)
-    sage: k_to_p(edges,loops,kappa,graph)
-    [[0, 1], [2], [3, 4], [5], [6]]
+        sage: from cvolume.stable_graphs import k_to_p
+        sage: edges, loops, kappa = [(0, 1, 1), (0, 3, 1), (1, 6, 1), (2, 3, 1), (2, 5, 1), (4, 5, 1), (4, 6, 1)], [0, 0, 3, 2, 2, 0, 1], [(1, -1), (1, -1), (1, -1), (1, 1), (1, 1), (3, 1), (3, 3, 1)]; 
+        sage: graph = Graph(edges)
+        sage: k_to_p(edges,loops,kappa,graph)
+        [[0, 1], [2], [3, 4], [5], [6]]
     '''
     edge_profile = []
     for v in graph.vertices():
@@ -49,29 +49,30 @@ def canonical(edges,loops,kappa,graph):
 
     Here is an example of canonical representative corresponding to a graph. Note that vertex 1 is switched with vertex 2::
     
-    sage: from cvolume.stable_graphs import canonical
-    sage: edges, loops, kappa = [(0, 1, 1), (0, 2, 1),(2, 1, 1)], [1,2,1], [[3,1],[7,5],[3,1]]
-    sage: graph = Graph(edges)
-    sage: canonical(edges,loops,kappa,graph)
-    (((0, 1, 1), (0, 2, 1), (1, 2, 1)),
-     (1, 1, 2),
-     ((1, 3), (1, 3), (5, 7)),
-     Graph on 3 vertices)
+        sage: from cvolume.stable_graphs import canonical
+        sage: edges, loops, kappa = [(0, 1, 1), (0, 2, 1),(2, 1, 1)], [1, 2, 1], [[3, 1],[7, 5],[3, 1]]
+        sage: graph = Graph(edges)
+        sage: canonical(edges,loops,kappa,graph)
+        (((0, 1, 1), (0, 2, 1), (1, 2, 1)),
+         (1, 1, 2),
+         ((3, 1), (3, 1), (7, 5)),
+         Graph on 3 vertices)
      
     Another example of canonical representative. Note that orders of zeros in stratum are sorted::
     
-    sage: edges, loops, kappa = [(0,1,1)], [1,1], [[1,3],[1,3,5,-1]]
-    sage: graph = Graph(edges)
-    sage: canonical(edges,loops,kappa,graph)
-    (((0, 1, 1),), (1, 1), ((1, 3), (-1, 1, 3, 5)), Graph on 2 vertices)
+        sage: edges, loops, kappa = [(0, 1, 1)], [1, 1], [[1, 3], [1, 3, 5, -1]]
+        sage: graph = Graph(edges)
+        sage: canonical(edges,loops,kappa,graph)
+        (((0, 1, 1),), (1, 1), ((3, 1), (5, 3, 1, -1)), Graph on 2 vertices)
     '''
+    kappa = [tuple(sorted(list(l), reverse = True)) for l in kappa]
     can_gr, relab = graph.canonical_label(partition=k_to_p(edges,loops,kappa,graph), certificate=True, edge_labels=True)
     can_loops = list(loops)
     can_kappa = list(kappa)
     for k,v in relab.items():
         can_loops[v] = loops[k] 
         can_kappa[v] = kappa[k]
-    can_kappa = [tuple(sorted(list(l))) for l in can_kappa]
+    can_kappa = [tuple(sorted(list(l), reverse = True)) for l in can_kappa]
     return tuple(can_gr.edges()), tuple(can_loops), tuple(can_kappa), can_gr.copy(immutable=True)
 
 class LabeledStableGraph:
@@ -110,10 +111,10 @@ class LabeledStableGraph:
         
         Here is an example of vertices degrees::
         
-        sage: from cvolume.stable_graphs import LabeledStableGraph
-        sage: stg = LabeledStableGraph([(0, 1, 2), (0, 2, 1), (1, 2, 5)], [0, 0, 0], [[5, 1], [7, 7], [11, 1]])
-        sage: stg.vertex_deg(0), stg.vertex_deg(1), stg.vertex_deg(2)
-        (3, 7, 6)
+            sage: from cvolume.stable_graphs import LabeledStableGraph
+            sage: stg = LabeledStableGraph([(0, 1, 2), (0, 2, 1), (1, 2, 5)], [0, 0, 0], [[5, 1], [7, 7], [11, 1]])
+            sage: stg.vertex_deg(0), stg.vertex_deg(1), stg.vertex_deg(2)
+            (3, 7, 6)
         '''
         deg = 0
         for e in self.edges:
@@ -129,12 +130,12 @@ class LabeledStableGraph:
         
         Here we compute all degenerations obtained by adding a loop to the stable graph::
         
-        sage: from cvolume import LabeledStableGraph
-        sage: edges, loops, kappa = [(0, 1, 2), (0, 2, 1), (1, 2, 1)], [0,1,0], [[1,1],[5,3,1,1],[7,1]]
-        sage: stg = LabeledStableGraph(edges,loops,kappa)
-        sage: stg.loop_degenerations()
-        {Labeled Stable Graph with edges = ((0, 1, 2), (0, 2, 1), (1, 2, 1)), loops = (0, 1, 1), kappa = ((1, 1), (1, 1, 3, 5), (1, 7)),
-         Labeled Stable Graph with edges = ((0, 1, 2), (0, 2, 1), (1, 2, 1)), loops = (0, 2, 0), kappa = ((1, 1), (1, 1, 3, 5), (1, 7))}
+            sage: from cvolume import LabeledStableGraph
+            sage: edges, loops, kappa = [(0, 1, 2), (0, 2, 1), (1, 2, 1)], [0, 1, 0], [[1, 1], [5, 3, 1, 1], [7, 1]]
+            sage: stg = LabeledStableGraph(edges,loops,kappa)
+            sage: stg.loop_degenerations()
+            {Labeled Stable Graph with edges = ((0, 1, 2), (0, 2, 1), (1, 2, 1)), loops = (0, 1, 1), kappa = ((1, 1), (5, 3, 1, 1), (7, 1)),
+             Labeled Stable Graph with edges = ((0, 1, 2), (0, 2, 1), (1, 2, 1)), loops = (0, 2, 0), kappa = ((1, 1), (5, 3, 1, 1), (7, 1))}
         '''
         new_graphs = set()
         for v in self.graph.vertices():
@@ -153,20 +154,20 @@ class LabeledStableGraph:
         
         Here is an example of all degenerations obtained by adding an adge::
         
-        sage: from cvolume import LabeledStableGraph
-        sage: edges, loops, kappa = [], [1], [[3,3,1,1]]
-        sage: stg = LabeledStableGraph(edges,loops,kappa)
-        sage: stg.edge_degenerations()
-        {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 1), kappa = ((1, 1), (3, 3)),
-         Labeled Stable Graph with edges = ((0, 1, 1),), loops = (1, 0), kappa = ((1, 1), (3, 3)),
-         Labeled Stable Graph with edges = ((0, 1, 2),), loops = (0, 0), kappa = ((1, 3), (1, 3))}
+            sage: from cvolume import LabeledStableGraph
+            sage: edges, loops, kappa = [], [1], [[3, 3, 1, 1]]
+            sage: stg = LabeledStableGraph(edges,loops,kappa)
+            sage: stg.edge_degenerations()
+            {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 1), kappa = ((1, 1), (3, 3)),
+             Labeled Stable Graph with edges = ((0, 1, 1),), loops = (1, 0), kappa = ((1, 1), (3, 3)),
+             Labeled Stable Graph with edges = ((0, 1, 2),), loops = (0, 0), kappa = ((3, 1), (3, 1))}
          
         Here is another example of special edge-degenerations::
         
-        sage: edges, loops, kappa = [(0,1,1)], [0,0], [[1,1],[3,1,1,1]]
-        sage: stg = LabeledStableGraph(edges,loops,kappa)
-        sage: stg.edge_degenerations()
-        {Labeled Stable Graph with edges = ((0, 2, 1), (1, 2, 1)), loops = (0, 0, 0), kappa = ((1, 1), (1, 1), (1, 3))}
+            sage: edges, loops, kappa = [(0, 1, 1)], [0, 0], [[1, 1],[3, 1, 1, 1]]
+            sage: stg = LabeledStableGraph(edges,loops,kappa)
+            sage: stg.edge_degenerations()
+            {Labeled Stable Graph with edges = ((0, 2, 1), (1, 2, 1)), loops = (0, 0, 0), kappa = ((1, 1), (1, 1), (3, 1))}
         '''
         new_graphs = set()
         profile = [sum(self.kappa[v])+len(self.kappa[v]) for v in self.graph.vertices()]
@@ -227,21 +228,21 @@ class LabeledStableGraph:
         
         Here we compute all special one step degenerations of a graph with a single vertex labeled by a stratum [3,3,1,1] with a single loop attached to it::
         
-        sage: from cvolume import LabeledStableGraph
-        sage: edges,loops,kappa = [], [1], [[3,3,1,1]]
-        sage: stg = LabeledStableGraph(edges,loops,kappa)
-        sage: stg.one_step_degenerations()
-        {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 1), kappa = ((1, 1), (3, 3)),
-         Labeled Stable Graph with edges = ((0, 1, 1),), loops = (1, 0), kappa = ((1, 1), (3, 3)),
-         Labeled Stable Graph with edges = ((0, 1, 2),), loops = (0, 0), kappa = ((1, 3), (1, 3)),
-         Labeled Stable Graph with edges = (), loops = (2,), kappa = ((1, 1, 3, 3),)}
+            sage: from cvolume import LabeledStableGraph
+            sage: edges,loops,kappa = [], [1], [[3, 3, 1, 1]]
+            sage: stg = LabeledStableGraph(edges,loops,kappa)
+            sage: stg.one_step_degenerations()
+            {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 1), kappa = ((1, 1), (3, 3)),
+             Labeled Stable Graph with edges = ((0, 1, 1),), loops = (1, 0), kappa = ((1, 1), (3, 3)),
+             Labeled Stable Graph with edges = ((0, 1, 2),), loops = (0, 0), kappa = ((3, 1), (3, 1)),
+             Labeled Stable Graph with edges = (), loops = (2,), kappa = ((3, 3, 1, 1),)}
          
         Here we start with a single vertex of genus 0 and therefore obtain no degenerations::
         
-        sage: edges,loops,kappa = [], [2], [[5,-1]]
-        sage: stg = LabeledStableGraph(edges,loops,kappa)
-        sage: stg.one_step_degenerations()
-        set()
+            sage: edges,loops,kappa = [], [2], [[5,-1]]
+            sage: stg = LabeledStableGraph(edges,loops,kappa)
+            sage: stg.one_step_degenerations()
+            set()
          
         '''
         degenerations = set()
@@ -258,25 +259,25 @@ class LabeledStableGraph:
         
         Here we compute the order of automorphism group of a single vertex graph with two loops::
         
-        sage: from cvolume import LabeledStableGraph
-        sage: edges, loops, kappa = [], [2], [[3,3,1,-1]]
-        sage: stg = LabeledStableGraph(edges,loops,kappa)
-        sage: stg.Aut()
-        8
+            sage: from cvolume import LabeledStableGraph
+            sage: edges, loops, kappa = [], [2], [[3, 3, 1, -1]]
+            sage: stg = LabeledStableGraph(edges,loops,kappa)
+            sage: stg.Aut()
+            8
         
         Here we compute the order of automorphism group of a two vertex graph with no loops, but a symmetry due to isomorphic vertices::
         
-        sage: edges, loops, kappa = [(0,1,1)], [0,0], [[3,-1],[3,-1]]
-        sage: stg = LabeledStableGraph(edges,loops,kappa)
-        sage: stg.Aut()
-        2
+            sage: edges, loops, kappa = [(0, 1, 1)], [0, 0], [[3, -1],[3, -1]]
+            sage: stg = LabeledStableGraph(edges,loops,kappa)
+            sage: stg.Aut()
+            2
         
         Here we compute the order of automorphism group of a two vertex graph with no loops, but five edges between non-isomorphic vertices::
         
-        sage: edges, loops, kappa = [(0,1,5)], [0,0], [[5,1],[7,-1]]
-        sage: stg = LabeledStableGraph(edges,loops,kappa)
-        sage: stg.Aut()
-        120
+            sage: edges, loops, kappa = [(0, 1, 5)], [0, 0], [[5, 1],[7, -1]]
+            sage: stg = LabeledStableGraph(edges,loops,kappa)
+            sage: stg.Aut()
+            120
         '''
         partition = k_to_p(self.edges,self.loops,self.kappa,self.graph)
         graph_aut = self.graph.automorphism_group(partition=partition,edge_labels=True,order=True,return_group=False)
@@ -304,22 +305,22 @@ def stable_lab_graphs(stratum, by_codim=False, one_vertex=False, verbose=False):
     Here we generate all labeled stable graphs in stratum [3,-1,-1,-1]::
         
         sage: from cvolume import stable_lab_graphs
-        sage: stable_lab_graphs([3,-1,-1,-1])
-        {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 0), kappa = ((-1, -1), (-1, 3)),
-         Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 1), kappa = ((-1, -1), (-1, 3)),
-         Labeled Stable Graph with edges = (), loops = (1,), kappa = ((-1, -1, -1, 3),)}
+        sage: stable_lab_graphs([3, -1, -1, -1])
+        {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 0), kappa = ((-1, -1), (3, -1)),
+         Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 1), kappa = ((-1, -1), (3, -1)),
+         Labeled Stable Graph with edges = (), loops = (1,), kappa = ((3, -1, -1, -1),)}
     
     Here we generate the same graphs only organized by codimension. Note that we keep the original non-degenerate graph of the stratum as the subset at index 0::
     
-        sage: stable_lab_graphs([3,-1,-1,-1], by_codim = True)
-        [{Labeled Stable Graph with edges = (), loops = (0,), kappa = ((-1, -1, -1, 3),)},
-         {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 0), kappa = ((-1, -1), (-1, 3)),
-          Labeled Stable Graph with edges = (), loops = (1,), kappa = ((-1, -1, -1, 3),)},
-         {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 1), kappa = ((-1, -1), (-1, 3))}]
+        sage: stable_lab_graphs([3, -1, -1, -1], by_codim = True)
+        [{Labeled Stable Graph with edges = (), loops = (0,), kappa = ((3, -1, -1, -1),)},
+         {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 0), kappa = ((-1, -1), (3, -1)),
+          Labeled Stable Graph with edges = (), loops = (1,), kappa = ((3, -1, -1, -1),)},
+         {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 1), kappa = ((-1, -1), (3, -1))}]
     
     Here we demonstrate verbose mode by generating stable graphs for stratum [3,1,1,-1]::
     
-        sage: graphs = stable_lab_graphs([3,1,1,-1], verbose = True)
+        sage: graphs = stable_lab_graphs([3, 1, 1, -1], verbose = True)
         Generated 2 codimension 1 graphs in ... s
         Generated 4 codimension 2 graphs in ... s
         Generated 3 codimension 3 graphs in ... s
@@ -328,15 +329,15 @@ def stable_lab_graphs(stratum, by_codim=False, one_vertex=False, verbose=False):
         
     Here we compute the number of labeled stable graphs for stratum [3,1,1,1,1,1]::
     
-        sage: len(stable_lab_graphs([3,1,1,1,1,1]))
+        sage: len(stable_lab_graphs([3, 1, 1, 1, 1, 1]))
         31
         
     Here we generate only one-vertex labeled stable graphs for stratum [3,1,1,1,1,1]::
     
-        sage: stable_lab_graphs([3,1,1,1,1,1], one_vertex = True)
-        {Labeled Stable Graph with edges = (), loops = (1,), kappa = ((1, 1, 1, 1, 1, 3),),
-         Labeled Stable Graph with edges = (), loops = (2,), kappa = ((1, 1, 1, 1, 1, 3),),
-         Labeled Stable Graph with edges = (), loops = (3,), kappa = ((1, 1, 1, 1, 1, 3),)}
+        sage: stable_lab_graphs([3, 1, 1, 1, 1, 1], one_vertex = True)
+        {Labeled Stable Graph with edges = (), loops = (1,), kappa = ((3, 1, 1, 1, 1, 1),),
+         Labeled Stable Graph with edges = (), loops = (2,), kappa = ((3, 1, 1, 1, 1, 1),),
+         Labeled Stable Graph with edges = (), loops = (3,), kappa = ((3, 1, 1, 1, 1, 1),)}
     
     '''
     assert sum(stratum)%4 == 0, f"The sum of orders of zeroes of the stratum has to be a multiple of 4."

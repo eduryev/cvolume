@@ -12,9 +12,9 @@ def monom(par):
     
     Here we generate all monomials of weight 5::
     
-    sage: from cvolume.series import monom
-    sage: [monom(l) for l in Partitions(5)]
-    [t4, t0*t3, t1*t2, 1/2*t0^2*t2, 1/2*t0*t1^2, 1/6*t0^3*t1, 1/120*t0^5]
+        sage: from cvolume.series import monom
+        sage: [monom(l) for l in Partitions(5)]
+        [t4, t0*t3, t1*t2, 1/2*t0^2*t2, 1/2*t0*t1^2, 1/6*t0^3*t1, 1/120*t0^5]
     '''
     exp = par.to_exp()
     return prod(ZZ(1)/factorial(k) for k in exp)*prod([R.gen(i-1) for i in par])
@@ -27,9 +27,9 @@ def coeff(par):
     
     Here are some examples of the coefficients of the partition function in low weight::
     
-    sage: from cvolume.series import coeff
-    sage: [coeff(Partition([1,1,1])),coeff(Partition([2,2,2])),coeff(Partition([4,4,1])),coeff(Partition([1,1,1,1]))]
-    [1, 1/12, 29/2880, 0]
+        sage: from cvolume.series import coeff
+        sage: [coeff(Partition([1,1,1])),coeff(Partition([2,2,2])),coeff(Partition([4,4,1])),coeff(Partition([1,1,1,1]))]
+        [1, 1/12, 29/2880, 0]
     '''
     if par == Partition([1,1,1]):
         return 1
@@ -121,9 +121,9 @@ class PartitionFunctions:
         
         The partition function truncated at weight 10::
         
-        sage: from cvolume import Fs
-        sage: Fs.partition_function(10)
-        1/6*t0^3*t1^3 + 1/8*t0^4*t1*t2 + 1/120*t0^5*t3 + 1/6*t0^3*t1^2 + 1/120*t1^5 + 1/24*t0^4*t2 + 1/6*t0*t1^3*t2 + 1/6*t0^2*t1*t2^2 + 1/8*t0^2*t1^2*t3 + 7/144*t0^3*t2*t3 + 1/36*t0^3*t1*t4 + 1/576*t0^4*t5 + 1/6*t0^3*t1 + 1/96*t1^4 + 1/8*t0*t1^2*t2 + 1/24*t0^2*t2^2 + 1/16*t0^2*t1*t3 + 1/144*t0^3*t4 + 1/6*t0^3 + 1/72*t1^3 + 1/12*t0*t1*t2 + 7/1440*t2^3 + 1/48*t0^2*t3 + 29/1440*t1*t2*t3 + 29/5760*t0*t3^2 + 1/192*t1^2*t4 + 11/1440*t0*t2*t4 + 1/288*t0*t1*t5 + 1/2304*t0^2*t6 + 1/48*t1^2 + 1/24*t0*t2 + 29/5760*t2*t3 + 1/384*t1*t4 + 607/2903040*t4^2 + 1/1152*t0*t5 + 503/1451520*t3*t5 + 77/414720*t2*t6 + 5/82944*t1*t7 + 1/82944*t0*t8 + 1/24*t1 + 1/1152*t4 + 1/82944*t7
+            sage: from cvolume import Fs
+            sage: Fs.partition_function(10)
+            1/6*t0^3*t1^3 + 1/8*t0^4*t1*t2 + 1/120*t0^5*t3 + 1/6*t0^3*t1^2 + 1/120*t1^5 + 1/24*t0^4*t2 + 1/6*t0*t1^3*t2 + 1/6*t0^2*t1*t2^2 + 1/8*t0^2*t1^2*t3 + 7/144*t0^3*t2*t3 + 1/36*t0^3*t1*t4 + 1/576*t0^4*t5 + 1/6*t0^3*t1 + 1/96*t1^4 + 1/8*t0*t1^2*t2 + 1/24*t0^2*t2^2 + 1/16*t0^2*t1*t3 + 1/144*t0^3*t4 + 1/6*t0^3 + 1/72*t1^3 + 1/12*t0*t1*t2 + 7/1440*t2^3 + 1/48*t0^2*t3 + 29/1440*t1*t2*t3 + 29/5760*t0*t3^2 + 1/192*t1^2*t4 + 11/1440*t0*t2*t4 + 1/288*t0*t1*t5 + 1/2304*t0^2*t6 + 1/48*t1^2 + 1/24*t0*t2 + 29/5760*t2*t3 + 1/384*t1*t4 + 607/2903040*t4^2 + 1/1152*t0*t5 + 503/1451520*t3*t5 + 77/414720*t2*t6 + 5/82944*t1*t7 + 1/82944*t0*t8 + 1/24*t1 + 1/1152*t4 + 1/82944*t7
         '''
         F_max_weight = self.F_weights.get((),-1)
         F = self.F_series.get((),R.zero()) 

@@ -27,25 +27,25 @@ def graph_poly(stg):
     
     Here we compute the polynomial associated with a labeled stable graph with one loop::
     
-    sage: from cvolume import LabeledStableGraph
-    sage: from cvolume.cvolume import graph_poly
-    sage: stg = LabeledStableGraph([], [1], [[3, 3, -1, -1]])
-    sage: graph_poly(stg)
-    19/128*b1^5
+        sage: from cvolume import LabeledStableGraph
+        sage: from cvolume.cvolume import graph_poly
+        sage: stg = LabeledStableGraph([], [1], [[3, 3, -1, -1]])
+        sage: graph_poly(stg)
+        19/128*b1^5
     
     Here is another example for a graph with two vertices::
     
-    sage: stg = LabeledStableGraph([(0,1,1)], [1, 1], [[3, -1], [3, -1]])
-    sage: graph_poly(stg)
-    9/16*b1*b2*b3
+        sage: stg = LabeledStableGraph([(0, 1, 1)], [1, 1], [[3, -1], [3, -1]])
+        sage: graph_poly(stg)
+        9/16*b1*b2*b3
     
     Note that the previous example can be expressed through local polynomials associated to vertices::
     
-    sage: from cvolume import Nlocal
-    sage: S = PolynomialRing(QQ,['b%d' % i for i in range(1,4)])
-    sage: b1,b2,b3 = S.gens()
-    sage: graph_poly(stg) == 1/2*1/8*b1*b2*b3*Nlocal(0,3,[3,-1])(b1=b1,b2=b1,b3=b2)*Nlocal(0,3,[3,-1])(b1=b2,b2=b3,b3=b3)
-    True
+        sage: from cvolume import Nlocal
+        sage: S = PolynomialRing(QQ,['b%d' % i for i in range(1,4)])
+        sage: b1,b2,b3 = S.gens()
+        sage: graph_poly(stg) == 1/2*1/8*b1*b2*b3*Nlocal(0,3,[3,-1])(b1=b1,b2=b1,b3=b2)*Nlocal(0,3,[3,-1])(b1=b2,b2=b3,b3=b3)
+        True
     '''
     edges,loops,kappa,graph = stg.edges,stg.loops,stg.kappa,stg.graph
     c = ZZ(1)/2**(len(graph.vertices())-1)*1/ZZ(stg.Aut())
@@ -105,7 +105,7 @@ def completed_volume(stratum, with_pi=True, verbose=False, one_vertex=False):
     Here we compute completed volume of an empty stratum Q(3,1)::
         
         sage: from cvolume import completed_volume 
-        sage: completed_volume([3,1])
+        sage: completed_volume([3, 1])
         23/90*pi^4
         
     Here we demonstrate the verbose mode by computing completed volume of stratum Q(1,-1)::
@@ -124,15 +124,15 @@ def completed_volume(stratum, with_pi=True, verbose=False, one_vertex=False):
         
     Here we compute one-vertex graphs contribution to the completed volume of Q(3,1,1,-1)::
     
-        sage: completed_volume([3,1,1,-1], one_vertex=True)
+        sage: completed_volume([3, 1, 1, -1], one_vertex=True)
         1346/14175*pi^6
         
     Here are some examples for principal strata, where completed volume coincides with Masur-Veech volume::
     
-        sage: assert completed_volume([1,-1,-1,-1,-1,-1]) == 1*pi^4 
-        sage: assert completed_volume([1,1,-1,-1]) == 1/3*pi^4
-        sage: assert completed_volume([1,-1]) == 2/3*pi^2
-        sage: assert completed_volume([-1,-1,-1,-1]) == 2*pi^2
+        sage: assert completed_volume([1, -1, -1, -1, -1, -1]) == 1*pi^4 
+        sage: assert completed_volume([1, 1, -1, -1]) == 1/3*pi^4
+        sage: assert completed_volume([1, -1]) == 2/3*pi^2
+        sage: assert completed_volume([-1, -1, -1, -1]) == 2*pi^2
     '''
     def max_weight(stratum): return sum(stratum)/ZZ(2) + len(stratum)/ZZ(2) + stratum.count(-1) + 1
     higher_part = [i for i in stratum if i > 1]
