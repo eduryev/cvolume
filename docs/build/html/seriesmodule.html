@@ -15,6 +15,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -177,7 +178,7 @@
 <dl class="function">
 <dt id="cvolume.series.monom">
 <code class="descclassname">cvolume.series.</code><code class="descname">monom</code><span class="sig-paren">(</span><em>par</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/series.html#monom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.series.monom" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a partition par = [0^i_0, 1^i_1, …, n^i_n] return a monomial (in Multivariate Polynomial Ring over Q) t0^i_0…tn^i_n/i_0!…i_n!</p>
+<dd><p>Given a partition <code class="docutils literal notranslate"><span class="pre">par</span></code> = <span class="math notranslate nohighlight">\(\left[0^{i_0},1^{i_1},\ldots,n^{i_n}\right]\)</span> return a monomial (in Multivariate Polynomial Ring over Q) <span class="math notranslate nohighlight">\({t_0}^{i_0}\cdot\ldots\cdot{t_n}^{i_n} \big/ {i_0}!\cdot\ldots\cdot{i_n}!\)</span>.</p>
 <p>EXAMPLE:</p>
 <p>Here we generate all monomials of weight 5:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">cvolume.series</span> <span class="k">import</span> <span class="n">monom</span>

@@ -9,7 +9,7 @@ def k_to_p(edges,loops,kappa,graph):
     
     EXAMPLE:
     
-    Here is an example of vertices grouped and sorted according to k_to_p. The graph is a triangle with no loops, by the third vertex is labeled differently from the other two::
+    Here is an example of vertices grouped and sorted according to `k_to_p`. The graph is a triangle with no loops, by the third vertex is labeled differently from the other two::
     
         sage: from cvolume.stable_graphs import k_to_p
         sage: edges, loops, kappa = [(0, 1, 1), (0, 2, 1), (1, 2, 1)], [0, 0, 0], [[1, 1], [1, 1], [3, 1]]
@@ -17,7 +17,7 @@ def k_to_p(edges,loops,kappa,graph):
         sage: k_to_p(edges,loops,kappa,graph)
         [[0, 1], [2]]
     
-    Here is a more complicated example of k_to_p::
+    Here is a more complicated example of `k_to_p`::
     
         sage: from cvolume.stable_graphs import k_to_p
         sage: edges, loops, kappa = [(0, 1, 1), (0, 3, 1), (1, 6, 1), (2, 3, 1), (2, 5, 1), (4, 5, 1), (4, 6, 1)], [0, 0, 3, 2, 2, 0, 1], [(1, -1), (1, -1), (1, -1), (1, 1), (1, 1), (3, 1), (3, 3, 1)]; 
@@ -58,7 +58,7 @@ def canonical(edges,loops,kappa,graph):
          ((3, 1), (3, 1), (7, 5)),
          Graph on 3 vertices)
      
-    Another example of canonical representative. Note that orders of zeros in stratum are sorted::
+    Another example of canonical representative. Note that orders of zeros in stratum are sorted in reverse::
     
         sage: edges, loops, kappa = [(0, 1, 1)], [1, 1], [[1, 3], [1, 3, 5, -1]]
         sage: graph = Graph(edges)
@@ -226,7 +226,7 @@ class LabeledStableGraph:
         
         EXAMPLES:
         
-        Here we compute all special one step degenerations of a graph with a single vertex labeled by a stratum [3,3,1,1] with a single loop attached to it::
+        Here we compute all special one step degenerations of a graph with a single vertex labeled by a stratum :math:`\mathcal{Q}(3,3,1,1)` with a single loop attached to it::
         
             sage: from cvolume import LabeledStableGraph
             sage: edges,loops,kappa = [], [1], [[3, 3, 1, 1]]
@@ -242,8 +242,7 @@ class LabeledStableGraph:
             sage: edges,loops,kappa = [], [2], [[5,-1]]
             sage: stg = LabeledStableGraph(edges,loops,kappa)
             sage: stg.one_step_degenerations()
-            set()
-         
+            set()         
         '''
         degenerations = set()
         if len(self.loops) == 1:    # make loop degeneration only if the graph has a single vertex
@@ -302,7 +301,7 @@ def stable_lab_graphs(stratum, by_codim=False, one_vertex=False, verbose=False):
     
     EXAMPLES:
 
-    Here we generate all labeled stable graphs in stratum [3,-1,-1,-1]::
+    Here we generate all labeled stable graphs in stratum :math:`\mathcal{Q}(3,-1,-1,-1)`::
         
         sage: from cvolume import stable_lab_graphs
         sage: stable_lab_graphs([3, -1, -1, -1])
@@ -318,7 +317,7 @@ def stable_lab_graphs(stratum, by_codim=False, one_vertex=False, verbose=False):
           Labeled Stable Graph with edges = (), loops = (1,), kappa = ((3, -1, -1, -1),)},
          {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 1), kappa = ((-1, -1), (3, -1))}]
     
-    Here we demonstrate verbose mode by generating stable graphs for stratum [3,1,1,-1]::
+    Here we demonstrate verbose mode by generating stable graphs for stratum :math:`\mathcal{Q}(3,1,1,-1)`::
     
         sage: graphs = stable_lab_graphs([3, 1, 1, -1], verbose = True)
         Generated 2 codimension 1 graphs in ... s
@@ -327,12 +326,12 @@ def stable_lab_graphs(stratum, by_codim=False, one_vertex=False, verbose=False):
         The total number of stable graphs for stratum [3, 1, 1, -1] is: 9.
         Generated all stable graphs for stratum [3, 1, 1, -1] in: ... s
         
-    Here we compute the number of labeled stable graphs for stratum [3,1,1,1,1,1]::
+    Here we compute the number of labeled stable graphs for stratum :math:`\mathcal{Q}(3,1,1,1,1,1)`::
     
         sage: len(stable_lab_graphs([3, 1, 1, 1, 1, 1]))
         31
         
-    Here we generate only one-vertex labeled stable graphs for stratum [3,1,1,1,1,1]::
+    Here we generate only one-vertex labeled stable graphs for stratum :math:`\mathcal{Q}(3,1,1,1,1,1)`::
     
         sage: stable_lab_graphs([3, 1, 1, 1, 1, 1], one_vertex = True)
         {Labeled Stable Graph with edges = (), loops = (1,), kappa = ((3, 1, 1, 1, 1, 1),),

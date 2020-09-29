@@ -15,6 +15,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -72,13 +73,13 @@ an appropriate degree of pi</li>
 <li><code class="docutils literal notranslate"><span class="pre">one_vertex</span></code> – boolean (default <cite>False</cite>), when True only computed contribution of one-vertex labeled stable graphs.</li>
 </ul>
 <p>EXAMPLES:</p>
-<p>Here we compute completed volume of an empty stratum Q(3,1):</p>
+<p>Here we compute completed volume of an empty stratum <span class="math notranslate nohighlight">\(\mathcal{Q}(3,1)\)</span>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">cvolume</span> <span class="k">import</span> <span class="n">completed_volume</span> 
 <span class="n">sage</span><span class="p">:</span> <span class="n">completed_volume</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 <span class="mi">23</span><span class="o">/</span><span class="mi">90</span><span class="o">*</span><span class="n">pi</span><span class="o">^</span><span class="mi">4</span>
 </pre></div>
 </div>
-<p>Here we demonstrate the verbose mode by computing completed volume of stratum Q(1,-1):</p>
+<p>Here we demonstrate the verbose mode by computing completed volume of stratum <span class="math notranslate nohighlight">\(\mathcal{Q}(1,-1)\)</span>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">completed_volume</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
 <span class="n">Computing</span> <span class="n">completed</span> <span class="n">volume</span> <span class="n">of</span> <span class="n">stratum</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">...</span>
 <span class="n">Generated</span> <span class="mi">2</span> <span class="n">codimension</span> <span class="mi">1</span> <span class="n">graphs</span> <span class="ow">in</span> <span class="o">...</span> <span class="n">s</span>
@@ -92,7 +93,7 @@ an appropriate degree of pi</li>
 <span class="mi">7</span><span class="o">/</span><span class="mi">60</span><span class="o">*</span><span class="n">pi</span><span class="o">^</span><span class="mi">6</span>
 </pre></div>
 </div>
-<p>Here we compute one-vertex graphs contribution to the completed volume of Q(3,1,1,-1):</p>
+<p>Here we compute one-vertex graphs contribution to the completed volume of <span class="math notranslate nohighlight">\(\mathcal{Q}(3,1,1,-1)\)</span>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">completed_volume</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">one_vertex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="mi">1346</span><span class="o">/</span><span class="mi">14175</span><span class="o">*</span><span class="n">pi</span><span class="o">^</span><span class="mi">6</span>
 </pre></div>
@@ -155,19 +156,19 @@ an appropriate degree of pi</li>
 <dl class="function">
 <dt id="cvolume.cvolume.operator">
 <code class="descclassname">cvolume.cvolume.</code><code class="descname">operator</code><span class="sig-paren">(</span><em>Poly</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/cvolume.html#operator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.cvolume.operator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the result of application of Z-operator to the polynomial.</p>
+<dd><p>Return the result of application of <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>-operator to the polynomial.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="cvolume.cvolume.principal_volume">
 <code class="descclassname">cvolume.cvolume.</code><code class="descname">principal_volume</code><span class="sig-paren">(</span><em>g_or_stratum</em>, <em>n=-1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/cvolume.html#principal_volume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.cvolume.principal_volume" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the Masur-Veech volume of the principal stratum. Input can be either a single argument that is a list of orders of zeroes or two arguments g,n, where g is the genus and n is the number of simple poles.</p>
+<dd><p>Return the Masur-Veech volume of the principal stratum. Input can be either a single argument that is a list of orders of zeroes or two arguments g and n, where g is the genus and n is the number of simple poles.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="cvolume.cvolume.replmon">
 <code class="descclassname">cvolume.cvolume.</code><code class="descname">replmon</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/cvolume.html#replmon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.cvolume.replmon" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the result of application of Z-operator to the monomial b^n.</p>
+<dd><p>Return the result of application of <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>-operator to the monomial <span class="math notranslate nohighlight">\(b_i^n\)</span>.</p>
 </dd></dl>
 
 </div>

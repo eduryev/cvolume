@@ -32,7 +32,7 @@ def shift(variables,k):
 
 def Nlocal(g,n,stratum,labeled=False,mode='derivative'):
     '''
-    Return a local polynomial N_{g,n}^stratum(b1, ..., bn).
+    Return a local polynomial :math:`N_{g,n}^{\kappa}(b_1, ..., b_n)`, where :math:`\kappa` is stratum.
     
     INPUT:
     
@@ -44,11 +44,11 @@ def Nlocal(g,n,stratum,labeled=False,mode='derivative'):
     
     OUTPUT:
     
-    - a symmetric Sage Multivariate Polynomail in variables b1, b2, ... .
+    - a symmetric Sage Multivariate Polynomial in variables b1, b2, ... .
     
     EXAMPLES:
     
-    Here we compute local polynomial of genus 2, 2 bondary components and stratum [5, 1, 1, 1]::
+    Here we compute local polynomial of genus 2, two bondary components and stratum :math:`\mathcal{Q}(5, 1, 1, 1)`::
     
         sage: from cvolume import Nlocal
         sage: S = PolynomialRing(QQ,['b%d' % i for i in range(1,10)])

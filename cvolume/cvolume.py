@@ -8,14 +8,14 @@ from .series import Fs
 
 def replmon(n):
     '''
-    Return the result of application of Z-operator to the monomial b^n.
+    Return the result of application of :math:`\mathcal{Z}`-operator to the monomial :math:`b_i^n`.
     '''
     if n==0: return 1
     else: return factorial(n)*Rational(zeta(n+1)/pi**(n+1))
     
 def operator(Poly):
     '''
-    Return the result of application of Z-operator to the polynomial.
+    Return the result of application of :math:`\mathcal{Z}`-operator to the polynomial.
     '''
     return sum(Poly.monomial_coefficient(monom)*prod(replmon(k) for k in monom.exponents()[0]) for monom in Poly.monomials())     
 
@@ -102,13 +102,13 @@ def completed_volume(stratum, with_pi=True, verbose=False, one_vertex=False):
     
     EXAMPLES:
 
-    Here we compute completed volume of an empty stratum Q(3,1)::
+    Here we compute completed volume of an empty stratum :math:`\mathcal{Q}(3,1)`::
         
         sage: from cvolume import completed_volume 
         sage: completed_volume([3, 1])
         23/90*pi^4
         
-    Here we demonstrate the verbose mode by computing completed volume of stratum Q(1,-1)::
+    Here we demonstrate the verbose mode by computing completed volume of stratum :math:`\mathcal{Q}(1,-1)`::
         
         sage: completed_volume([3, 1, 1, -1], verbose = True)
         Computing completed volume of stratum [3, 1, 1, -1]...
@@ -122,7 +122,7 @@ def completed_volume(stratum, with_pi=True, verbose=False, one_vertex=False):
         Completed volume of [3, 1, 1, -1] is: 7/60*pi^6
         7/60*pi^6
         
-    Here we compute one-vertex graphs contribution to the completed volume of Q(3,1,1,-1)::
+    Here we compute one-vertex graphs contribution to the completed volume of :math:`\mathcal{Q}(3,1,1,-1)`::
     
         sage: completed_volume([3, 1, 1, -1], one_vertex=True)
         1346/14175*pi^6
@@ -199,7 +199,7 @@ def CKazarian(g,k):
 
 def principal_volume(g_or_stratum,n=-1):
     '''
-    Return the Masur-Veech volume of the principal stratum. Input can be either a single argument that is a list of orders of zeroes or two arguments g,n, where g is the genus and n is the number of simple poles. 
+    Return the Masur-Veech volume of the principal stratum. Input can be either a single argument that is a list of orders of zeroes or two arguments g and n, where g is the genus and n is the number of simple poles. 
     '''
     if g_or_stratum in ZZ:
         assert n != -1, "Input Error: the input must be either g,n or stratum"

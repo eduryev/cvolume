@@ -15,6 +15,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -50,7 +51,7 @@
 <dl class="function">
 <dt id="cvolume.localpoly.Nlocal">
 <code class="descclassname">cvolume.localpoly.</code><code class="descname">Nlocal</code><span class="sig-paren">(</span><em>g</em>, <em>n</em>, <em>stratum</em>, <em>labeled=False</em>, <em>mode='derivative'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/localpoly.html#Nlocal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.localpoly.Nlocal" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a local polynomial N_{g,n}^stratum(b1, …, bn).</p>
+<dd><p>Return a local polynomial <span class="math notranslate nohighlight">\(N_{g,n}^{\kappa}(b_1, ..., b_n)\)</span>, where <span class="math notranslate nohighlight">\(\kappa\)</span> is stratum.</p>
 <p>INPUT:</p>
 <ul class="simple">
 <li><code class="docutils literal notranslate"><span class="pre">g</span></code>       – int, genus</li>
@@ -61,10 +62,10 @@
 </ul>
 <p>OUTPUT:</p>
 <ul class="simple">
-<li>a symmetric Sage Multivariate Polynomail in variables b1, b2, … .</li>
+<li>a symmetric Sage Multivariate Polynomial in variables b1, b2, … .</li>
 </ul>
 <p>EXAMPLES:</p>
-<p>Here we compute local polynomial of genus 2, 2 bondary components and stratum [5, 1, 1, 1]:</p>
+<p>Here we compute local polynomial of genus 2, two bondary components and stratum <span class="math notranslate nohighlight">\(\mathcal{Q}(5, 1, 1, 1)\)</span>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">cvolume</span> <span class="k">import</span> <span class="n">Nlocal</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">S</span> <span class="o">=</span> <span class="n">PolynomialRing</span><span class="p">(</span><span class="n">QQ</span><span class="p">,[</span><span class="s1">&#39;b</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">)])</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">b1</span><span class="p">,</span><span class="n">b2</span><span class="p">,</span><span class="n">b3</span><span class="p">,</span><span class="n">b4</span><span class="p">,</span><span class="n">b5</span> <span class="o">=</span> <span class="n">S</span><span class="o">.</span><span class="n">gens</span><span class="p">()[:</span><span class="mi">5</span><span class="p">]</span>

@@ -15,6 +15,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -49,14 +50,14 @@
 
 <div class="viewcode-block" id="replmon"><a class="viewcode-back" href="../../cvolumemodule.html#cvolume.cvolume.replmon">[docs]</a><span class="k">def</span> <span class="nf">replmon</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Return the result of application of Z-operator to the monomial b^n.</span>
+<span class="sd">    Return the result of application of :math:`\mathcal{Z}`-operator to the monomial :math:`b_i^n`.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">if</span> <span class="n">n</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span> <span class="k">return</span> <span class="mi">1</span>
     <span class="k">else</span><span class="p">:</span> <span class="k">return</span> <span class="n">factorial</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">*</span><span class="n">Rational</span><span class="p">(</span><span class="n">zeta</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">pi</span><span class="o">**</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span></div>
     
 <div class="viewcode-block" id="operator"><a class="viewcode-back" href="../../cvolumemodule.html#cvolume.cvolume.operator">[docs]</a><span class="k">def</span> <span class="nf">operator</span><span class="p">(</span><span class="n">Poly</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Return the result of application of Z-operator to the polynomial.</span>
+<span class="sd">    Return the result of application of :math:`\mathcal{Z}`-operator to the polynomial.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">Poly</span><span class="o">.</span><span class="n">monomial_coefficient</span><span class="p">(</span><span class="n">monom</span><span class="p">)</span><span class="o">*</span><span class="n">prod</span><span class="p">(</span><span class="n">replmon</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">monom</span><span class="o">.</span><span class="n">exponents</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">monom</span> <span class="ow">in</span> <span class="n">Poly</span><span class="o">.</span><span class="n">monomials</span><span class="p">())</span>     </div>
 
@@ -143,13 +144,13 @@
 <span class="sd">    </span>
 <span class="sd">    EXAMPLES:</span>
 
-<span class="sd">    Here we compute completed volume of an empty stratum Q(3,1)::</span>
+<span class="sd">    Here we compute completed volume of an empty stratum :math:`\mathcal{Q}(3,1)`::</span>
 <span class="sd">        </span>
 <span class="sd">        sage: from cvolume import completed_volume </span>
 <span class="sd">        sage: completed_volume([3, 1])</span>
 <span class="sd">        23/90*pi^4</span>
 <span class="sd">        </span>
-<span class="sd">    Here we demonstrate the verbose mode by computing completed volume of stratum Q(1,-1)::</span>
+<span class="sd">    Here we demonstrate the verbose mode by computing completed volume of stratum :math:`\mathcal{Q}(1,-1)`::</span>
 <span class="sd">        </span>
 <span class="sd">        sage: completed_volume([3, 1, 1, -1], verbose = True)</span>
 <span class="sd">        Computing completed volume of stratum [3, 1, 1, -1]...</span>
@@ -163,7 +164,7 @@
 <span class="sd">        Completed volume of [3, 1, 1, -1] is: 7/60*pi^6</span>
 <span class="sd">        7/60*pi^6</span>
 <span class="sd">        </span>
-<span class="sd">    Here we compute one-vertex graphs contribution to the completed volume of Q(3,1,1,-1)::</span>
+<span class="sd">    Here we compute one-vertex graphs contribution to the completed volume of :math:`\mathcal{Q}(3,1,1,-1)`::</span>
 <span class="sd">    </span>
 <span class="sd">        sage: completed_volume([3, 1, 1, -1], one_vertex=True)</span>
 <span class="sd">        1346/14175*pi^6</span>
@@ -240,7 +241,7 @@
 
 <div class="viewcode-block" id="principal_volume"><a class="viewcode-back" href="../../cvolumemodule.html#cvolume.cvolume.principal_volume">[docs]</a><span class="k">def</span> <span class="nf">principal_volume</span><span class="p">(</span><span class="n">g_or_stratum</span><span class="p">,</span><span class="n">n</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Return the Masur-Veech volume of the principal stratum. Input can be either a single argument that is a list of orders of zeroes or two arguments g,n, where g is the genus and n is the number of simple poles. </span>
+<span class="sd">    Return the Masur-Veech volume of the principal stratum. Input can be either a single argument that is a list of orders of zeroes or two arguments g and n, where g is the genus and n is the number of simple poles. </span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">if</span> <span class="n">g_or_stratum</span> <span class="ow">in</span> <span class="n">ZZ</span><span class="p">:</span>
         <span class="k">assert</span> <span class="n">n</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Input Error: the input must be either g,n or stratum&quot;</span>

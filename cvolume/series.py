@@ -6,7 +6,7 @@ from admcycles import psiclass
 
 def monom(par):
     '''
-    Given a partition par = [0^i_0, 1^i_1, ..., n^i_n] return a monomial (in Multivariate Polynomial Ring over Q) t0^i_0...tn^i_n/i_0!...i_n!
+    Given a partition ``par`` = :math:`\\left[0^{i_0},1^{i_1},\\ldots,n^{i_n}\\right]` return a monomial (in Multivariate Polynomial Ring over Q) :math:`{t_0}^{i_0}\\cdot\\ldots\\cdot{t_n}^{i_n} \\big/ {i_0}!\\cdot\\ldots\\cdot{i_n}!`.
     
     EXAMPLE:
     

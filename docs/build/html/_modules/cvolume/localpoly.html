@@ -15,6 +15,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -73,7 +74,7 @@
 
 <div class="viewcode-block" id="Nlocal"><a class="viewcode-back" href="../../localpolymodule.html#cvolume.localpoly.Nlocal">[docs]</a><span class="k">def</span> <span class="nf">Nlocal</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">stratum</span><span class="p">,</span><span class="n">labeled</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;derivative&#39;</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Return a local polynomial N_{g,n}^stratum(b1, ..., bn).</span>
+<span class="sd">    Return a local polynomial :math:`N_{g,n}^{\kappa}(b_1, ..., b_n)`, where :math:`\kappa` is stratum.</span>
 <span class="sd">    </span>
 <span class="sd">    INPUT:</span>
 <span class="sd">    </span>
@@ -85,11 +86,11 @@
 <span class="sd">    </span>
 <span class="sd">    OUTPUT:</span>
 <span class="sd">    </span>
-<span class="sd">    - a symmetric Sage Multivariate Polynomail in variables b1, b2, ... .</span>
+<span class="sd">    - a symmetric Sage Multivariate Polynomial in variables b1, b2, ... .</span>
 <span class="sd">    </span>
 <span class="sd">    EXAMPLES:</span>
 <span class="sd">    </span>
-<span class="sd">    Here we compute local polynomial of genus 2, 2 bondary components and stratum [5, 1, 1, 1]::</span>
+<span class="sd">    Here we compute local polynomial of genus 2, two bondary components and stratum :math:`\mathcal{Q}(5, 1, 1, 1)`::</span>
 <span class="sd">    </span>
 <span class="sd">        sage: from cvolume import Nlocal</span>
 <span class="sd">        sage: S = PolynomialRing(QQ,[&#39;b%d&#39; % i for i in range(1,10)])</span>
