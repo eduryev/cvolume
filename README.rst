@@ -10,8 +10,10 @@ below).
 _`admcycles <https://gitlab.com/jo314schmitt/admcycles>`
 to compute intersection numbers on moduli spae of complex curves.
 
-Example::
-   sage: print('Hello')
-   Hello
+# EXAMPLES
+
+Example:
+   ```sage: print('Hello')
+   Hello```
 
 And other stuff.
