@@ -119,6 +119,9 @@ which generated all of labeled stable graphs for stratum [3,1,1,-1]::
      Labeled Stable Graph with edges = (), loops = (1,), kappa = ((3, 1, 1, -1),),
      Labeled Stable Graph with edges = (), loops = (2,), kappa = ((3, 1, 1, -1),)}
 
+You can also compute a generalized local polynomial for any stratum::
 
+    sage: Nlocal(g=1,n=5,stratum=[5,3,1,1])
+    2045/64*b1^4 + 1575/16*b1^2*b2^2 + 2045/64*b2^4 + 1575/16*b1^2*b3^2 + 1575/16*b2^2*b3^2 + 2045/64*b3^4 + 1575/16*b1^2*b4^2 + 1575/16*b2^2*b4^2 + 1575/16*b3^2*b4^2 + 2045/64*b4^4 + 1575/16*b1^2*b5^2 + 1575/16*b2^2*b5^2 + 1575/16*b3^2*b5^2 + 1575/16*b4^2*b5^2 + 2045/64*b5^4
 
 
