@@ -1,21 +1,17 @@
 cvolume
 =======
 
-Computes completed volumes of strata of quadratic differentials with odd zeros.
+``cvolume`` is a `SageMath <https://www.sagemath.org>`_ module to compute completed
+and Masur-Veech volumes of strata of quadratic differentials with odd zeros.
+You can install it on top of a SageMath installation on your computer (see the instructions
+below). 
 
-Documentation
--------------
+``cvolume`` is based on `SageMath <https://www.sagemath.org>`_ module 
+_`admcycles <https://gitlab.com/jo314schmitt/admcycles>`
+to compute intersection numbers on moduli spae of complex curves.
 
-To compile the cvolume documentation
+Example::
+   sage: print('Hello')
+   Hello
 
-1. Go into the "sage shell" so that the command line looks like
-
-   (sage-sh) $
-
-2. Move to the "docs" folder
-
-   (sage-sh) $ cd docs
-
-3. Run the Makefile
-
-   (sage-sh) $ make html
+And other stuff.
