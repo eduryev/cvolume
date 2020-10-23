@@ -1,0 +1,328 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Module stable_graphs &#8212; cvolume 0.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Module utils" href="utilsmodule.html" />
+    <link rel="prev" title="Module series" href="seriesmodule.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="utilsmodule.html" title="Module utils"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="seriesmodule.html" title="Module series"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">cvolume 0.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-cvolume.stable_graphs">
+<span id="module-stable-graphs"></span><span id="stable-graphsmodule"></span><h1>Module <cite>stable_graphs</cite><a class="headerlink" href="#module-cvolume.stable_graphs" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="cvolume.stable_graphs.LabeledStableGraph">
+<em class="property">class </em><code class="descclassname">cvolume.stable_graphs.</code><code class="descname">LabeledStableGraph</code><span class="sig-paren">(</span><em>edges</em>, <em>loops</em>, <em>kappa</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/stable_graphs.html#LabeledStableGraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.stable_graphs.LabeledStableGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="cvolume.stable_graphs.LabeledStableGraph.Aut">
+<code class="descname">Aut</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/stable_graphs.html#LabeledStableGraph.Aut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.stable_graphs.LabeledStableGraph.Aut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the order of the group of automorphisms of this Labeled Stable Graph.</p>
+<p>EXAMPLES:</p>
+<p>Here we compute the order of automorphism group of a single vertex graph with two loops:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">cvolume</span> <span class="k">import</span> <span class="n">LabeledStableGraph</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">edges</span><span class="p">,</span> <span class="n">loops</span><span class="p">,</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="p">[[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">stg</span> <span class="o">=</span> <span class="n">LabeledStableGraph</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span><span class="n">loops</span><span class="p">,</span><span class="n">kappa</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">stg</span><span class="o">.</span><span class="n">Aut</span><span class="p">()</span>
+<span class="mi">8</span>
+</pre></div>
+</div>
+<p>Here we compute the order of automorphism group of a two vertex graph with no loops, but a symmetry due to isomorphic vertices:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">edges</span><span class="p">,</span> <span class="n">loops</span><span class="p">,</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[[</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">stg</span> <span class="o">=</span> <span class="n">LabeledStableGraph</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span><span class="n">loops</span><span class="p">,</span><span class="n">kappa</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">stg</span><span class="o">.</span><span class="n">Aut</span><span class="p">()</span>
+<span class="mi">2</span>
+</pre></div>
+</div>
+<p>Here we compute the order of automorphism group of a two vertex graph with no loops, but five edges between non-isomorphic vertices:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">edges</span><span class="p">,</span> <span class="n">loops</span><span class="p">,</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">],[</span><span class="mi">7</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">stg</span> <span class="o">=</span> <span class="n">LabeledStableGraph</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span><span class="n">loops</span><span class="p">,</span><span class="n">kappa</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">stg</span><span class="o">.</span><span class="n">Aut</span><span class="p">()</span>
+<span class="mi">120</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cvolume.stable_graphs.LabeledStableGraph.edge_degenerations">
+<code class="descname">edge_degenerations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/stable_graphs.html#LabeledStableGraph.edge_degenerations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.stable_graphs.LabeledStableGraph.edge_degenerations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the set of all Labeled Stable Graphs, obtained by <em>special</em> degenerations adding an edge to this Labeled Stable Graph. A <em>special</em> edge degeneration only adds an edge to the vertex with largest profile, when it’s unique. Profile is the sum of weight and length of the associated zeros partition.</p>
+<p>EXAMPLE:</p>
+<p>Here is an example of all degenerations obtained by adding an adge:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">cvolume</span> <span class="k">import</span> <span class="n">LabeledStableGraph</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">edges</span><span class="p">,</span> <span class="n">loops</span><span class="p">,</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">stg</span> <span class="o">=</span> <span class="n">LabeledStableGraph</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span><span class="n">loops</span><span class="p">,</span><span class="n">kappa</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">stg</span><span class="o">.</span><span class="n">edge_degenerations</span><span class="p">()</span>
+<span class="p">{</span><span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+ <span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+ <span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">))}</span>
+</pre></div>
+</div>
+<p>Here is another example of special edge-degenerations:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">edges</span><span class="p">,</span> <span class="n">loops</span><span class="p">,</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">stg</span> <span class="o">=</span> <span class="n">LabeledStableGraph</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span><span class="n">loops</span><span class="p">,</span><span class="n">kappa</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">stg</span><span class="o">.</span><span class="n">edge_degenerations</span><span class="p">()</span>
+<span class="p">{</span><span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">))}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cvolume.stable_graphs.LabeledStableGraph.loop_degenerations">
+<code class="descname">loop_degenerations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/stable_graphs.html#LabeledStableGraph.loop_degenerations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.stable_graphs.LabeledStableGraph.loop_degenerations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the set of all Labeled Stable Graphs, obtained by the degenerations adding a loop to this Labeled Stable Graph.</p>
+<p>EXAMPLE:</p>
+<p>Here we compute all degenerations obtained by adding a loop to the stable graph:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">cvolume</span> <span class="k">import</span> <span class="n">LabeledStableGraph</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">edges</span><span class="p">,</span> <span class="n">loops</span><span class="p">,</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">stg</span> <span class="o">=</span> <span class="n">LabeledStableGraph</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span><span class="n">loops</span><span class="p">,</span><span class="n">kappa</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">stg</span><span class="o">.</span><span class="n">loop_degenerations</span><span class="p">()</span>
+<span class="p">{</span><span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+ <span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">))}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cvolume.stable_graphs.LabeledStableGraph.one_step_degenerations">
+<code class="descname">one_step_degenerations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/stable_graphs.html#LabeledStableGraph.one_step_degenerations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.stable_graphs.LabeledStableGraph.one_step_degenerations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the set of all Labeled Stable Graphs, obtained by <em>special</em> one step degenerations of this Labeled Stable Graph. A <em>special</em> degeneration is adding a loop to a single vertex graph, or adding an edge to any graph.</p>
+<p>EXAMPLES:</p>
+<p>Here we compute all special one step degenerations of a graph with a single vertex labeled by a stratum <span class="math notranslate nohighlight">\(\mathcal{Q}(3,3,1,1)\)</span> with a single loop attached to it:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">cvolume</span> <span class="k">import</span> <span class="n">LabeledStableGraph</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">edges</span><span class="p">,</span><span class="n">loops</span><span class="p">,</span><span class="n">kappa</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">stg</span> <span class="o">=</span> <span class="n">LabeledStableGraph</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span><span class="n">loops</span><span class="p">,</span><span class="n">kappa</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">stg</span><span class="o">.</span><span class="n">one_step_degenerations</span><span class="p">()</span>
+<span class="p">{</span><span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+ <span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+ <span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+ <span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">(),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),)}</span>
+</pre></div>
+</div>
+<p>Here we start with a single vertex of genus 0 and therefore obtain no degenerations:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">edges</span><span class="p">,</span><span class="n">loops</span><span class="p">,</span><span class="n">kappa</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="p">[[</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">stg</span> <span class="o">=</span> <span class="n">LabeledStableGraph</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span><span class="n">loops</span><span class="p">,</span><span class="n">kappa</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">stg</span><span class="o">.</span><span class="n">one_step_degenerations</span><span class="p">()</span>
+<span class="nb">set</span><span class="p">()</span>         
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cvolume.stable_graphs.LabeledStableGraph.vertex_deg">
+<code class="descname">vertex_deg</code><span class="sig-paren">(</span><em>v</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/stable_graphs.html#LabeledStableGraph.vertex_deg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.stable_graphs.LabeledStableGraph.vertex_deg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the total number of non-loop edges (counted with multiplicities) at the vertex v of this Labeled Stable Graph.</p>
+<p>EXAMPLE:</p>
+<p>Here is an example of vertices degrees:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">cvolume.stable_graphs</span> <span class="k">import</span> <span class="n">LabeledStableGraph</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">stg</span> <span class="o">=</span> <span class="n">LabeledStableGraph</span><span class="p">([(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">)],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">stg</span><span class="o">.</span><span class="n">vertex_deg</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">stg</span><span class="o">.</span><span class="n">vertex_deg</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">stg</span><span class="o">.</span><span class="n">vertex_deg</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cvolume.stable_graphs.canonical">
+<code class="descclassname">cvolume.stable_graphs.</code><code class="descname">canonical</code><span class="sig-paren">(</span><em>edges</em>, <em>loops</em>, <em>kappa</em>, <em>graph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/stable_graphs.html#canonical"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.stable_graphs.canonical" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a 4-tuple (edges,loops,kappa,graph) of immutable objects, corresponding to the canonical representative of the class of isomorphism of the given labeled stable graph, where only vertices with the same number of loops and zero orders are allowed to permute and only edges of the same weight are allowed to permute.</p>
+<p>EXAMPLES:</p>
+<p>Here is an example of canonical representative corresponding to a graph. Note that vertex 1 is switched with vertex 2:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">cvolume.stable_graphs</span> <span class="k">import</span> <span class="n">canonical</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">edges</span><span class="p">,</span> <span class="n">loops</span><span class="p">,</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">canonical</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span><span class="n">loops</span><span class="p">,</span><span class="n">kappa</span><span class="p">,</span><span class="n">graph</span><span class="p">)</span>
+<span class="p">(((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+ <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+ <span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">)),</span>
+ <span class="n">Graph</span> <span class="n">on</span> <span class="mi">3</span> <span class="n">vertices</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Another example of canonical representative. Note that orders of zeros in stratum are sorted in reverse:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">edges</span><span class="p">,</span> <span class="n">loops</span><span class="p">,</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">canonical</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span><span class="n">loops</span><span class="p">,</span><span class="n">kappa</span><span class="p">,</span><span class="n">graph</span><span class="p">)</span>
+<span class="p">(((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)),</span> <span class="n">Graph</span> <span class="n">on</span> <span class="mi">2</span> <span class="n">vertices</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="cvolume.stable_graphs.k_to_p">
+<code class="descclassname">cvolume.stable_graphs.</code><code class="descname">k_to_p</code><span class="sig-paren">(</span><em>edges</em>, <em>loops</em>, <em>kappa</em>, <em>graph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/stable_graphs.html#k_to_p"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.stable_graphs.k_to_p" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a canonical partition of vertices of the graph into lists grouped by the same number of loops and orders of zeroes. The order is lexicographical with respect to kappa -&gt; loops -&gt; edges.</p>
+<p>EXAMPLE:</p>
+<p>Here is an example of vertices grouped and sorted according to <cite>k_to_p</cite>. The graph is a triangle with no loops, by the third vertex is labeled differently from the other two:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">cvolume.stable_graphs</span> <span class="k">import</span> <span class="n">k_to_p</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">edges</span><span class="p">,</span> <span class="n">loops</span><span class="p">,</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">k_to_p</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span><span class="n">loops</span><span class="p">,</span><span class="n">kappa</span><span class="p">,</span><span class="n">graph</span><span class="p">)</span>
+<span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>Here is a more complicated example of <cite>k_to_p</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">cvolume.stable_graphs</span> <span class="k">import</span> <span class="n">k_to_p</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">edges</span><span class="p">,</span> <span class="n">loops</span><span class="p">,</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">)],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)];</span> 
+<span class="n">sage</span><span class="p">:</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">k_to_p</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span><span class="n">loops</span><span class="p">,</span><span class="n">kappa</span><span class="p">,</span><span class="n">graph</span><span class="p">)</span>
+<span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="p">[</span><span class="mi">6</span><span class="p">]]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="cvolume.stable_graphs.stable_lab_graphs">
+<code class="descclassname">cvolume.stable_graphs.</code><code class="descname">stable_lab_graphs</code><span class="sig-paren">(</span><em>stratum</em>, <em>by_codim=False</em>, <em>one_vertex=False</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/stable_graphs.html#stable_lab_graphs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.stable_graphs.stable_lab_graphs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the set of all Labeled Stable Graphs given by the stratum.</p>
+<p>INPUT:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">stratum</span></code>    – list of orders of zeroes (including -1 for simple poles) of the stratum</li>
+<li><code class="docutils literal notranslate"><span class="pre">by_codim</span></code>   – boolean (default <cite>False</cite>), when True returns the list of sets of stable graphs organized by codimension</li>
+<li><code class="docutils literal notranslate"><span class="pre">one_vertex</span></code> – boolean (default <cite>False</cite>), when True only returns the set of one-vertex stable graphs</li>
+<li><code class="docutils literal notranslate"><span class="pre">verbose</span></code>    – boolean (default <cite>False</cite>), when True prints progress, total time and the number of stable graphs</li>
+</ul>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">graphs</span></code>     – set of Labeled Stable Graphs (if <code class="docutils literal notranslate"><span class="pre">by_codim</span></code> is <cite>False</cite>), or list of sets of Labeled Stable Graphs organized by codimension (if <code class="docutils literal notranslate"><span class="pre">by_codim</span></code> is <cite>True</cite>). In the first case we exclude original graph with no edges (codimension 0), in the second case we keep it, so that the index of the subset of stable graphs in the output list is their codimension.</li>
+</ul>
+<p>EXAMPLES:</p>
+<p>Here we generate all labeled stable graphs in stratum <span class="math notranslate nohighlight">\(\mathcal{Q}(3,-1,-1,-1)\)</span>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">cvolume</span> <span class="k">import</span> <span class="n">stable_lab_graphs</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">stable_lab_graphs</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="p">{</span><span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)),</span>
+ <span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)),</span>
+ <span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">(),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),)}</span>
+</pre></div>
+</div>
+<p>Here we generate the same graphs only organized by codimension. Note that we keep the original non-degenerate graph of the stratum as the subset at index 0:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">stable_lab_graphs</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">by_codim</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="p">[{</span><span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">(),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),)},</span>
+ <span class="p">{</span><span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)),</span>
+  <span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">(),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),)},</span>
+ <span class="p">{</span><span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))}]</span>
+</pre></div>
+</div>
+<p>Here we demonstrate verbose mode by generating stable graphs for stratum <span class="math notranslate nohighlight">\(\mathcal{Q}(3,1,1,-1)\)</span>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">graphs</span> <span class="o">=</span> <span class="n">stable_lab_graphs</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">Generated</span> <span class="mi">2</span> <span class="n">codimension</span> <span class="mi">1</span> <span class="n">graphs</span> <span class="ow">in</span> <span class="o">...</span> <span class="n">s</span>
+<span class="n">Generated</span> <span class="mi">4</span> <span class="n">codimension</span> <span class="mi">2</span> <span class="n">graphs</span> <span class="ow">in</span> <span class="o">...</span> <span class="n">s</span>
+<span class="n">Generated</span> <span class="mi">3</span> <span class="n">codimension</span> <span class="mi">3</span> <span class="n">graphs</span> <span class="ow">in</span> <span class="o">...</span> <span class="n">s</span>
+<span class="n">The</span> <span class="n">total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">stable</span> <span class="n">graphs</span> <span class="k">for</span> <span class="n">stratum</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span><span class="p">:</span> <span class="mf">9.</span>
+<span class="n">Generated</span> <span class="nb">all</span> <span class="n">stable</span> <span class="n">graphs</span> <span class="k">for</span> <span class="n">stratum</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span><span class="p">:</span> <span class="o">...</span> <span class="n">s</span>
+</pre></div>
+</div>
+<p>Here we compute the number of labeled stable graphs for stratum <span class="math notranslate nohighlight">\(\mathcal{Q}(3,1,1,1,1,1)\)</span>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">stable_lab_graphs</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]))</span>
+<span class="mi">31</span>
+</pre></div>
+</div>
+<p>Here we generate only one-vertex labeled stable graphs for stratum <span class="math notranslate nohighlight">\(\mathcal{Q}(3,1,1,1,1,1)\)</span>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">stable_lab_graphs</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">one_vertex</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="p">{</span><span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">(),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),),</span>
+ <span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">(),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),),</span>
+ <span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">(),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),)}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="seriesmodule.html"
+                        title="previous chapter">Module <cite>series</cite></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="utilsmodule.html"
+                        title="next chapter">Module <cite>utils</cite></a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/stable_graphsmodule.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="utilsmodule.html" title="Module utils"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="seriesmodule.html" title="Module series"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">cvolume 0.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Vincent Delecroix, Eduard Duryev.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>
