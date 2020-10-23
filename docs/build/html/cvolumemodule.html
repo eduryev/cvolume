@@ -1,0 +1,234 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Module cvolume &#8212; cvolume 0.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Module localpoly" href="localpolymodule.html" />
+    <link rel="prev" title="cvolume Tutorial" href="tutorial.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="localpolymodule.html" title="Module localpoly"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorial.html" title="cvolume Tutorial"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">cvolume 0.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-cvolume.cvolume">
+<span id="module-cvolume"></span><span id="cvolumemodule"></span><h1>Module <cite>cvolume</cite><a class="headerlink" href="#module-cvolume.cvolume" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="cvolume.cvolume.CKazarian">
+<code class="descclassname">cvolume.cvolume.</code><code class="descname">CKazarian</code><span class="sig-paren">(</span><em>g</em>, <em>k</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/cvolume.html#CKazarian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.cvolume.CKazarian" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return Kazarian constant for recursion on volumes of principal strata.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cvolume.cvolume.asymptotic_volume">
+<code class="descclassname">cvolume.cvolume.</code><code class="descname">asymptotic_volume</code><span class="sig-paren">(</span><em>stratum</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/cvolume.html#asymptotic_volume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.cvolume.asymptotic_volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return conjectural asymptotics for the volume of the stratum from [ADGZZ]. Note that formula is only conjectured in the case when the number of poles is logarithmically small compared to the genus.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cvolume.cvolume.completed_volume">
+<code class="descclassname">cvolume.cvolume.</code><code class="descname">completed_volume</code><span class="sig-paren">(</span><em>stratum</em>, <em>with_pi=True</em>, <em>verbose=False</em>, <em>one_vertex=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/cvolume.html#completed_volume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.cvolume.completed_volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the completed volume of the stratum.</p>
+<p>INPUT:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">stratum</span></code>    – list, a list of orders of zeros of the stratum</li>
+<li><code class="docutils literal notranslate"><span class="pre">with_pi</span></code>    – boolean (default <cite>True</cite>), when False returns completed volume as a rational number (volume divided by 
+an appropriate degree of pi</li>
+<li><code class="docutils literal notranslate"><span class="pre">verbose</span></code>    – boolean (default <cite>False</cite>), when True prints progress of the computation: time to generate and the number       of stable graphs in each codimension and in total; progress of computing contribution of stable graphs</li>
+<li><code class="docutils literal notranslate"><span class="pre">one_vertex</span></code> – boolean (default <cite>False</cite>), when True only computed contribution of one-vertex labeled stable graphs.</li>
+</ul>
+<p>EXAMPLES:</p>
+<p>Here we compute completed volume of an empty stratum <span class="math notranslate nohighlight">\(\mathcal{Q}(3,1)\)</span>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">cvolume</span> <span class="k">import</span> <span class="n">completed_volume</span> 
+<span class="n">sage</span><span class="p">:</span> <span class="n">completed_volume</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="mi">23</span><span class="o">/</span><span class="mi">90</span><span class="o">*</span><span class="n">pi</span><span class="o">^</span><span class="mi">4</span>
+</pre></div>
+</div>
+<p>Here we demonstrate the verbose mode by computing completed volume of stratum <span class="math notranslate nohighlight">\(\mathcal{Q}(1,-1)\)</span>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">completed_volume</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">Computing</span> <span class="n">completed</span> <span class="n">volume</span> <span class="n">of</span> <span class="n">stratum</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">...</span>
+<span class="n">Generated</span> <span class="mi">2</span> <span class="n">codimension</span> <span class="mi">1</span> <span class="n">graphs</span> <span class="ow">in</span> <span class="o">...</span> <span class="n">s</span>
+<span class="n">Generated</span> <span class="mi">4</span> <span class="n">codimension</span> <span class="mi">2</span> <span class="n">graphs</span> <span class="ow">in</span> <span class="o">...</span> <span class="n">s</span>
+<span class="n">Generated</span> <span class="mi">3</span> <span class="n">codimension</span> <span class="mi">3</span> <span class="n">graphs</span> <span class="ow">in</span> <span class="o">...</span> <span class="n">s</span>
+<span class="n">The</span> <span class="n">total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">stable</span> <span class="n">graphs</span> <span class="k">for</span> <span class="n">stratum</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span><span class="p">:</span> <span class="mf">9.</span>
+<span class="n">Generated</span> <span class="nb">all</span> <span class="n">stable</span> <span class="n">graphs</span> <span class="k">for</span> <span class="n">stratum</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span><span class="p">:</span> <span class="o">...</span> <span class="n">s</span>
+<span class="n">Computed</span> <span class="n">contribution</span> <span class="n">of</span> <span class="mi">9</span><span class="o">/</span><span class="mi">9</span> <span class="n">graphs</span><span class="o">.</span> <span class="n">Time</span> <span class="n">elapsed</span><span class="p">:</span> <span class="o">...</span> <span class="n">s</span>
+<span class="n">Completed</span> <span class="n">volume</span> <span class="n">of</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="n">computed</span> <span class="ow">in</span><span class="p">:</span> <span class="o">...</span> <span class="n">s</span>
+<span class="n">Completed</span> <span class="n">volume</span> <span class="n">of</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span><span class="p">:</span> <span class="mi">7</span><span class="o">/</span><span class="mi">60</span><span class="o">*</span><span class="n">pi</span><span class="o">^</span><span class="mi">6</span>
+<span class="mi">7</span><span class="o">/</span><span class="mi">60</span><span class="o">*</span><span class="n">pi</span><span class="o">^</span><span class="mi">6</span>
+</pre></div>
+</div>
+<p>Here we compute one-vertex graphs contribution to the completed volume of <span class="math notranslate nohighlight">\(\mathcal{Q}(3,1,1,-1)\)</span>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">completed_volume</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">one_vertex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="mi">1346</span><span class="o">/</span><span class="mi">14175</span><span class="o">*</span><span class="n">pi</span><span class="o">^</span><span class="mi">6</span>
+</pre></div>
+</div>
+<p>Here are some examples for principal strata, where completed volume coincides with Masur-Veech volume:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="k">assert</span> <span class="n">completed_volume</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="o">*</span><span class="n">pi</span><span class="o">^</span><span class="mi">4</span> 
+<span class="n">sage</span><span class="p">:</span> <span class="k">assert</span> <span class="n">completed_volume</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="n">pi</span><span class="o">^</span><span class="mi">4</span>
+<span class="n">sage</span><span class="p">:</span> <span class="k">assert</span> <span class="n">completed_volume</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="n">pi</span><span class="o">^</span><span class="mi">2</span>
+<span class="n">sage</span><span class="p">:</span> <span class="k">assert</span> <span class="n">completed_volume</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">^</span><span class="mi">2</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="cvolume.cvolume.cvolume_by_cylinders">
+<code class="descclassname">cvolume.cvolume.</code><code class="descname">cvolume_by_cylinders</code><span class="sig-paren">(</span><em>stratum</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/cvolume.html#cvolume_by_cylinders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.cvolume.cvolume_by_cylinders" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the contributions of k-cylinder surfaces to the completed volume of the stratum for each k.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cvolume.cvolume.cvolume_by_graphs">
+<code class="descclassname">cvolume.cvolume.</code><code class="descname">cvolume_by_graphs</code><span class="sig-paren">(</span><em>stratum</em>, <em>graphs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/cvolume.html#cvolume_by_graphs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.cvolume.cvolume_by_graphs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the contribution of given stable graphs to the completed volume of the stratum.</p>
+<p>INPUT:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">stratum</span></code>    – list, a list of orders of zeros of the stratum</li>
+<li><code class="docutils literal notranslate"><span class="pre">graphs</span></code>     – iterable, e.g. a set, of Labeled Stable Graphs</li>
+</ul>
+</dd></dl>
+
+<dl class="function">
+<dt id="cvolume.cvolume.graph_poly">
+<code class="descclassname">cvolume.cvolume.</code><code class="descname">graph_poly</code><span class="sig-paren">(</span><em>stg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/cvolume.html#graph_poly"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.cvolume.graph_poly" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the ‘Kontsevich polynomial’ associated to the Labeled Stable Graph.</p>
+<p>EXAMPLES:</p>
+<p>Here we compute the polynomial associated with a labeled stable graph with one loop:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">cvolume</span> <span class="k">import</span> <span class="n">LabeledStableGraph</span>
+<span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">cvolume.cvolume</span> <span class="k">import</span> <span class="n">graph_poly</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">stg</span> <span class="o">=</span> <span class="n">LabeledStableGraph</span><span class="p">([],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">graph_poly</span><span class="p">(</span><span class="n">stg</span><span class="p">)</span>
+<span class="mi">19</span><span class="o">/</span><span class="mi">128</span><span class="o">*</span><span class="n">b1</span><span class="o">^</span><span class="mi">5</span>
+</pre></div>
+</div>
+<p>Here is another example for a graph with two vertices:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">stg</span> <span class="o">=</span> <span class="n">LabeledStableGraph</span><span class="p">([(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[[</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">graph_poly</span><span class="p">(</span><span class="n">stg</span><span class="p">)</span>
+<span class="mi">9</span><span class="o">/</span><span class="mi">16</span><span class="o">*</span><span class="n">b1</span><span class="o">*</span><span class="n">b2</span><span class="o">*</span><span class="n">b3</span>
+</pre></div>
+</div>
+<p>Note that the previous example can be expressed through local polynomials associated to vertices:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">cvolume</span> <span class="k">import</span> <span class="n">Nlocal</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">S</span> <span class="o">=</span> <span class="n">PolynomialRing</span><span class="p">(</span><span class="n">QQ</span><span class="p">,[</span><span class="s1">&#39;b</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">b1</span><span class="p">,</span><span class="n">b2</span><span class="p">,</span><span class="n">b3</span> <span class="o">=</span> <span class="n">S</span><span class="o">.</span><span class="n">gens</span><span class="p">()</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">graph_poly</span><span class="p">(</span><span class="n">stg</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="mi">1</span><span class="o">/</span><span class="mi">8</span><span class="o">*</span><span class="n">b1</span><span class="o">*</span><span class="n">b2</span><span class="o">*</span><span class="n">b3</span><span class="o">*</span><span class="n">Nlocal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,[</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">])(</span><span class="n">b1</span><span class="o">=</span><span class="n">b1</span><span class="p">,</span><span class="n">b2</span><span class="o">=</span><span class="n">b1</span><span class="p">,</span><span class="n">b3</span><span class="o">=</span><span class="n">b2</span><span class="p">)</span><span class="o">*</span><span class="n">Nlocal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,[</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">])(</span><span class="n">b1</span><span class="o">=</span><span class="n">b2</span><span class="p">,</span><span class="n">b2</span><span class="o">=</span><span class="n">b3</span><span class="p">,</span><span class="n">b3</span><span class="o">=</span><span class="n">b3</span><span class="p">)</span>
+<span class="kc">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="cvolume.cvolume.operator">
+<code class="descclassname">cvolume.cvolume.</code><code class="descname">operator</code><span class="sig-paren">(</span><em>Poly</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/cvolume.html#operator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.cvolume.operator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the result of application of <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>-operator to the polynomial.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cvolume.cvolume.principal_volume">
+<code class="descclassname">cvolume.cvolume.</code><code class="descname">principal_volume</code><span class="sig-paren">(</span><em>g_or_stratum</em>, <em>n=-1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/cvolume.html#principal_volume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.cvolume.principal_volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the Masur-Veech volume of the principal stratum. Input can be either a single argument that is a list of orders of zeroes or two arguments g and n, where g is the genus and n is the number of simple poles.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cvolume.cvolume.replmon">
+<code class="descclassname">cvolume.cvolume.</code><code class="descname">replmon</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/cvolume.html#replmon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.cvolume.replmon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the result of application of <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>-operator to the monomial <span class="math notranslate nohighlight">\(b_i^n\)</span>.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tutorial.html"
+                        title="previous chapter">cvolume Tutorial</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="localpolymodule.html"
+                        title="next chapter">Module <cite>localpoly</cite></a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/cvolumemodule.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="localpolymodule.html" title="Module localpoly"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tutorial.html" title="cvolume Tutorial"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">cvolume 0.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Vincent Delecroix, Eduard Duryev.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

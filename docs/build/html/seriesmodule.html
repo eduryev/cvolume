@@ -1,0 +1,251 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Module series &#8212; cvolume 0.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Module stable_graphs" href="stable_graphsmodule.html" />
+    <link rel="prev" title="Module localpoly" href="localpolymodule.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="stable_graphsmodule.html" title="Module stable_graphs"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="localpolymodule.html" title="Module localpoly"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">cvolume 0.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-cvolume.series">
+<span id="module-series"></span><span id="seriesmodule"></span><h1>Module <cite>series</cite><a class="headerlink" href="#module-cvolume.series" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="cvolume.series.PartitionFunctions">
+<em class="property">class </em><code class="descclassname">cvolume.series.</code><code class="descname">PartitionFunctions</code><a class="reference internal" href="_modules/cvolume/series.html#PartitionFunctions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.series.PartitionFunctions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="cvolume.series.PartitionFunctions.AC_formulae">
+<code class="descname">AC_formulae</code><em class="property"> = {(2,): &lt;function get_Fs2&gt;, (2, 2): &lt;function get_Fs22&gt;, (2, 2, 2): &lt;function get_Fs222&gt;, (2, 3): &lt;function get_Fs23&gt;, (2, 4): &lt;function get_Fs24&gt;, (3,): &lt;function get_Fs3&gt;, (3, 3): &lt;function get_Fs33&gt;, (4,): &lt;function get_Fs4&gt;, (5,): &lt;function get_Fs5&gt;, (6,): &lt;function get_Fs6&gt;, (7,): &lt;function get_Fs7&gt;}</em><a class="headerlink" href="#cvolume.series.PartitionFunctions.AC_formulae" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cvolume.series.PartitionFunctions.Z_formulae">
+<code class="descname">Z_formulae</code><em class="property"> = {(2,): &lt;function get_Zs2&gt;}</em><a class="headerlink" href="#cvolume.series.PartitionFunctions.Z_formulae" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cvolume.series.PartitionFunctions.partition_function">
+<code class="descname">partition_function</code><span class="sig-paren">(</span><em>w</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/series.html#PartitionFunctions.partition_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.series.PartitionFunctions.partition_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the partition function F truncated at weight w.</p>
+<p>EXAMPLE:</p>
+<p>The partition function truncated at weight 10:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">cvolume</span> <span class="k">import</span> <span class="n">Fs</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Fs</span><span class="o">.</span><span class="n">partition_function</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="mi">1</span><span class="o">/</span><span class="mi">6</span><span class="o">*</span><span class="n">t0</span><span class="o">^</span><span class="mi">3</span><span class="o">*</span><span class="n">t1</span><span class="o">^</span><span class="mi">3</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">8</span><span class="o">*</span><span class="n">t0</span><span class="o">^</span><span class="mi">4</span><span class="o">*</span><span class="n">t1</span><span class="o">*</span><span class="n">t2</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">120</span><span class="o">*</span><span class="n">t0</span><span class="o">^</span><span class="mi">5</span><span class="o">*</span><span class="n">t3</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">6</span><span class="o">*</span><span class="n">t0</span><span class="o">^</span><span class="mi">3</span><span class="o">*</span><span class="n">t1</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">120</span><span class="o">*</span><span class="n">t1</span><span class="o">^</span><span class="mi">5</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">24</span><span class="o">*</span><span class="n">t0</span><span class="o">^</span><span class="mi">4</span><span class="o">*</span><span class="n">t2</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">6</span><span class="o">*</span><span class="n">t0</span><span class="o">*</span><span class="n">t1</span><span class="o">^</span><span class="mi">3</span><span class="o">*</span><span class="n">t2</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">6</span><span class="o">*</span><span class="n">t0</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">t1</span><span class="o">*</span><span class="n">t2</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">8</span><span class="o">*</span><span class="n">t0</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">t1</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">t3</span> <span class="o">+</span> <span class="mi">7</span><span class="o">/</span><span class="mi">144</span><span class="o">*</span><span class="n">t0</span><span class="o">^</span><span class="mi">3</span><span class="o">*</span><span class="n">t2</span><span class="o">*</span><span class="n">t3</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">36</span><span class="o">*</span><span class="n">t0</span><span class="o">^</span><span class="mi">3</span><span class="o">*</span><span class="n">t1</span><span class="o">*</span><span class="n">t4</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">576</span><span class="o">*</span><span class="n">t0</span><span class="o">^</span><span class="mi">4</span><span class="o">*</span><span class="n">t5</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">6</span><span class="o">*</span><span class="n">t0</span><span class="o">^</span><span class="mi">3</span><span class="o">*</span><span class="n">t1</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">96</span><span class="o">*</span><span class="n">t1</span><span class="o">^</span><span class="mi">4</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">8</span><span class="o">*</span><span class="n">t0</span><span class="o">*</span><span class="n">t1</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">t2</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">24</span><span class="o">*</span><span class="n">t0</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">t2</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">16</span><span class="o">*</span><span class="n">t0</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">t1</span><span class="o">*</span><span class="n">t3</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">144</span><span class="o">*</span><span class="n">t0</span><span class="o">^</span><span class="mi">3</span><span class="o">*</span><span class="n">t4</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">6</span><span class="o">*</span><span class="n">t0</span><span class="o">^</span><span class="mi">3</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">72</span><span class="o">*</span><span class="n">t1</span><span class="o">^</span><span class="mi">3</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">12</span><span class="o">*</span><span class="n">t0</span><span class="o">*</span><span class="n">t1</span><span class="o">*</span><span class="n">t2</span> <span class="o">+</span> <span class="mi">7</span><span class="o">/</span><span class="mi">1440</span><span class="o">*</span><span class="n">t2</span><span class="o">^</span><span class="mi">3</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">48</span><span class="o">*</span><span class="n">t0</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">t3</span> <span class="o">+</span> <span class="mi">29</span><span class="o">/</span><span class="mi">1440</span><span class="o">*</span><span class="n">t1</span><span class="o">*</span><span class="n">t2</span><span class="o">*</span><span class="n">t3</span> <span class="o">+</span> <span class="mi">29</span><span class="o">/</span><span class="mi">5760</span><span class="o">*</span><span class="n">t0</span><span class="o">*</span><span class="n">t3</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">192</span><span class="o">*</span><span class="n">t1</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">t4</span> <span class="o">+</span> <span class="mi">11</span><span class="o">/</span><span class="mi">1440</span><span class="o">*</span><span class="n">t0</span><span class="o">*</span><span class="n">t2</span><span class="o">*</span><span class="n">t4</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">288</span><span class="o">*</span><span class="n">t0</span><span class="o">*</span><span class="n">t1</span><span class="o">*</span><span class="n">t5</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2304</span><span class="o">*</span><span class="n">t0</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">t6</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">48</span><span class="o">*</span><span class="n">t1</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">24</span><span class="o">*</span><span class="n">t0</span><span class="o">*</span><span class="n">t2</span> <span class="o">+</span> <span class="mi">29</span><span class="o">/</span><span class="mi">5760</span><span class="o">*</span><span class="n">t2</span><span class="o">*</span><span class="n">t3</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">384</span><span class="o">*</span><span class="n">t1</span><span class="o">*</span><span class="n">t4</span> <span class="o">+</span> <span class="mi">607</span><span class="o">/</span><span class="mi">2903040</span><span class="o">*</span><span class="n">t4</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">1152</span><span class="o">*</span><span class="n">t0</span><span class="o">*</span><span class="n">t5</span> <span class="o">+</span> <span class="mi">503</span><span class="o">/</span><span class="mi">1451520</span><span class="o">*</span><span class="n">t3</span><span class="o">*</span><span class="n">t5</span> <span class="o">+</span> <span class="mi">77</span><span class="o">/</span><span class="mi">414720</span><span class="o">*</span><span class="n">t2</span><span class="o">*</span><span class="n">t6</span> <span class="o">+</span> <span class="mi">5</span><span class="o">/</span><span class="mi">82944</span><span class="o">*</span><span class="n">t1</span><span class="o">*</span><span class="n">t7</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">82944</span><span class="o">*</span><span class="n">t0</span><span class="o">*</span><span class="n">t8</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">24</span><span class="o">*</span><span class="n">t1</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">1152</span><span class="o">*</span><span class="n">t4</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">82944</span><span class="o">*</span><span class="n">t7</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cvolume.series.PartitionFunctions.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/series.html#PartitionFunctions.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.series.PartitionFunctions.reset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cvolume.series.PartitionFunctions.shifts">
+<code class="descname">shifts</code><em class="property"> = {(2,): 3, (2, 2): 6, (2, 2, 2): 9, (2, 3): 7, (2, 4): 8, (3,): 4, (3, 3): 8, (4,): 5, (5,): 6, (6,): 7, (7,): 8}</em><a class="headerlink" href="#cvolume.series.PartitionFunctions.shifts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cvolume.series.PartitionFunctions.times">
+<code class="descname">times</code><em class="property"> = {(): &lt;function &lt;lambda&gt;&gt;, (2,): &lt;function &lt;lambda&gt;&gt;, (2, 2): &lt;function &lt;lambda&gt;&gt;, (2, 2, 2): &lt;function &lt;lambda&gt;&gt;, (2, 3): &lt;function &lt;lambda&gt;&gt;, (2, 4): &lt;function &lt;lambda&gt;&gt;, (3,): &lt;function &lt;lambda&gt;&gt;, (3, 3): &lt;function &lt;lambda&gt;&gt;, (4,): &lt;function &lt;lambda&gt;&gt;, (5,): &lt;function &lt;lambda&gt;&gt;, (6,): &lt;function &lt;lambda&gt;&gt;, (7,): &lt;function &lt;lambda&gt;&gt;}</em><a class="headerlink" href="#cvolume.series.PartitionFunctions.times" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cvolume.series.coeff">
+<code class="descclassname">cvolume.series.</code><code class="descname">coeff</code><span class="sig-paren">(</span><em>par</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/series.html#coeff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.series.coeff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the coefficient of the monomial correspoding to the partition par in the partition function F.</p>
+<p>EXAMPLE:</p>
+<p>Here are some examples of the coefficients of the partition function in low weight:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">cvolume.series</span> <span class="k">import</span> <span class="n">coeff</span>
+<span class="n">sage</span><span class="p">:</span> <span class="p">[</span><span class="n">coeff</span><span class="p">(</span><span class="n">Partition</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])),</span><span class="n">coeff</span><span class="p">(</span><span class="n">Partition</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">])),</span><span class="n">coeff</span><span class="p">(</span><span class="n">Partition</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">])),</span><span class="n">coeff</span><span class="p">(</span><span class="n">Partition</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]))]</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">12</span><span class="p">,</span> <span class="mi">29</span><span class="o">/</span><span class="mi">2880</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="cvolume.series.get_Fs2">
+<code class="descclassname">cvolume.series.</code><code class="descname">get_Fs2</code><span class="sig-paren">(</span><em>F</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/series.html#get_Fs2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.series.get_Fs2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cvolume.series.get_Fs22">
+<code class="descclassname">cvolume.series.</code><code class="descname">get_Fs22</code><span class="sig-paren">(</span><em>F</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/series.html#get_Fs22"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.series.get_Fs22" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cvolume.series.get_Fs222">
+<code class="descclassname">cvolume.series.</code><code class="descname">get_Fs222</code><span class="sig-paren">(</span><em>F</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/series.html#get_Fs222"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.series.get_Fs222" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cvolume.series.get_Fs23">
+<code class="descclassname">cvolume.series.</code><code class="descname">get_Fs23</code><span class="sig-paren">(</span><em>F</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/series.html#get_Fs23"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.series.get_Fs23" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cvolume.series.get_Fs24">
+<code class="descclassname">cvolume.series.</code><code class="descname">get_Fs24</code><span class="sig-paren">(</span><em>F</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/series.html#get_Fs24"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.series.get_Fs24" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cvolume.series.get_Fs3">
+<code class="descclassname">cvolume.series.</code><code class="descname">get_Fs3</code><span class="sig-paren">(</span><em>F</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/series.html#get_Fs3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.series.get_Fs3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cvolume.series.get_Fs33">
+<code class="descclassname">cvolume.series.</code><code class="descname">get_Fs33</code><span class="sig-paren">(</span><em>F</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/series.html#get_Fs33"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.series.get_Fs33" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cvolume.series.get_Fs4">
+<code class="descclassname">cvolume.series.</code><code class="descname">get_Fs4</code><span class="sig-paren">(</span><em>F</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/series.html#get_Fs4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.series.get_Fs4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cvolume.series.get_Fs5">
+<code class="descclassname">cvolume.series.</code><code class="descname">get_Fs5</code><span class="sig-paren">(</span><em>F</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/series.html#get_Fs5"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.series.get_Fs5" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cvolume.series.get_Fs6">
+<code class="descclassname">cvolume.series.</code><code class="descname">get_Fs6</code><span class="sig-paren">(</span><em>F</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/series.html#get_Fs6"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.series.get_Fs6" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cvolume.series.get_Fs7">
+<code class="descclassname">cvolume.series.</code><code class="descname">get_Fs7</code><span class="sig-paren">(</span><em>F</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/series.html#get_Fs7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.series.get_Fs7" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cvolume.series.get_Zs2">
+<code class="descclassname">cvolume.series.</code><code class="descname">get_Zs2</code><span class="sig-paren">(</span><em>Z</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/series.html#get_Zs2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.series.get_Zs2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cvolume.series.get_Zs22">
+<code class="descclassname">cvolume.series.</code><code class="descname">get_Zs22</code><span class="sig-paren">(</span><em>Z</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/series.html#get_Zs22"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.series.get_Zs22" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cvolume.series.get_Zs3">
+<code class="descclassname">cvolume.series.</code><code class="descname">get_Zs3</code><span class="sig-paren">(</span><em>Z</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/series.html#get_Zs3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.series.get_Zs3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cvolume.series.monom">
+<code class="descclassname">cvolume.series.</code><code class="descname">monom</code><span class="sig-paren">(</span><em>par</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/series.html#monom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.series.monom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a partition <code class="docutils literal notranslate"><span class="pre">par</span></code> = <span class="math notranslate nohighlight">\(\left[0^{i_0},1^{i_1},\ldots,n^{i_n}\right]\)</span> return a monomial (in Multivariate Polynomial Ring over Q) <span class="math notranslate nohighlight">\({t_0}^{i_0}\cdot\ldots\cdot{t_n}^{i_n} \big/ {i_0}!\cdot\ldots\cdot{i_n}!\)</span>.</p>
+<p>EXAMPLE:</p>
+<p>Here we generate all monomials of weight 5:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">cvolume.series</span> <span class="k">import</span> <span class="n">monom</span>
+<span class="n">sage</span><span class="p">:</span> <span class="p">[</span><span class="n">monom</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">Partitions</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
+<span class="p">[</span><span class="n">t4</span><span class="p">,</span> <span class="n">t0</span><span class="o">*</span><span class="n">t3</span><span class="p">,</span> <span class="n">t1</span><span class="o">*</span><span class="n">t2</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">t0</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">t2</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">t0</span><span class="o">*</span><span class="n">t1</span><span class="o">^</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">6</span><span class="o">*</span><span class="n">t0</span><span class="o">^</span><span class="mi">3</span><span class="o">*</span><span class="n">t1</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">120</span><span class="o">*</span><span class="n">t0</span><span class="o">^</span><span class="mi">5</span><span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="localpolymodule.html"
+                        title="previous chapter">Module <cite>localpoly</cite></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="stable_graphsmodule.html"
+                        title="next chapter">Module <cite>stable_graphs</cite></a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/seriesmodule.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="stable_graphsmodule.html" title="Module stable_graphs"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="localpolymodule.html" title="Module localpoly"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">cvolume 0.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Vincent Delecroix, Eduard Duryev.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>
