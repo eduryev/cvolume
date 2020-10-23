@@ -15,6 +15,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -27,6 +28,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="seriesmodule.html" title="Module series"
              accesskey="N">next</a> |</li>
@@ -42,8 +46,70 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-localpoly">
-<span id="localpolymodule"></span><h1>Module <cite>localpoly</cite><a class="headerlink" href="#module-localpoly" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-cvolume.localpoly">
+<span id="module-localpoly"></span><span id="localpolymodule"></span><h1>Module <cite>localpoly</cite><a class="headerlink" href="#module-cvolume.localpoly" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="cvolume.localpoly.Nlocal">
+<code class="descclassname">cvolume.localpoly.</code><code class="descname">Nlocal</code><span class="sig-paren">(</span><em>g</em>, <em>n</em>, <em>stratum</em>, <em>labeled=False</em>, <em>mode='derivative'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/localpoly.html#Nlocal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.localpoly.Nlocal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a local polynomial <span class="math notranslate nohighlight">\(N_{g,n}^{\kappa}(b_1, ..., b_n)\)</span>, where <span class="math notranslate nohighlight">\(\kappa\)</span> is stratum.</p>
+<p>INPUT:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">g</span></code>       – int, genus</li>
+<li><code class="docutils literal notranslate"><span class="pre">n</span></code>       – int, number of boundaries</li>
+<li><code class="docutils literal notranslate"><span class="pre">stratum</span></code> – list or tuple, orders of zeros of the stratum</li>
+<li><code class="docutils literal notranslate"><span class="pre">labeled</span></code> – boolean (default <cite>False</cite>), whether to consider labeled zeros or not</li>
+<li><code class="docutils literal notranslate"><span class="pre">mode</span></code>    – ‘derivative’ (default) or ‘recursive’, ‘derivative’ uses Arbarello-Cornalba formulae and ‘recursive’ uses recursion on local polynomials dervied from the same AC formulae</li>
+</ul>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li>a symmetric Sage Multivariate Polynomial in variables b1, b2, … .</li>
+</ul>
+<p>EXAMPLES:</p>
+<p>Here we compute local polynomial of genus 2, two bondary components and stratum <span class="math notranslate nohighlight">\(\mathcal{Q}(5, 1, 1, 1)\)</span>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">cvolume</span> <span class="k">import</span> <span class="n">Nlocal</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">S</span> <span class="o">=</span> <span class="n">PolynomialRing</span><span class="p">(</span><span class="n">QQ</span><span class="p">,[</span><span class="s1">&#39;b</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">b1</span><span class="p">,</span><span class="n">b2</span><span class="p">,</span><span class="n">b3</span><span class="p">,</span><span class="n">b4</span><span class="p">,</span><span class="n">b5</span> <span class="o">=</span> <span class="n">S</span><span class="o">.</span><span class="n">gens</span><span class="p">()[:</span><span class="mi">5</span><span class="p">]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Nlocal</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="mi">1</span><span class="o">/</span><span class="mi">192</span><span class="o">*</span><span class="n">b1</span><span class="o">^</span><span class="mi">6</span> <span class="o">+</span> <span class="mi">95</span><span class="o">/</span><span class="mi">3072</span><span class="o">*</span><span class="n">b1</span><span class="o">^</span><span class="mi">4</span><span class="o">*</span><span class="n">b2</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">95</span><span class="o">/</span><span class="mi">3072</span><span class="o">*</span><span class="n">b1</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">b2</span><span class="o">^</span><span class="mi">4</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">192</span><span class="o">*</span><span class="n">b2</span><span class="o">^</span><span class="mi">6</span>
+</pre></div>
+</div>
+<p>And here is the same local polynomial, but with labeled zeros:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">Nlocal</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">labeled</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="mi">1</span><span class="o">/</span><span class="mi">32</span><span class="o">*</span><span class="n">b1</span><span class="o">^</span><span class="mi">6</span> <span class="o">+</span> <span class="mi">95</span><span class="o">/</span><span class="mi">512</span><span class="o">*</span><span class="n">b1</span><span class="o">^</span><span class="mi">4</span><span class="o">*</span><span class="n">b2</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">95</span><span class="o">/</span><span class="mi">512</span><span class="o">*</span><span class="n">b1</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">b2</span><span class="o">^</span><span class="mi">4</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">32</span><span class="o">*</span><span class="n">b2</span><span class="o">^</span><span class="mi">6</span>
+</pre></div>
+</div>
+<p>Another example for a different stratum:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">Nlocal</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="mi">35</span><span class="o">/</span><span class="mi">192</span><span class="o">*</span><span class="n">b1</span><span class="o">^</span><span class="mi">4</span> <span class="o">+</span> <span class="mi">35</span><span class="o">/</span><span class="mi">64</span><span class="o">*</span><span class="n">b1</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">b2</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">35</span><span class="o">/</span><span class="mi">192</span><span class="o">*</span><span class="n">b2</span><span class="o">^</span><span class="mi">4</span>
+</pre></div>
+</div>
+<p>Here we show that <cite>recursive</cite> and <cite>derivative</cite> methods give consistent answers:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="k">assert</span> <span class="n">Nlocal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;recursive&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">Nlocal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="k">assert</span> <span class="n">Nlocal</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;recursive&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">Nlocal</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="k">assert</span> <span class="n">Nlocal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;recursive&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">Nlocal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="k">assert</span> <span class="n">Nlocal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;recursive&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">Nlocal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="cvolume.localpoly.shift">
+<code class="descclassname">cvolume.localpoly.</code><code class="descname">shift</code><span class="sig-paren">(</span><em>variables</em>, <em>k</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/localpoly.html#shift"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.localpoly.shift" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of the list of variables shifted k units to the left.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cvolume.localpoly.stratum_to_F">
+<code class="descclassname">cvolume.localpoly.</code><code class="descname">stratum_to_F</code><span class="sig-paren">(</span><em>g</em>, <em>n</em>, <em>stratum</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/localpoly.html#stratum_to_F"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.localpoly.stratum_to_F" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return partition function Fs corresponding to the stratum. Function is truncated at a minimal admissible weight.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cvolume.localpoly.vanish">
+<code class="descclassname">cvolume.localpoly.</code><code class="descname">vanish</code><span class="sig-paren">(</span><em>variables</em>, <em>indices</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/localpoly.html#vanish"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.localpoly.vanish" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of the list of variables, in which elements at given indices are replaces by 0.</p>
+</dd></dl>
+
 </div>
 
 
@@ -87,6 +153,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="seriesmodule.html" title="Module series"
              >next</a> |</li>

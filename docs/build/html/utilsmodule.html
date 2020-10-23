@@ -15,6 +15,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -27,6 +28,9 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="stable_graphsmodule.html" title="Module stable_graphs"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">cvolume 0.0.0 documentation</a> &#187;</li> 
@@ -38,8 +42,98 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-utils">
-<span id="utilsemodule"></span><h1>Module <cite>utils</cite><a class="headerlink" href="#module-utils" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-cvolume.utils">
+<span id="module-utils"></span><span id="utilsemodule"></span><h1>Module <cite>utils</cite><a class="headerlink" href="#module-cvolume.utils" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="cvolume.utils.c_d">
+<code class="descclassname">cvolume.utils.</code><code class="descname">c_d</code><span class="sig-paren">(</span><em>stratum</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/utils.html#c_d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.utils.c_d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the dimension of a stratum.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cvolume.utils.c_f">
+<code class="descclassname">cvolume.utils.</code><code class="descname">c_f</code><span class="sig-paren">(</span><em>dim_or_stratum</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/utils.html#c_f"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.utils.c_f" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the renormalization coefficient for stratum: 2^(d+1)/(d-1)! where d is dimension. Input can be a dimension or a stratum itself.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cvolume.utils.coeff_2">
+<code class="descclassname">cvolume.utils.</code><code class="descname">coeff_2</code><span class="sig-paren">(</span><em>g</em>, <em>n</em>, <em>M</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/utils.html#coeff_2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.utils.coeff_2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return power-of-2 renormalizing coefficient for local polynomials.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cvolume.utils.dfactorial">
+<code class="descclassname">cvolume.utils.</code><code class="descname">dfactorial</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/utils.html#dfactorial"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.utils.dfactorial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return double-factorial of integer.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cvolume.utils.float2time">
+<code class="descclassname">cvolume.utils.</code><code class="descname">float2time</code><span class="sig-paren">(</span><em>t</em>, <em>precision=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cvolume/utils.html#float2time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cvolume.utils.float2time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes float and precision (int) and return a time string in minutes and seconds.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cvolume.utils.time_for_F">
+<code class="descclassname">cvolume.utils.</code><code class="descname">time_for_F</code><span class="sig-paren">(</span><em>w</em><span class="sig-paren">)</span><a class="headerlink" href="#cvolume.utils.time_for_F" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cvolume.utils.time_for_Fs2">
+<code class="descclassname">cvolume.utils.</code><code class="descname">time_for_Fs2</code><span class="sig-paren">(</span><em>w</em><span class="sig-paren">)</span><a class="headerlink" href="#cvolume.utils.time_for_Fs2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cvolume.utils.time_for_Fs22">
+<code class="descclassname">cvolume.utils.</code><code class="descname">time_for_Fs22</code><span class="sig-paren">(</span><em>w</em><span class="sig-paren">)</span><a class="headerlink" href="#cvolume.utils.time_for_Fs22" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cvolume.utils.time_for_Fs222">
+<code class="descclassname">cvolume.utils.</code><code class="descname">time_for_Fs222</code><span class="sig-paren">(</span><em>w</em><span class="sig-paren">)</span><a class="headerlink" href="#cvolume.utils.time_for_Fs222" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cvolume.utils.time_for_Fs23">
+<code class="descclassname">cvolume.utils.</code><code class="descname">time_for_Fs23</code><span class="sig-paren">(</span><em>w</em><span class="sig-paren">)</span><a class="headerlink" href="#cvolume.utils.time_for_Fs23" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cvolume.utils.time_for_Fs24">
+<code class="descclassname">cvolume.utils.</code><code class="descname">time_for_Fs24</code><span class="sig-paren">(</span><em>w</em><span class="sig-paren">)</span><a class="headerlink" href="#cvolume.utils.time_for_Fs24" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cvolume.utils.time_for_Fs3">
+<code class="descclassname">cvolume.utils.</code><code class="descname">time_for_Fs3</code><span class="sig-paren">(</span><em>w</em><span class="sig-paren">)</span><a class="headerlink" href="#cvolume.utils.time_for_Fs3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cvolume.utils.time_for_Fs33">
+<code class="descclassname">cvolume.utils.</code><code class="descname">time_for_Fs33</code><span class="sig-paren">(</span><em>w</em><span class="sig-paren">)</span><a class="headerlink" href="#cvolume.utils.time_for_Fs33" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cvolume.utils.time_for_Fs4">
+<code class="descclassname">cvolume.utils.</code><code class="descname">time_for_Fs4</code><span class="sig-paren">(</span><em>w</em><span class="sig-paren">)</span><a class="headerlink" href="#cvolume.utils.time_for_Fs4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cvolume.utils.time_for_Fs5">
+<code class="descclassname">cvolume.utils.</code><code class="descname">time_for_Fs5</code><span class="sig-paren">(</span><em>w</em><span class="sig-paren">)</span><a class="headerlink" href="#cvolume.utils.time_for_Fs5" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cvolume.utils.time_for_Fs6">
+<code class="descclassname">cvolume.utils.</code><code class="descname">time_for_Fs6</code><span class="sig-paren">(</span><em>w</em><span class="sig-paren">)</span><a class="headerlink" href="#cvolume.utils.time_for_Fs6" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cvolume.utils.time_for_Fs7">
+<code class="descclassname">cvolume.utils.</code><code class="descname">time_for_Fs7</code><span class="sig-paren">(</span><em>w</em><span class="sig-paren">)</span><a class="headerlink" href="#cvolume.utils.time_for_Fs7" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 
 
@@ -80,6 +174,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="stable_graphsmodule.html" title="Module stable_graphs"
              >previous</a> |</li>
