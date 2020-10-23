@@ -6,13 +6,75 @@
 cvolume Tutorial
 ******************
 
-Below we show how to use ``cvolume``.
+Installation
+------------
 
-To use ``cvolume``, the first thing you need to do is import it::
+Prerequisites
+^^^^^^^^^^^^^
 
-    sage: from cvolume import *
+Make sure that `SageMath 9 <https://www.sagemath.org>`_ is installed on your
+computer. Detailed installation instructions for different operating systems
+are available `here
+<http://doc.sagemath.org/html/en/installation/binary.html>`_ and on the
+SageMath website.
 
-Then many functions become available. 
+WARNING: Module will not work with SageMath 8 as that version doesn't support some
+functionality of Python 3. Make sure to use the last version of SageMath!
+
+All the command below must be run inside a console (the last character of the
+prompt is usally a ``$``). On Windows this is called ``SageMath Shell`` while
+on Linux and MacOS this is often referred to as a ``Terminal``.
+
+Inside the console, we assume that the command ``sage`` launches a Sage
+session (whose prompt is usually ``sage:``). To quit the Sage session
+type ``quit`` and press ``Enter``.
+
+Manual installation with pip
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Follow the procedure below:
+
+- Download the admcycles package as a ``.zip`` file from `github
+  <https://github.com/eduryev/cvolume/archive/v1.0.zip>`__.
+
+- Inside a shell console run::
+
+      $ sage -pip install /where/is/the/package.zip --user
+
+  Here, the ``--user`` is an optional argument to ``pip`` which, when
+  provided, will install admcycles not inside the Sage folder but in your home
+  directory.
+ 
+Cloning with git
+^^^^^^^^^^^^^^^^
+
+You can also clone this repository to your computer, if you have
+versioning software ``git`` installed. Go to the folder where you
+want ``cvolume`` to be stored and run the following commands::
+
+    $ git init
+    $ git clone https://github.com/eduryev/cvolume.git
+    $ cd cvolume
+    $ git fetch --tags
+    $ git checkout tags/v1.0 -b v1.0
+    
+Use without installation
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+To use the package without installing, download the package as a ``.zip`` file either
+from `github
+<https://github.com/eduryev/cvolume/archive/v1.0.zip>`__.
+Unpack the ``.zip`` file. This creates a folder which should
+contain a file ``setup.py``. In order to use the
+module, you need to run Sage from this folder. For example, if the full path of
+this folder is ``/Amazing/Organized/Folder/System/cvolume``, you could do::
+
+    $ cd /Amazing/Organized/Folder/System/cvolume
+    $ sage
+
+Or directly inside a Sage session::
+
+    sage: cd /Amazing/Organized/Folder/System/admcycles
 
 Examples
 -------
@@ -55,4 +117,3 @@ You can also compute a generalized local polynomial for any stratum::
 
     sage: Nlocal(g=1,n=5,stratum=[5,3,1,1])
     2045/64*b1^4 + 1575/16*b1^2*b2^2 + 2045/64*b2^4 + 1575/16*b1^2*b3^2 + 1575/16*b2^2*b3^2 + 2045/64*b3^4 + 1575/16*b1^2*b4^2 + 1575/16*b2^2*b4^2 + 1575/16*b3^2*b4^2 + 2045/64*b4^4 + 1575/16*b1^2*b5^2 + 1575/16*b2^2*b5^2 + 1575/16*b3^2*b5^2 + 1575/16*b4^2*b5^2 + 2045/64*b5^4
-
