@@ -15,6 +15,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -47,12 +48,112 @@
             
   <div class="section" id="cvolume-tutorial">
 <span id="tutorial"></span><h1>cvolume Tutorial<a class="headerlink" href="#cvolume-tutorial" title="Permalink to this headline">¶</a></h1>
-<p>Below we show how to use <code class="docutils literal notranslate"><span class="pre">cvolume</span></code>.</p>
-<p>To use <code class="docutils literal notranslate"><span class="pre">cvolume</span></code>, the first thing you need to do is import it:</p>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="prerequisites">
+<h3>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h3>
+<p>Make sure that <a class="reference external" href="https://www.sagemath.org">SageMath 9</a> is installed on your
+computer. Detailed installation instructions for different operating systems
+are available <a class="reference external" href="http://doc.sagemath.org/html/en/installation/binary.html">here</a> and on the
+SageMath website.</p>
+<p>WARNING: Module will not work with SageMath 8 as that version doesn’t support some
+functionality of Python 3. Make sure to use the last version of SageMath!</p>
+<p>All the command below must be run inside a console (the last character of the
+prompt is usally a <code class="docutils literal notranslate"><span class="pre">$</span></code>). On Windows this is called <code class="docutils literal notranslate"><span class="pre">SageMath</span> <span class="pre">Shell</span></code> while
+on Linux and MacOS this is often referred to as a <code class="docutils literal notranslate"><span class="pre">Terminal</span></code>.</p>
+<p>Inside the console, we assume that the command <code class="docutils literal notranslate"><span class="pre">sage</span></code> launches a Sage
+session (whose prompt is usually <code class="docutils literal notranslate"><span class="pre">sage:</span></code>). To quit the Sage session
+type <code class="docutils literal notranslate"><span class="pre">quit</span></code> and press <code class="docutils literal notranslate"><span class="pre">Enter</span></code>.</p>
+</div>
+<div class="section" id="manual-installation-with-pip">
+<h3>Manual installation with pip<a class="headerlink" href="#manual-installation-with-pip" title="Permalink to this headline">¶</a></h3>
+<p>Follow the procedure below:</p>
+<ul>
+<li><p class="first">Download the admcycles package as a <code class="docutils literal notranslate"><span class="pre">.zip</span></code> file from <a class="reference external" href="https://github.com/eduryev/cvolume/archive/v1.0.zip">github</a>.</p>
+</li>
+<li><p class="first">Inside a shell console run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sage -pip install /where/is/the/package.zip --user
+</pre></div>
+</div>
+<p>Here, the <code class="docutils literal notranslate"><span class="pre">--user</span></code> is an optional argument to <code class="docutils literal notranslate"><span class="pre">pip</span></code> which, when
+provided, will install admcycles not inside the Sage folder but in your home
+directory.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="cloning-with-git">
+<h3>Cloning with git<a class="headerlink" href="#cloning-with-git" title="Permalink to this headline">¶</a></h3>
+<p>You can also clone this repository to your computer, if you have
+versioning software <code class="docutils literal notranslate"><span class="pre">git</span></code> installed. Go to the folder where you
+want <code class="docutils literal notranslate"><span class="pre">cvolume</span></code> to be stored and run the following commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git init
+$ git clone https://github.com/eduryev/cvolume.git
+$ cd cvolume
+$ git fetch --tags
+$ git checkout tags/v1.0 -b v1.0
+</pre></div>
+</div>
+</div>
+<div class="section" id="use-without-installation">
+<h3>Use without installation<a class="headerlink" href="#use-without-installation" title="Permalink to this headline">¶</a></h3>
+<p>To use the package without installing, download the package as a <code class="docutils literal notranslate"><span class="pre">.zip</span></code> file either
+from <a class="reference external" href="https://github.com/eduryev/cvolume/archive/v1.0.zip">github</a>.
+Unpack the <code class="docutils literal notranslate"><span class="pre">.zip</span></code> file. This creates a folder which should
+contain a file <code class="docutils literal notranslate"><span class="pre">setup.py</span></code>. In order to use the
+module, you need to run Sage from this folder. For example, if the full path of
+this folder is <code class="docutils literal notranslate"><span class="pre">/Amazing/Organized/Folder/System/cvolume</span></code>, you could do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd /Amazing/Organized/Folder/System/cvolume
+$ sage
+</pre></div>
+</div>
+<p>Or directly inside a Sage session:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">cd</span> <span class="o">/</span><span class="n">Amazing</span><span class="o">/</span><span class="n">Organized</span><span class="o">/</span><span class="n">Folder</span><span class="o">/</span><span class="n">System</span><span class="o">/</span><span class="n">admcycles</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>To start using cvolume, start a Sage session: either in the command line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sage
+</pre></div>
+</div>
+<p>or a Jupyter notebook, or inside one of the online services). Then type:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">cvolume</span> <span class="k">import</span> <span class="o">*</span>
 </pre></div>
 </div>
-<p>Then many functions become available.</p>
+<p>To try a first computation, you can compute the completed volume of Q(1,1,1,1),
+which coincides with its Masur-Veech volume, since the stratum is principle:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">completed_volume</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="mi">1</span><span class="o">/</span><span class="mi">15</span><span class="o">*</span><span class="n">pi</span><span class="o">^</span><span class="mi">6</span>
+</pre></div>
+</div>
+<p>You can also compute the completed volume of Q(3,1), which has Masur-Veech volume 0,
+since it is empty:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">completed_volume</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="mi">23</span><span class="o">/</span><span class="mi">90</span><span class="o">*</span><span class="n">pi</span><span class="o">^</span><span class="mi">4</span>
+</pre></div>
+</div>
+<p>Apart from computing volumes you can generate labeled stable graph. Here is a an example,
+which generated all of labeled stable graphs for stratum [3,1,1,-1]:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">stable_lab_graphs</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="p">{</span><span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)),</span>
+ <span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)),</span>
+ <span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)),</span>
+ <span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)),</span>
+ <span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+ <span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+ <span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)),</span>
+ <span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">(),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),),</span>
+ <span class="n">Labeled</span> <span class="n">Stable</span> <span class="n">Graph</span> <span class="k">with</span> <span class="n">edges</span> <span class="o">=</span> <span class="p">(),</span> <span class="n">loops</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">kappa</span> <span class="o">=</span> <span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),)}</span>
+</pre></div>
+</div>
+<p>You can also compute a generalized local polynomial for any stratum:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">Nlocal</span><span class="p">(</span><span class="n">g</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">stratum</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="mi">2045</span><span class="o">/</span><span class="mi">64</span><span class="o">*</span><span class="n">b1</span><span class="o">^</span><span class="mi">4</span> <span class="o">+</span> <span class="mi">1575</span><span class="o">/</span><span class="mi">16</span><span class="o">*</span><span class="n">b1</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">b2</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2045</span><span class="o">/</span><span class="mi">64</span><span class="o">*</span><span class="n">b2</span><span class="o">^</span><span class="mi">4</span> <span class="o">+</span> <span class="mi">1575</span><span class="o">/</span><span class="mi">16</span><span class="o">*</span><span class="n">b1</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">b3</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1575</span><span class="o">/</span><span class="mi">16</span><span class="o">*</span><span class="n">b2</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">b3</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2045</span><span class="o">/</span><span class="mi">64</span><span class="o">*</span><span class="n">b3</span><span class="o">^</span><span class="mi">4</span> <span class="o">+</span> <span class="mi">1575</span><span class="o">/</span><span class="mi">16</span><span class="o">*</span><span class="n">b1</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">b4</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1575</span><span class="o">/</span><span class="mi">16</span><span class="o">*</span><span class="n">b2</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">b4</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1575</span><span class="o">/</span><span class="mi">16</span><span class="o">*</span><span class="n">b3</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">b4</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2045</span><span class="o">/</span><span class="mi">64</span><span class="o">*</span><span class="n">b4</span><span class="o">^</span><span class="mi">4</span> <span class="o">+</span> <span class="mi">1575</span><span class="o">/</span><span class="mi">16</span><span class="o">*</span><span class="n">b1</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">b5</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1575</span><span class="o">/</span><span class="mi">16</span><span class="o">*</span><span class="n">b2</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">b5</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1575</span><span class="o">/</span><span class="mi">16</span><span class="o">*</span><span class="n">b3</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">b5</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1575</span><span class="o">/</span><span class="mi">16</span><span class="o">*</span><span class="n">b4</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">b5</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2045</span><span class="o">/</span><span class="mi">64</span><span class="o">*</span><span class="n">b5</span><span class="o">^</span><span class="mi">4</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 
@@ -61,6 +162,21 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">cvolume Tutorial</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a><ul>
+<li><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li><a class="reference internal" href="#manual-installation-with-pip">Manual installation with pip</a></li>
+<li><a class="reference internal" href="#cloning-with-git">Cloning with git</a></li>
+<li><a class="reference internal" href="#use-without-installation">Use without installation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
                         title="previous chapter">Welcome to cvolume’s documentation!</a></p>
