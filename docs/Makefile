@@ -17,3 +17,8 @@ help:
 # "make mode" option.
 %: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS)
+
+github:
+	@make html
+	@cp -a build/html/. ../docs
+
