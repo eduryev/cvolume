@@ -8,7 +8,7 @@ def stratum_to_F(g,n,stratum):
     '''
     s_part = tuple(sorted((i+1)/ZZ(2) for i in stratum if i > 1))
     w = sum(stratum)/ZZ(4) + len(stratum)/ZZ(2) + stratum.count(-1) + n/ZZ(2)
-    return Fs(s_part,w)
+    return Fs(w,s_part)
 
 def vanish(variables,indices):
     '''
@@ -32,14 +32,14 @@ def shift(variables,k):
 
 def Nlocal(g,n,stratum,labeled=False,mode='derivative'):
     '''
-    Return a local polynomial :math:`N_{g,n}^{\kappa}(b_1, ..., b_n)`, where :math:`\kappa` is stratum.
+    Return a local polynomial :math:`N_{g,n}^{\\kappa}(b_1, ..., b_n)`, where :math:`\\kappa` is stratum.
     
     INPUT:
     
     - ``g``       -- int, genus
     - ``n``       -- int, number of boundaries
     - ``stratum`` -- list or tuple, orders of zeros of the stratum
-    - ``labeled`` -- boolean (default `False`), whether to consider labeled zeros or not
+    - ``labeled`` -- boolean (default `False`), whether to label zeros or not
     - ``mode``    -- 'derivative' (default) or 'recursive', 'derivative' uses Arbarello-Cornalba formulae and 'recursive' uses recursion on local polynomials dervied from the same AC formulae
     
     OUTPUT:
@@ -48,7 +48,7 @@ def Nlocal(g,n,stratum,labeled=False,mode='derivative'):
     
     EXAMPLES:
     
-    Here we compute local polynomial of genus 2, two bondary components and stratum :math:`\mathcal{Q}(5, 1, 1, 1)`::
+    Here we compute local polynomial of genus 2, two bondary components and stratum :math:`\\mathcal{Q}(5, 1, 1, 1)`::
     
         sage: from cvolume import Nlocal
         sage: S = PolynomialRing(QQ,['b%d' % i for i in range(1,10)])
@@ -136,6 +136,6 @@ def Nlocal(g,n,stratum,labeled=False,mode='derivative'):
             cache_poly[(g,n,stratum)] = N_unlab*cache_labeling[(g,n,stratum)]
             return cache_poly[(g,n,stratum)]
     memo_Nlocal(g,n,stratum,labeled,mode)
-    if labeled: return cache_poly.get((g,n,stratum),0)
-    else: return cache_poly.get((g,n,stratum),0)/cache_labeling.get((g,n,stratum),1)
+    if labeled: return cache_poly.get((g,n,stratum),S.zero())
+    else: return cache_poly.get((g,n,stratum),S.zero())/cache_labeling.get((g,n,stratum),1)
     

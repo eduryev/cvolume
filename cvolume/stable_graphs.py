@@ -1,7 +1,7 @@
 from sage.all import Graph, ZZ, Combinations, prod, factorial
 import itertools
 import time
-from .utils import float2time
+from .utils import float2time, stratum2print
 
 def k_to_p(edges,loops,kappa,graph):
     '''
@@ -226,7 +226,7 @@ class LabeledStableGraph:
         
         EXAMPLES:
         
-        Here we compute all special one step degenerations of a graph with a single vertex labeled by a stratum :math:`\mathcal{Q}(3,3,1,1)` with a single loop attached to it::
+        Here we compute all special one step degenerations of a graph with a single vertex labeled by a stratum :math:`\\mathcal{Q}(3,3,1,1)` with a single loop attached to it::
         
             sage: from cvolume import LabeledStableGraph
             sage: edges,loops,kappa = [], [1], [[3, 3, 1, 1]]
@@ -301,7 +301,7 @@ def stable_lab_graphs(stratum, by_codim=False, one_vertex=False, verbose=False):
     
     EXAMPLES:
 
-    Here we generate all labeled stable graphs in stratum :math:`\mathcal{Q}(3,-1,-1,-1)`::
+    Here we generate all labeled stable graphs in stratum :math:`\\mathcal{Q}(3,-1,-1,-1)`::
         
         sage: from cvolume import stable_lab_graphs
         sage: stable_lab_graphs([3, -1, -1, -1])
@@ -317,7 +317,7 @@ def stable_lab_graphs(stratum, by_codim=False, one_vertex=False, verbose=False):
           Labeled Stable Graph with edges = (), loops = (1,), kappa = ((3, -1, -1, -1),)},
          {Labeled Stable Graph with edges = ((0, 1, 1),), loops = (0, 1), kappa = ((-1, -1), (3, -1))}]
     
-    Here we demonstrate verbose mode by generating stable graphs for stratum :math:`\mathcal{Q}(3,1,1,-1)`::
+    Here we demonstrate verbose mode by generating stable graphs for stratum :math:`\\mathcal{Q}(3,1,1,-1)`::
     
         sage: graphs = stable_lab_graphs([3, 1, 1, -1], verbose = True)
         Generated 2 codimension 1 graphs in ... s
@@ -326,12 +326,12 @@ def stable_lab_graphs(stratum, by_codim=False, one_vertex=False, verbose=False):
         The total number of stable graphs for stratum [3, 1, 1, -1] is: 9.
         Generated all stable graphs for stratum [3, 1, 1, -1] in: ... s
         
-    Here we compute the number of labeled stable graphs for stratum :math:`\mathcal{Q}(3,1,1,1,1,1)`::
+    Here we compute the number of labeled stable graphs for stratum :math:`\\mathcal{Q}(3,1,1,1,1,1)`::
     
         sage: len(stable_lab_graphs([3, 1, 1, 1, 1, 1]))
         31
         
-    Here we generate only one-vertex labeled stable graphs for stratum :math:`\mathcal{Q}(3,1,1,1,1,1)`::
+    Here we generate only one-vertex labeled stable graphs for stratum :math:`\\mathcal{Q}(3,1,1,1,1,1)`::
     
         sage: stable_lab_graphs([3, 1, 1, 1, 1, 1], one_vertex = True)
         {Labeled Stable Graph with edges = (), loops = (1,), kappa = ((3, 1, 1, 1, 1, 1),),
@@ -342,7 +342,7 @@ def stable_lab_graphs(stratum, by_codim=False, one_vertex=False, verbose=False):
     assert sum(stratum)%4 == 0, f"The sum of orders of zeroes of the stratum has to be a multiple of 4."
     kappa = [sorted(stratum)]
     codim = 0
-    g = (sum(stratum)+4)/4         
+    g = (sum(stratum)+4)//4         
     if one_vertex:
         degenerations = [{LabeledStableGraph([],[i],kappa)} for i in range(g+1)]
     else:
@@ -359,11 +359,10 @@ def stable_lab_graphs(stratum, by_codim=False, one_vertex=False, verbose=False):
                 # taking a union with all possible one-step degenerations of each graph
                 degenerations[codim].update(stg.one_step_degenerations())
             toc = time.time()
-            if verbose and degenerations[-1]: print(f"Generated {len(degenerations[-1])} codimension {codim} graphs in {float2time(toc-tic,5)}")
+            if verbose and degenerations[-1]: print(f"Generated {str(len(degenerations[-1])).ljust(3)} codimension {codim} graphs in {float2time(toc-tic,3)}")
         degenerations.pop() # remove the last empty list
         if verbose:
-            print(f"The total number of stable graphs for stratum {stratum} is: {sum(len(i) for i in degenerations)-1}.")
             toc = time.time()
-            print(f"Generated all stable graphs for stratum {stratum} in: {float2time(toc-tic_total,5)}")  
+            print(f"The total number of stable graphs for stratum {stratum2print(stratum)} is: {sum(len(i) for i in degenerations)-1}. Generated in: {float2time(toc-tic_total,3)}")
     if by_codim: return degenerations # keep the original graph at index 0 as codim 0 element
     else: return set().union(*degenerations[1:]) # take union and return, don't include the original graph

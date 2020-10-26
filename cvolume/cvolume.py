@@ -6,16 +6,23 @@ from .utils import *
 from .stable_graphs import *
 from .series import Fs
 
+import pickle
+with open("cvolume/Elise_volumes.pkl", "rb") as f:
+    volumes_dict = pickle.load(f)
+    
+cvolumes_dict = {}
+conjvolumes_dict = {}
+
 def replmon(n):
     '''
-    Return the result of application of :math:`\mathcal{Z}`-operator to the monomial :math:`b_i^n`.
+    Return the result of application of :math:`\\mathcal{Z}`-operator to the monomial :math:`b_i^n`.
     '''
     if n==0: return 1
     else: return factorial(n)*Rational(zeta(n+1)/pi**(n+1))
     
 def operator(Poly):
     '''
-    Return the result of application of :math:`\mathcal{Z}`-operator to the polynomial.
+    Return the result of application of :math:`\\mathcal{Z}`-operator to the polynomial.
     '''
     return sum(Poly.monomial_coefficient(monom)*prod(replmon(k) for k in monom.exponents()[0]) for monom in Poly.monomials())     
 
@@ -98,17 +105,17 @@ def completed_volume(stratum, with_pi=True, verbose=False, one_vertex=False):
     - ``with_pi``    -- boolean (default `True`), when False returns completed volume as a rational number (volume divided by 
       an appropriate degree of pi
     - ``verbose``    -- boolean (default `False`), when True prints progress of the computation: time to generate and the number       of stable graphs in each codimension and in total; progress of computing contribution of stable graphs
-    - ``one_vertex`` -- boolean (default `False`), when True only computed contribution of one-vertex labeled stable graphs.
+    - ``one_vertex`` -- boolean (default `False`), when True only computes contribution of one-vertex labeled stable graphs.
     
     EXAMPLES:
 
-    Here we compute completed volume of an empty stratum :math:`\mathcal{Q}(3,1)`::
+    Here we compute completed volume of an empty stratum :math:`\\mathcal{Q}(3,1)`::
         
         sage: from cvolume import completed_volume 
         sage: completed_volume([3, 1])
         23/90*pi^4
         
-    Here we demonstrate the verbose mode by computing completed volume of stratum :math:`\mathcal{Q}(1,-1)`::
+    Here we demonstrate the verbose mode by computing completed volume of stratum :math:`\\mathcal{Q}(1,-1)`::
         
         sage: completed_volume([3, 1, 1, -1], verbose = True)
         Computing completed volume of stratum [3, 1, 1, -1]...
@@ -122,7 +129,7 @@ def completed_volume(stratum, with_pi=True, verbose=False, one_vertex=False):
         Completed volume of [3, 1, 1, -1] is: 7/60*pi^6
         7/60*pi^6
         
-    Here we compute one-vertex graphs contribution to the completed volume of :math:`\mathcal{Q}(3,1,1,-1)`::
+    Here we compute one-vertex graphs contribution to the completed volume of :math:`\\mathcal{Q}(3,1,1,-1)`::
     
         sage: completed_volume([3, 1, 1, -1], one_vertex=True)
         1346/14175*pi^6
@@ -134,6 +141,11 @@ def completed_volume(stratum, with_pi=True, verbose=False, one_vertex=False):
         sage: assert completed_volume([1, -1]) == 2/3*pi^2
         sage: assert completed_volume([-1, -1, -1, -1]) == 2*pi^2
     '''
+    stratum = tuple(sorted(stratum,reverse=True))
+    if stratum in cvolumes_dict and one_vertex == False:
+        cvolume = cvolumes_dict[stratum]
+        if with_pi: return cvolume
+        else: return cvolume.coefficient(pi**cvolume.degree(pi))
     def max_weight(stratum): return sum(stratum)/ZZ(2) + len(stratum)/ZZ(2) + stratum.count(-1) + 1
     higher_part = [i for i in stratum if i > 1]
     lower_part = [i for i in stratum if i not in higher_part]
@@ -141,31 +153,31 @@ def completed_volume(stratum, with_pi=True, verbose=False, one_vertex=False):
         rest_is_odd = (sum(higher_part) - sum(new_higher_part)) % 2
         w = max_weight(new_higher_part + lower_part) - rest_is_odd
         s_part = tuple(sorted((i+1)/ZZ(2) for i in new_higher_part))
-        _ = Fs(s_part,w)
+        _ = Fs(w,s_part)
     d = c_d(stratum)
-    f = c_f(stratum)
+    f = c_f(d)
     mu = prod([factorial(stratum.count(i)) for i in range(-1,max(stratum)+1)])        
     if verbose:
         tic_total = time.time()
-        print(f"Computing completed volume of stratum {stratum}...")
+        print(f"Computing completed volume of stratum {stratum2print(stratum)}...")
         tic = time.time()
     stgs = stable_lab_graphs(stratum, one_vertex=one_vertex, verbose=verbose)
     total_num = len(stgs)
-    vol = 0
-    count, period = 0, 10
+    vol, count, period = 0, 0, 10
     tic = time.time()
     for stg in stgs:      
         vol += operator(graph_poly(stg)) 
         count += 1        
         if verbose and (count%period == 0 or count == total_num):
             toc = time.time()
-            print(f"\rComputed contribution of {count}/{total_num} graphs. Time elapsed: {float2time(toc-tic,5)}", end = "") 
+            print(f"\rComputed contribution of {count}/{total_num} graphs. Time elapsed: {float2time(toc-tic,3)}. ETA: {float2time((toc-tic)/count*(total_num-count),3)}", end = "") 
     if verbose:
         toc_total = time.time()
-        print(f"\nCompleted volume of {stratum} is computed in: {float2time(toc_total-tic_total,5)}")
-        print(f"Completed volume of {stratum} is: {f*mu*vol*pi**d}")
-    if with_pi: return f*mu*vol*pi**d
-    else: return f*mu*vol
+        print(f"\nCompleted volume of {stratum2print(stratum)} is: {f*mu*vol*pi**d}. Computed in: {float2time(toc_total-tic_total,3)}")
+    cvolume, cvolume_pi = f*mu*vol, f*mu*vol*pi**d
+    if one_vertex == False: cvolumes_dict[stratum] = cvolume_pi
+    if with_pi: return cvolume_pi
+    else: return cvolume
 
 def cvolume_by_graphs(stratum, graphs):
     '''
@@ -188,36 +200,125 @@ def cvolume_by_cylinders(stratum):
     for i in range(1,len(stgs)):    # don't include the 0-th set, as it consists of the original non-degenrated graph
         print(f"Volume contribution of {i+1}-cylinder surfaces is {cvolume_by_graphs(stratum, stgs[i])}")
         
-def CKazarian(g,k):
+def CKazarian(g,k,memo=None):
     '''
     Return Kazarian constant for recursion on volumes of principal strata.
     '''
     if g<=0 or k<0 or k>g: return 0
-    if [g,k] == [1,0]: return ZZ(1)/12
-    return ZZ(g-k+1)/(5*g-k-2)*CKazarian(g,k-1) + ZZ(5*g-6-k)*(5*g-4-k)/ZZ(12)*CKazarian(g-1,k)+\
-    ZZ(1)/2*sum(CKazarian(g1,k1)*CKazarian(g-g1,k-k1) for g1 in range(1,g) for k1 in range(k+1))
+    if (g,k) == (1,0): return ZZ(1)/12
+    if (g,k) in memo: return memo[(g,k)]
+    const = ZZ(g-k+1)/(5*g-k-2)*CKazarian(g,k-1,memo) + ZZ(5*g-6-k)*(5*g-4-k)/ZZ(12)*CKazarian(g-1,k,memo)+\
+    ZZ(1)/2*sum(CKazarian(g1,k1,memo)*CKazarian(g-g1,k-k1,memo) for g1 in range(1,g) for k1 in range(k+1))
+    memo[(g,k)] = const
+    return const
 
-def principal_volume(g_or_stratum,n=-1):
+def principal_volume(g_or_stratum,n=None):
     '''
-    Return the Masur-Veech volume of the principal stratum. Input can be either a single argument that is a list of orders of zeroes or two arguments g and n, where g is the genus and n is the number of simple poles. 
+    Return the Masur-Veech volume of the principal stratum. By convention an empty stratum has volume 0. Input can be either a single argument that is a list of orders of zeroes or two arguments g and n, where g is the genus and n is the number of simple poles. 
     '''
     if g_or_stratum in ZZ:
-        assert n != -1, "Input Error: the input must be either g,n or stratum"
-        g = g_or_stratum        
-    elif type(g_or_stratum) == list:
-        assert n == -1, "Input Error: the input must be either g,n or stratum"
+        assert n != None, "Input Error: the input must be either g,n or stratum"
+        g = ZZ(g_or_stratum)
+        stratum = [1]*(4*g-4+n) + [-1]*n
+    elif type(g_or_stratum) in {list,tuple}:
+        assert n == None, "Input Error: the input must be either g,n or stratum"
         stratum = g_or_stratum
         n = stratum.count(-1)
         g = (sum(stratum)+4)/ZZ(4)
-    else: return "Input Error: the input must be either g,n or stratum"       
-    if g == 0:
-        if n<3: return 0
-        else: return pi**(2*n-6)/ZZ(2**(n-5))
-    elif [g,n] == [1,0]: return 0
-    else: return ZZ(2**(2*g+1))*pi**(6*g-6+2*n)*factorial(4*g-4+n)/factorial(6*g-7+2*n)*sum(dfactorial(5*g-7+2*n-k)/dfactorial(5*g-3-k)*CKazarian(g,k) for k in range(g+1)) 
+    else:
+        raise ValueError("Input Error: the input must be either g,n or stratum")
+    if sum(stratum) < -4 or sum(stratum)%4 != 0 or n < 0 or (g,n) in {(0,0),(0,1),(0,2),(0,3),(1,0)}: return 0
+    memo = {}
+    if g == 0: volume = 2*pi**(2*n-6)/ZZ(2**(n-4))
+    else: volume = ZZ(2**(2*g+1))*pi**(6*g-6+2*n)*factorial(4*g-4+n)/factorial(6*g-7+2*n)*sum(dfactorial(5*g-7+2*n-k)/dfactorial(5*g-3-k)*CKazarian(g,k,memo) for k in range(g+1)) 
+    return volume
+    
+def MV_volume(stratum,verbose=False,mode='default'):
+    '''
+    Return the Masur-Veech volume of any startum of quadratic differentials, if it is known. This inlcudes all principal strata, strata covered by the table of volumes of Elise Goujard and strata [3,1,1...-1,-1] and [5,1,1...-1,-1], for which we make use of completed volumes. The mode can be set to 'conjecture', the Masur-Veech volumes are computed using their conjectural relations with completed volumes.
+    '''
+    stratum = tuple(sorted(stratum,reverse=True))
+    if sum(stratum) < -4 or sum(stratum)%4 != 0:
+        print(f'Warning: {stratum2print(stratum)} is an empty stratum. Its sum of the orders of zeros is either < -4 or not divisible by 4.')
+        return 0
+    elif stratum in {(3,1),(1,-1)}:
+        return 0
+    elif stratum in volumes_dict and mode in {'default','both'}:
+        if type(volumes_dict[stratum]) == tuple:
+            p,q,deg = volumes_dict[stratum]
+            mv_volume = ZZ(p)/q*pi**deg
+        else:
+            mv_volume = volumes_dict[stratum]
+        return mv_volume
+    tic = time.time()
+    if verbose: print(f"Computing Masur-Veech volume of stratum {stratum2print(stratum)}...")
+    d,g,p = c_d(stratum),sum(stratum)/4+1,stratum.count(-1) # dimension, genus, number of poles
+    if set(stratum).issubset({1,-1}):
+        mv_volume = principal_volume(stratum)  
+    elif set(stratum).issubset({3,1,-1}) and stratum.count(3) == 1:        
+        boundary = c_f(d)/(c_f(2)*c_f(d-2))*2/3*pi**2*principal_volume(g-1,p+1)
+        cvolume = completed_volume(stratum,verbose=verbose)
+        mv_volume = cvolume - boundary
+        if mode in {'default','both'}: volumes_dict[stratum] = mv_volume
+    elif set(stratum).issubset({5,1,-1}) and stratum.count(5) == 1:
+        boundary = c_f(d)/(c_f(2)*c_f(d-2))*2/3*pi**2*principal_volume(g-1,p)
+        cvolume = completed_volume(stratum,verbose=verbose)
+        mv_volume = cvolume - 3*boundary
+        if mode in {'default','both'}: volumes_dict[stratum] = mv_volume
+    elif mode == 'conjecture' or mode == 'both':
+        if stratum in conjvolumes_dict:
+            return conjvolumes_dict[stratum]            
+        if len(stratum) == 2:
+            raise ValueError('There is no conjecture for Masur-Veech volume for this stratum. Stratum needs to have at least three zeros.')
+        H0,H2,H4 = ZZ(2)/3*pi**2,ZZ(1)/15*pi**4,ZZ(61)/3402*pi**6
+        higher_part = sorted([i for i in stratum if i != 1 and i != -1],reverse=True)
+        lower_part = sorted([i for i in stratum if i == 1 or i == -1],reverse=True)
+        if set(stratum).issubset({7,1,-1}) and stratum.count(7) == 1:
+            H0bdry = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [3],verbose=verbose,mode='both')
+            H2bdry = c_f(d)/(c_f(4)*c_f(d-4))*H2*MV_volume(lower_part + [-1],verbose=verbose,mode='both')
+            H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(d-4))*H0*H0*MV_volume(lower_part + [-1],verbose=verbose,mode='both')
+            boundary = 5*H0bdry + 3*H2bdry + ZZ(7)/2*H0H0bdry
+        elif set(stratum).issubset({3,1,-1}) and stratum.count(3) == 2:
+            H0bdry = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [3,-1],verbose=verbose,mode='both')
+            H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(d-4))*H0*H0*MV_volume(lower_part + [-1,-1],verbose=verbose,mode='both')
+            boundary = 2*H0bdry + H0H0bdry
+        elif set(stratum).issubset({5,3,1,-1}) and stratum.count(5) == 1 and stratum.count(3) == 1:
+            H0bdry_5 = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [-1,5],verbose=verbose,mode='both')
+            H0bdry_3 = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [1,3],verbose=verbose,mode='both')
+            H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(d-4))*H0*H0*MV_volume(lower_part + [1,-1],verbose=verbose,mode='both')
+            boundary = 3*H0bdry_3 + H0bdry_5 + 3*H0H0bdry
+        elif set(stratum).issubset({9,1,-1}) and stratum.count(9) == 1:
+            H0bdry = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [5],verbose=verbose,mode='both')
+            H2bdry = c_f(d)/(c_f(4)*c_f(d-4))*H2*MV_volume(lower_part + [1],verbose=verbose,mode='both')
+            H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(d-4))*H0*H0*MV_volume(lower_part + [1],verbose=verbose,mode='both')
+            boundary = 7*H0bdry + 9*H2bdry + ZZ(27)/2*H0H0bdry
+        elif set(stratum).issubset({5,1,-1}) and stratum.count(5) == 2:
+            H0bdry = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [5,1],verbose=verbose,mode='both')
+            H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(d-4))*H0*H0*MV_volume(lower_part + [1,1],verbose=verbose,mode='both')
+            boundary = 6*H0bdry + 9*H0H0bdry
+        elif set(stratum).issubset({7,3,1,-1}) and stratum.count(7) == 1 and stratum.count(3) == 1:
+            H0bdry_33 = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [3,3],verbose=verbose,mode='both')
+            H2bdry = c_f(d)/(c_f(4)*c_f(d-4))*H2*MV_volume(lower_part + [3,-1],verbose=verbose,mode='both')
+            H0bdry_7 = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [7,-1],verbose=verbose,mode='both')
+            H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(d-4))*H0*H0*MV_volume(lower_part + [3,-1],verbose=verbose,mode='both')
+            H0H2bdry = c_f(d)/(c_f(2)*c_f(4)*c_f(d-6))*H0*H2*MV_volume(lower_part + [-1,-1],verbose=verbose,mode='both')
+            H0H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(2)*c_f(d-6))*H0*H0*H0*MV_volume(lower_part + [-1,-1],verbose=verbose,mode='both')
+            boundary = 5*H0bdry_33 + 3*H2bdry + H0bdry_7 + ZZ(17)/2*H0H0bdry + 3*H0H2bdry + ZZ(7)/2*H0H0H0bdry
+        else:
+            raise ValueError('There is no conjecture for Masur-Veech volume for this stratum.')
+        cvolume = completed_volume(stratum,verbose=verbose)
+        mv_volume = cvolume - boundary 
+        conjvolumes_dict[stratum] = mv_volume
+    else:
+        raise ValueError('Masur-Veech volume for this stratum is not known.')    
+    if verbose:
+        toc = time.time()
+        print(f"Masur-Veech volume of {stratum2print(stratum)} is: {mv_volume}. Computed in: {float2time(toc-tic,3)}")
+    return mv_volume
 
 def asymptotic_volume(stratum):
     '''
     Return conjectural asymptotics for the volume of the stratum from [ADGZZ]. Note that formula is only conjectured in the case when the number of poles is logarithmically small compared to the genus.
     '''
     return ZZ(4)/pi*prod(2**(d+2)/(d+2) for d in stratum)
+

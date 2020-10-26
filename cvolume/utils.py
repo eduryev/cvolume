@@ -1,15 +1,29 @@
 from sage.all import PolynomialRing, ZZ, QQ, N, exp, factorial
+from collections import Counter
 
 R = PolynomialRing(QQ, ['t%d' % i for i in range(31)])
 S = PolynomialRing(QQ, ['b%d' % i for i in range(1,31)])
 
 def float2time(t,precision=0):
     '''
-    Takes float and precision (int) and return a time string in minutes and seconds.
+    Take t (float) and precision (int) and return a time string in minutes and seconds.
     '''
     minutes, seconds = divmod(int(t*10**precision), 60*10**precision)
     if minutes: return '%s min %.*f s' % (int(minutes), int(precision), int(seconds)/10**precision)
     else: return '%.*f s' % (int(precision),int(seconds)/10**precision)
+    
+def stratum2print(stratum):
+    if not stratum: return '[]'
+    stratum = Counter(stratum)
+    ans = ['[']
+    for order in sorted(stratum.keys(),reverse=True):
+        mult = stratum[order]
+        if mult == 1:
+            ans.extend([f'{order}',','])
+        else:
+            ans.extend([f'{order}^{mult}',','])
+    ans[-1] = ']'
+    return ''.join(ans)
 
 time_for_F = lambda w : N(exp(0.39*w-6.7))
 time_for_Fs2 = lambda w : N(exp(0.38*w-5.2))
@@ -40,7 +54,7 @@ def c_f(dim_or_stratum):
     '''
     Return the renormalization coefficient for stratum: 2^(d+1)/(d-1)! where d is dimension. Input can be a dimension or a stratum itself.
     '''
-    if type(dim_or_stratum) == list:
+    if type(dim_or_stratum) in {list,tuple}:
         d = c_d(dim_or_stratum)
     else:
         d = dim_or_stratum

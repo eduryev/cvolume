@@ -39,12 +39,18 @@ def coeff(par):
         psi = prod(psiclass(i+1,g,n)**(par[i]-1) for i in range(0,len(par)))
         return psi.evaluate()
     else:
-        return 0
+        return ZZ(0)
 
 t0,t1,t2,t3,t4,t5,t6 = R.gens()[:7]
+# S = R['z']
+# z = S('z')
+# t0,t1,t2,t3,t4,t5,t6 = S('t0*z'),S('t1*z^2'),S('t2*z^3'),S('t3*z^4'),S('t4*z^5'),S('t5*z^6'),S('t6*z^7')
 
 def get_Fs2(F):
     return 12*diff(F,t2) - diff(F,t0,2)/2 - diff(F,t0)**2/2
+
+# def get_Fs2(F,w):
+#     return 12*diff(F,t2).truncate(w) - diff(F,t0,2).truncate(w)/2 - diff(F,t0).truncate(w)._mul_trunc_(diff(F,t0).truncate(w))/2
 
 def get_Zs2(Z):
     return 12*diff(Z,t2) - diff(Z,t0,2)/2
@@ -141,11 +147,11 @@ class PartitionFunctions:
             self.F_weights[()] = w
             self.F_series[()] = F
             toc = time.time()
-            if self.verbose: print(f"    Done updating the partition function F from max_weight {F_max_weight} to {w} in: {float2time(toc-tic,2)}")
+            if self.verbose: print(f"    Finished in: {float2time(toc-tic,2)}")
         return F
     
-    def __call__(self, s_part, w):
-        if not s_part:
+    def __call__(self, w, s_part=None):
+        if s_part is None:
             return self.partition_function(w)
         Fs_max_weight = self.F_weights.get(s_part,-1)
         Fs = self.F_series.get(s_part,R.zero())             
@@ -163,7 +169,7 @@ class PartitionFunctions:
             self.F_weights[s_part] = w
             self.F_series[s_part] = Fs
             toc = time.time()
-            if self.verbose: print(f"Done updating Fs function for s = {s_part} from max_weight {Fs_max_weight} to {w} in: {float2time(toc-tic,2)}")     
+            if self.verbose: print(f"Finished in: {float2time(toc-tic,2)}")     
         return Fs
     
     def reset(self):
