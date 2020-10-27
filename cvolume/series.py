@@ -4,6 +4,12 @@ import sys
 from .utils import *
 from admcycles import psiclass
 
+# t0,t1,t2,t3,t4,t5,t6 = R.gens()[:7]
+S = R['z']
+z = S('z')
+t0,t1,t2,t3,t4,t5,t6 = S('t0*z'),S('t1*z^2'),S('t2*z^3'),S('t3*z^4'),S('t4*z^5'),S('t5*z^6'),S('t6*z^7')
+t_str = {t0:'t0',t1:'t1',t2:'t2',t3:'t3'}
+
 def monom(par):
     '''
     Given a partition ``par`` = :math:`\\left[0^{i_0},1^{i_1},\\ldots,n^{i_n}\\right]` return a monomial (in Multivariate Polynomial Ring over Q) :math:`{t_0}^{i_0}\\cdot\\ldots\\cdot{t_n}^{i_n} \\big/ {i_0}!\\cdot\\ldots\\cdot{i_n}!`.
@@ -17,7 +23,9 @@ def monom(par):
         [t4, t0*t3, t1*t2, 1/2*t0^2*t2, 1/2*t0*t1^2, 1/6*t0^3*t1, 1/120*t0^5]
     '''
     exp = par.to_exp()
-    return prod(ZZ(1)/factorial(k) for k in exp)*prod([R.gen(i-1) for i in par])
+    t_vars = [t0,t1,t2,t3,t4,t5,t6]
+    print(par)
+    return prod(ZZ(1)/factorial(k) for k in exp)*prod([t_vars[i-1] for i in par])
 
 def coeff(par):
     '''
@@ -41,13 +49,20 @@ def coeff(par):
     else:
         return ZZ(0)
 
-t0,t1,t2,t3,t4,t5,t6 = R.gens()[:7]
-# S = R['z']
-# z = S('z')
-# t0,t1,t2,t3,t4,t5,t6 = S('t0*z'),S('t1*z^2'),S('t2*z^3'),S('t3*z^4'),S('t4*z^5'),S('t5*z^6'),S('t6*z^7')
+def diff(F,*args):
+    P = F(z=1)
+    str2P_var = {str(v):v for v in P.variables()}
+    d = {}
+    for t in args:
+        if t_str[t] in str2P_var:
+            d[t] = str2P_var[t_str[t]] 
+        else:
+            return S.zero()
+    P = P.derivative(*(d[t] for t in args))
+    return P(t0=t0,t1=t1,t2=t2,t3=t3)
 
-def get_Fs2(F):
-    return 12*diff(F,t2) - diff(F,t0,2)/2 - diff(F,t0)**2/2
+def get_Fs2(F,w):
+    return 12*diff(F,t2) - diff(F,t0,t0)/2 - diff(F,t0)._mul_trunc_(diff(F,t0),w)/2
 
 # def get_Fs2(F,w):
 #     return 12*diff(F,t2).truncate(w) - diff(F,t0,2).truncate(w)/2 - diff(F,t0).truncate(w)._mul_trunc_(diff(F,t0).truncate(w))/2
@@ -165,7 +180,7 @@ class PartitionFunctions:
                     sys.exit("The computation was aborted by user due to time constraints.")
             if self.verbose: print(f"Updating Fs function for s = {s_part} from max_weight {Fs_max_weight} to {w}...Estimated time: {float2time(time_est,2)}")
             F = self.partition_function(w+self.shifts[s_part])
-            Fs = self.AC_formulae[s_part](F)
+            Fs = self.AC_formulae[s_part](F,w+1)
             self.F_weights[s_part] = w
             self.F_series[s_part] = Fs
             toc = time.time()
