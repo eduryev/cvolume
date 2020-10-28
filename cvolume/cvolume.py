@@ -274,30 +274,30 @@ def MV_volume(stratum,verbose=False,mode='default'):
         H0,H2,H4 = ZZ(2)/3*pi**2,ZZ(1)/15*pi**4,ZZ(61)/3402*pi**6
         higher_part = sorted([i for i in stratum if i != 1 and i != -1],reverse=True)
         lower_part = sorted([i for i in stratum if i == 1 or i == -1],reverse=True)
-        if higher_part = [7]:
+        if higher_part == [7]:
             H0bdry = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [3],verbose=verbose,mode='both')
             H2bdry = c_f(d)/(c_f(4)*c_f(d-4))*H2*MV_volume(lower_part + [-1],verbose=verbose,mode='both')
             H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(d-4))*H0*H0*MV_volume(lower_part + [-1],verbose=verbose,mode='both')
             boundary = 5*H0bdry + 3*H2bdry + ZZ(7)/2*H0H0bdry
-        elif higher_part = [9]:
+        elif higher_part == [9]:
             H0bdry = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [5],verbose=verbose,mode='both')
             H2bdry = c_f(d)/(c_f(4)*c_f(d-4))*H2*MV_volume(lower_part + [1],verbose=verbose,mode='both')
             H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(d-4))*H0*H0*MV_volume(lower_part + [1],verbose=verbose,mode='both')
             boundary = 7*H0bdry + 9*H2bdry + ZZ(27)/2*H0H0bdry
-        elif higher_part = [3,3]:
+        elif higher_part == [3,3]:
             H0bdry = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [3,-1],verbose=verbose,mode='both')
             H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(d-4))*H0*H0*MV_volume(lower_part + [-1,-1],verbose=verbose,mode='both')
             boundary = 2*H0bdry + H0H0bdry
-        elif higher_part = [5,3]:
+        elif higher_part == [5,3]:
             H0bdry_5 = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [-1,5],verbose=verbose,mode='both')
             H0bdry_3 = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [1,3],verbose=verbose,mode='both')
             H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(d-4))*H0*H0*MV_volume(lower_part + [1,-1],verbose=verbose,mode='both')
             boundary = 3*H0bdry_3 + H0bdry_5 + 3*H0H0bdry
-        elif higher_part = [5,5]:
+        elif higher_part == [5,5]:
             H0bdry = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [5,1],verbose=verbose,mode='both')
             H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(d-4))*H0*H0*MV_volume(lower_part + [1,1],verbose=verbose,mode='both')
             boundary = 6*H0bdry + 9*H0H0bdry        
-        elif higher_part = [7,3]:
+        elif higher_part == [7,3]:
             H0bdry_33 = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [3,3],verbose=verbose,mode='both')
             H2bdry = c_f(d)/(c_f(4)*c_f(d-4))*H2*MV_volume(lower_part + [3,-1],verbose=verbose,mode='both')
             H0bdry_7 = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [7,-1],verbose=verbose,mode='both')
