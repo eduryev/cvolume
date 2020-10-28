@@ -4,12 +4,17 @@ import sys
 from .utils import *
 from admcycles import psiclass
 
-# t0,t1,t2,t3,t4,t5,t6 = R.gens()[:7]
+N = 31
 S = R['z']
 z = S('z')
-t0,t1,t2,t3,t4,t5,t6 = S('t0*z'),S('t1*z^2'),S('t2*z^3'),S('t3*z^4'),S('t4*z^5'),S('t5*z^6'),S('t6*z^7')
-t7,t8,t9,t10,t11,t12,t13 = S('t7*z^8'),S('t8*z^9'),S('t9*z^10'),S('t10*z^11'),S('t11*z^12'),S('t12*z^13'),S('t13*z^14')
-t_str = {t0:'t0',t1:'t1',t2:'t2',t3:'t3',t4:'t4',t5:'t5',t6:'t6',t7:'t7',t8:'t8',t9:'t9',t10:'t10',t11:'t11',t12:'t12',t13:'t13'}
+tz_vars,tz2str,str2tz = [],{},{}
+for i in range(N):
+    vars()[f't{i}'] = S(f't{i}*z^{i+1}')
+    tz_vars.append(vars()[f't{i}'])
+    tz2str[vars()[f't{i}']] = f't{i}'
+    str2tz[f't{i}'] = vars()[f't{i}']
+# print(tz_vars)
+# print(tz2str)
 
 def monom(par):
     '''
@@ -24,9 +29,7 @@ def monom(par):
         [t4, t0*t3, t1*t2, 1/2*t0^2*t2, 1/2*t0*t1^2, 1/6*t0^3*t1, 1/120*t0^5]
     '''
     exp = par.to_exp()
-    t_vars = [t0,t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13]
-    #print(par)
-    return prod(ZZ(1)/factorial(k) for k in exp)*prod([t_vars[i-1] for i in par])
+    return prod(ZZ(1)/factorial(k) for k in exp)*prod([tz_vars[i-1] for i in par])
 
 def coeff(par):
     '''
@@ -52,27 +55,30 @@ def coeff(par):
 
 def diff(F,*args):
     P = F(z=1)
-    str2P_var = {str(v):v for v in P.variables()}
-    d = {}
-    for t in args:
-        if t_str[t] in str2P_var:
-            d[t] = str2P_var[t_str[t]] 
+    str2t = {str(t):t for t in P.variables()}
+    tz2t = {}
+    for tz in args:
+        if tz2str[tz] in str2t:
+            tz2t[tz] = str2t[tz2str[tz]] 
         else:
             return S.zero()
-    P = P.derivative(*(d[t] for t in args))
-    return P(t0=t0,t1=t1,t2=t2,t3=t3,t4=t4,t5=t5,t6=t6,t7=t7,t8=t8,t9=t9,t10=t10,t11=t11,t12=t12,t13=t13)
+    P = P.derivative(*(tz2t[tz] for tz in args))
+    return P(*(str2tz[f't{i}'] for i in range(N)))
 
 def get_Fs2(F,w):
-    return 12*diff(F,t2) - diff(F,t0,t0)/2 - diff(F,t0)._mul_trunc_(diff(F,t0),w)/2
+    return 12*diff(F,t2).truncate(w+1) - diff(F,t0,t0).truncate(w+1)/2 - diff(F,t0)._mul_trunc_(diff(F,t0),w+1)/2
 
 # def get_Fs2(F,w):
-#     return 12*diff(F,t2).truncate(w) - diff(F,t0,2).truncate(w)/2 - diff(F,t0).truncate(w)._mul_trunc_(diff(F,t0).truncate(w))/2
+#     return 12*diff(F,t2) - diff(F,t0,2)/2 - diff(F,t0)**2/2
 
 def get_Zs2(Z):
     return 12*diff(Z,t2) - diff(Z,t0,2)/2
 
-def get_Fs3(F):
-    return 120*diff(F,t3) - 6*diff(F,t0,t1) - 6*diff(F,t1)*diff(F,t0) + 5*diff(F,t0)/4
+def get_Fs3(F,w):
+    return 120*diff(F,t3).truncate(w+1) - 6*diff(F,t0,t1).truncate(w+1) - 6*diff(F,t1)._mul_trunc_(diff(F,t0),w+1) + 5*diff(F,t0).truncate(w+1)/4
+
+# def get_Fs3(F):
+#     return 120*diff(F,t3) - 6*diff(F,t0,t1) - 6*diff(F,t1)*diff(F,t0) + 5*diff(F,t0)/4
 
 def get_Zs3(Z):
     return 120*diff(Z,t3) - 6*diff(Z,t0,t1) + 5*diff(Z,t0)/4
@@ -181,7 +187,7 @@ class PartitionFunctions:
                     sys.exit("The computation was aborted by user due to time constraints.")
             if self.verbose: print(f"Updating Fs function for s = {s_part} from max_weight {Fs_max_weight} to {w}...Estimated time: {float2time(time_est,2)}")
             F = self.partition_function(w+self.shifts[s_part])
-            Fs = self.AC_formulae[s_part](F,w+1)
+            Fs = self.AC_formulae[s_part](F,w)(z=1)
             self.F_weights[s_part] = w
             self.F_series[s_part] = Fs
             toc = time.time()
