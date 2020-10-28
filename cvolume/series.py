@@ -8,7 +8,8 @@ from admcycles import psiclass
 S = R['z']
 z = S('z')
 t0,t1,t2,t3,t4,t5,t6 = S('t0*z'),S('t1*z^2'),S('t2*z^3'),S('t3*z^4'),S('t4*z^5'),S('t5*z^6'),S('t6*z^7')
-t_str = {t0:'t0',t1:'t1',t2:'t2',t3:'t3'}
+t7,t8,t9,t10,t11,t12,t13 = S('t7*z^8'),S('t8*z^9'),S('t9*z^10'),S('t10*z^11'),S('t11*z^12'),S('t12*z^13'),S('t13*z^14')
+t_str = {t0:'t0',t1:'t1',t2:'t2',t3:'t3',t4:'t4',t5:'t5',t6:'t6',t7:'t7',t8:'t8',t9:'t9',t10:'t10',t11:'t11',t12:'t12',t13:'t13'}
 
 def monom(par):
     '''
@@ -23,8 +24,8 @@ def monom(par):
         [t4, t0*t3, t1*t2, 1/2*t0^2*t2, 1/2*t0*t1^2, 1/6*t0^3*t1, 1/120*t0^5]
     '''
     exp = par.to_exp()
-    t_vars = [t0,t1,t2,t3,t4,t5,t6]
-    print(par)
+    t_vars = [t0,t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13]
+    #print(par)
     return prod(ZZ(1)/factorial(k) for k in exp)*prod([t_vars[i-1] for i in par])
 
 def coeff(par):
@@ -59,7 +60,7 @@ def diff(F,*args):
         else:
             return S.zero()
     P = P.derivative(*(d[t] for t in args))
-    return P(t0=t0,t1=t1,t2=t2,t3=t3)
+    return P(t0=t0,t1=t1,t2=t2,t3=t3,t4=t4,t5=t5,t6=t6,t7=t7,t8=t8,t9=t9,t10=t10,t11=t11,t12=t12,t13=t13)
 
 def get_Fs2(F,w):
     return 12*diff(F,t2) - diff(F,t0,t0)/2 - diff(F,t0)._mul_trunc_(diff(F,t0),w)/2
