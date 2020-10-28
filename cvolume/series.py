@@ -83,8 +83,11 @@ def get_Fs3(F,w):
 def get_Zs3(Z):
     return 120*diff(Z,t3) - 6*diff(Z,t0,t1) + 5*diff(Z,t0)/4
 
-def get_Fs4(F):
-    return 1680*diff(F, t4) - 18*diff(F, t1, t1) - 18*diff(F, t1)**2 - 60*diff(F, t0, t2) - 60*diff(F, t2)*diff(F, t0) + 7*diff(F, t0, t0, t0)/6 + 7*diff(F, t0)*diff(F, t0, t0)/2 + 7*diff(F, t0)**3/6 + 49*diff(F, t1)/2 - ZZ(35)/96
+def get_Fs4(F,w):
+    return 1680*diff(F, t4).truncate(w+1) - 18*diff(F, t1, t1).truncate(w+1) - 18*diff(F, t1).power_trunc(2,w+1) - 60*diff(F, t0, t2).truncate(w+1) - 60*diff(F, t2)._mul_trunc_(diff(F, t0),w+1) + 7*diff(F, t0, t0, t0).truncate(w+1)/6 + 7*diff(F, t0)._mul_trunc_(diff(F, t0, t0),w+1)/2 + 7*diff(F, t0).power_trunc(3,w+1)/6 + 49*diff(F, t1).truncate(w+1)/2 - ZZ(35)/96
+
+# def get_Fs4(F):
+#     return 1680*diff(F, t4) - 18*diff(F, t1, t1) - 18*diff(F, t1)**2 - 60*diff(F, t0, t2) - 60*diff(F, t2)*diff(F, t0) + 7*diff(F, t0, t0, t0)/6 + 7*diff(F, t0)*diff(F, t0, t0)/2 + 7*diff(F, t0)**3/6 + 49*diff(F, t1)/2 - ZZ(35)/96
 
 def get_Fs22(F):
     return ZZ(1)/2*(144*diff(F,t2,t2) - 840*diff(F,t3) - 12*diff(F,t0,t0,t2) - 24*diff(F,t0)*diff(F,t0,t2) + 24*diff(F,t0,t1) + 24*diff(F,t1)*diff(F,t0) + diff(F,t0,4)/4 + diff(F,t0)*diff(F,t0,3) + diff(F,t0,t0)**2/2 + diff(F,t0)**2*diff(F,t0,t0) - 3*diff(F,t0))
@@ -92,14 +95,20 @@ def get_Fs22(F):
 def get_Zs22(Z):
     return ZZ(1)/2*(144*diff(Z,t2,t2) - 840*diff(Z,t3) - 12*diff(Z,t0,t0,t2) + 24*diff(Z,t0,t1) + diff(Z,t0,4)/4 - 3*diff(Z,t0))
 
-def get_Fs5(F):
-    return 30240*diff(F, t5) - 360*diff(F, t1, t2) - 360*diff(F, t2)*diff(F, t1) - 840*diff(F, t0, t3) - 840*diff(F, t0)*diff(F, t3) + 27*diff(F, t0, t0, t1) + 27*diff(F, t1)*diff(F, t0, t0) + 54*diff(F, t0)*diff(F, t0, t1) + 27*diff(F, t1)*diff(F, t0)*diff(F, t0) + 585*diff(F, t2) - 105*diff(F, t0, t0)/8 - 105*diff(F, t0)*diff(F, t0)/8
+def get_Fs5(F,w):
+    return 30240*diff(F, t5).truncate(w+1) - 360*diff(F, t1, t2).truncate(w+1) - 360*diff(F, t2)._mul_trunc_(diff(F, t1),w+1) - 840*diff(F, t0, t3).truncate(w+1) - 840*diff(F, t0)._mul_trunc_(diff(F, t3),w+1) + 27*diff(F, t0, t0, t1).truncate(w+1) + 27*diff(F, t1)._mul_trunc_(diff(F, t0, t0),w+1) + 54*diff(F, t0)._mul_trunc_(diff(F, t0, t1),w+1) + 27*diff(F, t1)._mul_trunc_(diff(F, t0).power_trunc(2,w+1),w+1) + 585*diff(F, t2).truncate(w+1) - 105*diff(F, t0, t0).truncate(w+1)/8 - 105*diff(F, t0).power_trunc(2,w+1)/8
+
+# def get_Fs5(F,w):
+#     return 30240*diff(F, t5) - 360*diff(F, t1, t2) - 360*diff(F, t2)*diff(F, t1) - 840*diff(F, t0, t3) - 840*diff(F, t0)*diff(F, t3) + 27*diff(F, t0, t0, t1) + 27*diff(F, t1)*diff(F, t0, t0) + 54*diff(F, t0)*diff(F, t0, t1) + 27*diff(F, t1)*diff(F, t0)*diff(F, t0) + 585*diff(F, t2) - 105*diff(F, t0, t0)/8 - 105*diff(F, t0)*diff(F, t0)/8
 
 def get_Fs23(F):
     return 1440*diff(F, t2, t3) - 15120*diff(F, t4) - 60*diff(F, t0, t0, t3) - 120*diff(F, t0)*diff(F, t0, t3) - 72*diff(F, t0, t1, t2) - 72*diff(F, t1)*diff(F, t0, t2) - 72*diff(F, t1, t2)*diff(F, t0) + 90*diff(F, t1, t1) + 90*diff(F, t1)**2 + 375*diff(F, t0, t2) + 360*diff(F, t2)*diff(F, t0) + 3*diff(F, t0, t0, t0, t1) + 6*diff(F, t0, t1)*diff(F, t0, t0) + 9*diff(F, t0)*diff(F, t0, t0, t1) + 3*diff(F, t1)*diff(F, t0, t0, t0) + 6*diff(F, t1)*diff(F, t0)*diff(F, t0, t0) + 6*diff(F, t0)**2*diff(F, t0, t1) - 45*diff(F, t0, t0, t0)/8 - 65*diff(F, t0)*diff(F, t0, t0)/4 - 5*diff(F, t0)**3 - 165*diff(F, t1)/2 + ZZ(29)/32
 
-def get_Fs6(F):
-    return 665280*diff(F, t6) - 1800*diff(F, t2, t2) - 1800*diff(F, t2)**2 - 5040*diff(F, t1, t3) - 5040*diff(F, t3)*diff(F, t1) - 15120*diff(F, t0, t4) - 15120*diff(F, t4)*diff(F, t0) + 16170*diff(F, t3) + 198*diff(F, t0, t1, t1) + 396*diff(F, t1)*diff(F, t0, t1) + 198*diff(F, t1, t1)*diff(F, t0) + 198*diff(F, t1)**2*diff(F, t0) + 330*diff(F, t0, t0, t2) + 330*diff(F, t2)*diff(F, t0, t0) + 660*diff(F, t0)*diff(F, t0, t2) + 330*diff(F, t2)*diff(F, t0)**2 - 33*diff(F, t0, t0, t0, t0)/8 - 33*diff(F, t0)*diff(F, t0, t0, t0)/2 - 99*diff(F, t0, t0)**2/8 - 99*diff(F, t0)**2*diff(F, t0, t0)/4 - 33*diff(F, t0)**4/8 - 891*diff(F, t0, t1)/2 - 891*diff(F, t1)*diff(F, t0)/2 + 1155*diff(F, t0)/32
+def get_Fs6(F,w):
+    return 665280*diff(F, t6).truncate(w+1) - 1800*diff(F, t2, t2).truncate(w+1) - 1800*diff(F, t2)._mul_trunc_(diff(F, t2),w+1) - 5040*diff(F, t1, t3).truncate(w+1) - 5040*diff(F, t3)._mul_trunc_(diff(F, t1),w+1) - 15120*diff(F, t0, t4).truncate(w+1) - 15120*diff(F, t4)._mul_trunc_(diff(F, t0),w+1) + 16170*diff(F, t3).truncate(w+1) + 198*diff(F, t0, t1, t1).truncate(w+1) + 396*diff(F, t1)._mul_trunc_(diff(F, t0, t1),w+1) + 198*diff(F, t1, t1)._mul_trunc_(diff(F, t0),w+1) + 198*diff(F, t1).power_trunc(2,w+1)._mul_trunc_(diff(F, t0),w+1) + 330*diff(F, t0, t0, t2).truncate(w+1) + 330*diff(F, t2)._mul_trunc_(diff(F, t0, t0),w+1) + 660*diff(F, t0)._mul_trunc_(diff(F, t0, t2),w+1) + 330*diff(F, t2)._mul_trunc_(diff(F, t0),w+1)._mul_trunc_(diff(F, t0),w+1) - 33*diff(F, t0, t0, t0, t0).truncate(w+1)/8 - 33*diff(F, t0)._mul_trunc_(diff(F, t0, t0, t0),w+1)/2 - 99*diff(F, t0, t0)._mul_trunc_(diff(F, t0, t0),w+1)/8 - 99*diff(F, t0)._mul_trunc_(diff(F, t0),w+1)._mul_trunc_(diff(F, t0, t0),w+1)/4 - 33*diff(F, t0).power_trunc(4,w+1)/8 - 891*diff(F, t0, t1).truncate(w+1)/2 - 891*diff(F, t1)._mul_trunc_(diff(F, t0),w+1)/2 + 1155*diff(F, t0).truncate(w+1)/32
+
+# def get_Fs6(F):
+#     return 665280*diff(F, t6) - 1800*diff(F, t2, t2) - 1800*diff(F, t2)**2 - 5040*diff(F, t1, t3) - 5040*diff(F, t3)*diff(F, t1) - 15120*diff(F, t0, t4) - 15120*diff(F, t4)*diff(F, t0) + 16170*diff(F, t3) + 198*diff(F, t0, t1, t1) + 396*diff(F, t1)*diff(F, t0, t1) + 198*diff(F, t1, t1)*diff(F, t0) + 198*diff(F, t1)**2*diff(F, t0) + 330*diff(F, t0, t0, t2) + 330*diff(F, t2)*diff(F, t0, t0) + 660*diff(F, t0)*diff(F, t0, t2) + 330*diff(F, t2)*diff(F, t0)**2 - 33*diff(F, t0, t0, t0, t0)/8 - 33*diff(F, t0)*diff(F, t0, t0, t0)/2 - 99*diff(F, t0, t0)**2/8 - 99*diff(F, t0)**2*diff(F, t0, t0)/4 - 33*diff(F, t0)**4/8 - 891*diff(F, t0, t1)/2 - 891*diff(F, t1)*diff(F, t0)/2 + 1155*diff(F, t0)/32
 
 def get_Fs24(F):
     return 385*diff(F, t0)*diff(F, t0)/8 + 385*diff(F, t0, t0)/8 - 21*diff(F, t0)*diff(F, t0)*diff(F, t0, t0, t0)/4 - 7*diff(F, t0)*diff(F, t0, t0)*diff(F, t0, t0) - 7*diff(F, t0, t0, t0, t0, t0)/12 - 147*diff(F, t0)*diff(F, t0)*diff(F, t1) - 637*diff(F, t0, t0, t1)/4 + 102*diff(F, t0)*diff(F, t0)*diff(F, t0, t2) + 18*diff(F, t0, t1)*diff(F, t0, t1) - 7*diff(F, t0)*diff(F, t0)*diff(F, t0)*diff(F, t0, t0)/2 + 60*diff(F, t2)*diff(F, t0)*diff(F, t0, t0) - 35*diff(F, t0)*diff(F, t0, t0, t0, t0)/12 - 21*diff(F, t0, t0)*diff(F, t0, t0, t0)/4 - 637*diff(F, t0)*diff(F, t0, t1)/2 + 36*diff(F, t1)*diff(F, t0)*diff(F, t0, t1) + 132*diff(F, t0)*diff(F, t0, t0, t2) + 30*diff(F, t2)*diff(F, t0, t0, t0) + 102*diff(F, t0, t2)*diff(F, t0, t0) + 18*diff(F, t0)*diff(F, t0, t1, t1) + 18*diff(F, t1)*diff(F, t0, t0, t1) - 720*diff(F, t0, t2)*diff(F, t2) - 1680*diff(F, t0)*diff(F, t0, t4) - 720*diff(F, t2, t2)*diff(F, t0) - 432*diff(F, t1, t2)*diff(F, t1) - 720*diff(F, t0, t2, t2) - 840*diff(F, t0, t0, t4) + 44*diff(F, t2, t0, t0, t0) + 20160*diff(F, t2, t4) - 216*diff(F, t1, t1, t2) - 147*diff(F, t1)*diff(F, t0, t0) + 9*diff(F, t1, t1, t0, t0) + 2520*diff(F, t2)*diff(F, t1) + 6720*diff(F, t0)*diff(F, t3) + 6720*diff(F, t0, t3) - 2835*diff(F, t2) + 2814*diff(F, t1, t2) - 332640*diff(F, t5)
