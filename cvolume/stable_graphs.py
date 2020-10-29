@@ -323,8 +323,7 @@ def stable_lab_graphs(stratum, by_codim=False, one_vertex=False, verbose=False):
         Generated 2 codimension 1 graphs in ... s
         Generated 4 codimension 2 graphs in ... s
         Generated 3 codimension 3 graphs in ... s
-        The total number of stable graphs for stratum [3, 1, 1, -1] is: 9.
-        Generated all stable graphs for stratum [3, 1, 1, -1] in: ... s
+        The total number of stable graphs for stratum [3,1^2,-1] is: 9. Generated in: ... s
         
     Here we compute the number of labeled stable graphs for stratum :math:`\\mathcal{Q}(3,1,1,1,1,1)`::
     

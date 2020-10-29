@@ -56,8 +56,8 @@ def graph_poly(stg):
     '''
     edges,loops,kappa,graph = stg.edges,stg.loops,stg.kappa,stg.graph
     c = ZZ(1)/2**(len(graph.vertices())-1)*1/ZZ(stg.Aut())
-    variables = list(S.gens())
-    b = list(S.gens())
+    variables = list(B.gens())
+    b = list(B.gens())
     valency = [stg.vertex_deg(v)+2*loops[v] for v in graph.vertices()]
     used_vars = []
     # dictionary that converts edges to variables
@@ -118,15 +118,13 @@ def completed_volume(stratum, with_pi=True, verbose=False, one_vertex=False):
     Here we demonstrate the verbose mode by computing completed volume of stratum :math:`\\mathcal{Q}(1,-1)`::
         
         sage: completed_volume([3, 1, 1, -1], verbose = True)
-        Computing completed volume of stratum [3, 1, 1, -1]...
-        Generated 2 codimension 1 graphs in ... s
-        Generated 4 codimension 2 graphs in ... s
-        Generated 3 codimension 3 graphs in ... s
-        The total number of stable graphs for stratum [3, 1, 1, -1] is: 9.
-        Generated all stable graphs for stratum [3, 1, 1, -1] in: ... s
-        Computed contribution of 9/9 graphs. Time elapsed: ... s
-        Completed volume of [3, 1, 1, -1] is computed in: ... s
-        Completed volume of [3, 1, 1, -1] is: 7/60*pi^6
+        Computing completed volume of stratum [3,1^2,-1]...
+        Generated 2   codimension 1 graphs in ... s
+        Generated 4   codimension 2 graphs in ... s
+        Generated 3   codimension 3 graphs in ... s
+        The total number of stable graphs for stratum [3,1^2,-1] is: 9. Generated in: ... s
+        Computed contribution of 9/9 graphs. Time elapsed: ... s. ETA: ... s
+        Completed volume of [3,1^2,-1] is: 7/60*pi^6. Computed in: ... s
         7/60*pi^6
         
     Here we compute one-vertex graphs contribution to the completed volume of :math:`\\mathcal{Q}(3,1,1,-1)`::
@@ -273,30 +271,30 @@ def MV_volume(stratum,verbose=False,mode='default'):
         H0,H2,H4 = ZZ(2)/3*pi**2,ZZ(1)/15*pi**4,ZZ(61)/3402*pi**6
         higher_part = sorted([i for i in stratum if i != 1 and i != -1],reverse=True)
         lower_part = sorted([i for i in stratum if i == 1 or i == -1],reverse=True)
-        if set(stratum).issubset({7,1,-1}) and stratum.count(7) == 1:
+        if higher_part == [7]:
             H0bdry = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [3],verbose=verbose,mode='both')
             H2bdry = c_f(d)/(c_f(4)*c_f(d-4))*H2*MV_volume(lower_part + [-1],verbose=verbose,mode='both')
             H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(d-4))*H0*H0*MV_volume(lower_part + [-1],verbose=verbose,mode='both')
             boundary = 5*H0bdry + 3*H2bdry + ZZ(7)/2*H0H0bdry
-        elif set(stratum).issubset({3,1,-1}) and stratum.count(3) == 2:
-            H0bdry = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [3,-1],verbose=verbose,mode='both')
-            H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(d-4))*H0*H0*MV_volume(lower_part + [-1,-1],verbose=verbose,mode='both')
-            boundary = 2*H0bdry + H0H0bdry
-        elif set(stratum).issubset({5,3,1,-1}) and stratum.count(5) == 1 and stratum.count(3) == 1:
-            H0bdry_5 = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [-1,5],verbose=verbose,mode='both')
-            H0bdry_3 = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [1,3],verbose=verbose,mode='both')
-            H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(d-4))*H0*H0*MV_volume(lower_part + [1,-1],verbose=verbose,mode='both')
-            boundary = 3*H0bdry_3 + H0bdry_5 + 3*H0H0bdry
-        elif set(stratum).issubset({9,1,-1}) and stratum.count(9) == 1:
+        elif higher_part == [9]:
             H0bdry = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [5],verbose=verbose,mode='both')
             H2bdry = c_f(d)/(c_f(4)*c_f(d-4))*H2*MV_volume(lower_part + [1],verbose=verbose,mode='both')
             H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(d-4))*H0*H0*MV_volume(lower_part + [1],verbose=verbose,mode='both')
             boundary = 7*H0bdry + 9*H2bdry + ZZ(27)/2*H0H0bdry
-        elif set(stratum).issubset({5,1,-1}) and stratum.count(5) == 2:
+        elif higher_part == [3,3]:
+            H0bdry = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [3,-1],verbose=verbose,mode='both')
+            H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(d-4))*H0*H0*MV_volume(lower_part + [-1,-1],verbose=verbose,mode='both')
+            boundary = 2*H0bdry + H0H0bdry
+        elif higher_part == [5,3]:
+            H0bdry_5 = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [-1,5],verbose=verbose,mode='both')
+            H0bdry_3 = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [1,3],verbose=verbose,mode='both')
+            H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(d-4))*H0*H0*MV_volume(lower_part + [1,-1],verbose=verbose,mode='both')
+            boundary = 3*H0bdry_3 + H0bdry_5 + 3*H0H0bdry
+        elif higher_part == [5,5]:
             H0bdry = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [5,1],verbose=verbose,mode='both')
             H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(d-4))*H0*H0*MV_volume(lower_part + [1,1],verbose=verbose,mode='both')
-            boundary = 6*H0bdry + 9*H0H0bdry
-        elif set(stratum).issubset({7,3,1,-1}) and stratum.count(7) == 1 and stratum.count(3) == 1:
+            boundary = 6*H0bdry + 9*H0H0bdry        
+        elif higher_part == [7,3]:
             H0bdry_33 = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [3,3],verbose=verbose,mode='both')
             H2bdry = c_f(d)/(c_f(4)*c_f(d-4))*H2*MV_volume(lower_part + [3,-1],verbose=verbose,mode='both')
             H0bdry_7 = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume(lower_part + [7,-1],verbose=verbose,mode='both')
@@ -304,6 +302,29 @@ def MV_volume(stratum,verbose=False,mode='default'):
             H0H2bdry = c_f(d)/(c_f(2)*c_f(4)*c_f(d-6))*H0*H2*MV_volume(lower_part + [-1,-1],verbose=verbose,mode='both')
             H0H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(2)*c_f(d-6))*H0*H0*H0*MV_volume(lower_part + [-1,-1],verbose=verbose,mode='both')
             boundary = 5*H0bdry_33 + 3*H2bdry + H0bdry_7 + ZZ(17)/2*H0H0bdry + 3*H0H2bdry + ZZ(7)/2*H0H0H0bdry
+        elif higher_part == [11]:
+            H0bdry = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume([7] + lower_part,verbose=verbose,mode='both')
+            H2bdry = c_f(d)/(c_f(4)*c_f(d-4))*H2*MV_volume([3] + lower_part,verbose=verbose,mode='both')
+            H4bdry = c_f(d)/(c_f(6)*c_f(d-6))*H4*MV_volume([-1] + lower_part,verbose=verbose,mode='both')
+            H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(d-4))*H0**2*MV_volume([3] + lower_part,verbose=verbose,mode='both')
+            H0H2bdry = c_f(d)/(c_f(2)*c_f(4)*c_f(d-6))*H0*H2*MV_volume([-1] + lower_part,verbose=verbose,mode='both')
+            H0H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(2)*c_f(d-6))*H0**3*MV_volume([-1] + lower_part,verbose=verbose,mode='both')
+            boundary = 9*H0bdry + 15*H2bdry + 5*H4bdry + ZZ(55)/2*H0H0bdry + 33*H0H2bdry + ZZ(33)/2*H0H0H0bdry
+        elif higher_part == [3,3,3]:
+            H0bdry = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume([3,3,-1] + lower_part,verbose=verbose,mode='both')
+            H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(d-4))*H0**2*MV_volume([3,-1,-1] + lower_part,verbose=verbose,mode='both')       
+            H0H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(2)*c_f(d-6))*H0**3*MV_volume([-1,-1,-1] + lower_part,verbose=verbose,mode='both') 
+            boundary = 3*H0bdry + 3*H0H0bdry + H0H0H0bdry
+        elif higher_part == [13]:
+            print('WARNING: This conjectural formula has not been sufficiently verified.')
+            A, B, C = MV_volume([9] + lower_part), MV_volume([5]+lower_part), principal_volume_Kazarian(g-3,poles)
+            H0bdry = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume([9]+lower_part,verbose=verbose,mode='both')
+            H2bdry = c_f(d)/(c_f(4)*c_f(d-4))*H2*MV_volume([5]+lower_part,verbose=verbose,mode='both')
+            H4bdry = c_f(d)/(c_f(6)*c_f(d-6))*H4*MV_volume([1]+lower_part,verbose=verbose,mode='both')
+            H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(d-4))*H0**2*MV_volume([5]+lower_part,verbose=verbose,mode='both')
+            H0H2bdry = c_f(d)/(c_f(2)*c_f(4)*c_f(d-6))*H0*H2*MV_volume([1]+lower_part,verbose=verbose,mode='both')
+            H0H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(2)*c_f(d-6))*H0**3*MV_volume([1]+lower_part,verbose=verbose,mode='both')
+            boundary = 11*H0bdry + 21*H2bdry + 15*H4bdry + ZZ(91)/2*H0H0bdry + 117*H0H2bdry + ZZ(143)/2*H0H0H0bdry
         else:
             raise ValueError('There is no conjecture for Masur-Veech volume for this stratum.')
         cvolume = completed_volume(stratum,verbose=verbose)
