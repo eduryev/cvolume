@@ -1,8 +1,9 @@
 from sage.all import PolynomialRing, ZZ, QQ, N, exp, factorial
 from collections import Counter
 
-R = PolynomialRing(QQ, ['t%d' % i for i in range(31)])
-S = PolynomialRing(QQ, ['b%d' % i for i in range(1,31)])
+NUM_T_VAR, NUM_B_VAR = 30, 30
+T = PolynomialRing(QQ, ['t%d' % i for i in range(NUM_T_VAR)])
+B = PolynomialRing(QQ, ['b%d' % i for i in range(1,NUM_B_VAR+1)])
 
 def float2time(t,precision=0):
     '''

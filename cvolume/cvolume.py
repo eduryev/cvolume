@@ -56,8 +56,8 @@ def graph_poly(stg):
     '''
     edges,loops,kappa,graph = stg.edges,stg.loops,stg.kappa,stg.graph
     c = ZZ(1)/2**(len(graph.vertices())-1)*1/ZZ(stg.Aut())
-    variables = list(S.gens())
-    b = list(S.gens())
+    variables = list(B.gens())
+    b = list(B.gens())
     valency = [stg.vertex_deg(v)+2*loops[v] for v in graph.vertices()]
     used_vars = []
     # dictionary that converts edges to variables
@@ -118,15 +118,13 @@ def completed_volume(stratum, with_pi=True, verbose=False, one_vertex=False):
     Here we demonstrate the verbose mode by computing completed volume of stratum :math:`\\mathcal{Q}(1,-1)`::
         
         sage: completed_volume([3, 1, 1, -1], verbose = True)
-        Computing completed volume of stratum [3, 1, 1, -1]...
-        Generated 2 codimension 1 graphs in ... s
-        Generated 4 codimension 2 graphs in ... s
-        Generated 3 codimension 3 graphs in ... s
-        The total number of stable graphs for stratum [3, 1, 1, -1] is: 9.
-        Generated all stable graphs for stratum [3, 1, 1, -1] in: ... s
-        Computed contribution of 9/9 graphs. Time elapsed: ... s
-        Completed volume of [3, 1, 1, -1] is computed in: ... s
-        Completed volume of [3, 1, 1, -1] is: 7/60*pi^6
+        Computing completed volume of stratum [3,1^2,-1]...
+        Generated 2   codimension 1 graphs in ... s
+        Generated 4   codimension 2 graphs in ... s
+        Generated 3   codimension 3 graphs in ... s
+        The total number of stable graphs for stratum [3,1^2,-1] is: 9. Generated in: ... s
+        Computed contribution of 9/9 graphs. Time elapsed: ... s. ETA: ... s
+        Completed volume of [3,1^2,-1] is: 7/60*pi^6. Computed in: ... s
         7/60*pi^6
         
     Here we compute one-vertex graphs contribution to the completed volume of :math:`\\mathcal{Q}(3,1,1,-1)`::
@@ -312,7 +310,7 @@ def MV_volume(stratum,verbose=False,mode='default'):
             H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(d-4))*H0**2*MV_volume([3] + lower_part,verbose=verbose,mode='both')
             H0H2bdry = c_f(d)/(c_f(2)*c_f(4)*c_f(d-6))*H0*H2*MV_volume([-1] + lower_part,verbose=verbose,mode='both')
             H0H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(2)*c_f(d-6))*H0**3*MV_volume([-1] + lower_part,verbose=verbose,mode='both')
-            boundary = 9*H0bdry + 15*H2bdry + 5*H4bdry + 55/2*H0H0bdry + 33*H0H2bdry + 33/2*H0H0H0bdry
+            boundary = 9*H0bdry + 15*H2bdry + 5*H4bdry + ZZ(55)/2*H0H0bdry + 33*H0H2bdry + ZZ(33)/2*H0H0H0bdry
         elif higher_part == [3,3,3]:
             H0bdry = c_f(d)/(c_f(2)*c_f(d-2))*H0*MV_volume([3,3,-1] + lower_part,verbose=verbose,mode='both')
             H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(d-4))*H0**2*MV_volume([3,-1,-1] + lower_part,verbose=verbose,mode='both')       
@@ -327,7 +325,7 @@ def MV_volume(stratum,verbose=False,mode='default'):
             H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(d-4))*H0**2*MV_volume([5]+lower_part,verbose=verbose,mode='both')
             H0H2bdry = c_f(d)/(c_f(2)*c_f(4)*c_f(d-6))*H0*H2*MV_volume([1]+lower_part,verbose=verbose,mode='both')
             H0H0H0bdry = c_f(d)/(c_f(2)*c_f(2)*c_f(2)*c_f(d-6))*H0**3*MV_volume([1]+lower_part,verbose=verbose,mode='both')
-            boundary = 11*H0bdry + 21*H2bdry + 15*H4bdry + 91/2*H0H0bdry + 117*H0H2bdry + 143/2*H0H0H0bdry
+            boundary = 11*H0bdry + 21*H2bdry + 15*H4bdry + ZZ(91)/2*H0H0bdry + 117*H0H2bdry + ZZ(143)/2*H0H0H0bdry
         else:
             raise ValueError('There is no conjecture for Masur-Veech volume for this stratum.')
         cvolume = completed_volume(stratum,verbose=verbose)

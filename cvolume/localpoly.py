@@ -51,8 +51,8 @@ def Nlocal(g,n,stratum,labeled=False,mode='derivative'):
     Here we compute local polynomial of genus 2, two bondary components and stratum :math:`\\mathcal{Q}(5, 1, 1, 1)`::
     
         sage: from cvolume import Nlocal
-        sage: S = PolynomialRing(QQ,['b%d' % i for i in range(1,10)])
-        sage: b1,b2,b3,b4,b5 = S.gens()[:5]
+        sage: from cvolume.utils import B
+        sage: b1,b2,b3,b4,b5 = B.gens()[:5]
         sage: Nlocal(2, 2, (5, 1, 1, 1))
         1/192*b1^6 + 95/3072*b1^4*b2^2 + 95/3072*b1^2*b2^4 + 1/192*b2^6
    
@@ -78,10 +78,10 @@ def Nlocal(g,n,stratum,labeled=False,mode='derivative'):
     cache_poly = {}
     cache_labeling = {}
     stratum = tuple(stratum)
-    b = list(S.gens())
+    b = list(B.gens())
     def memo_Nlocal(g,n,stratum,labeled,mode):
         #print('Computing for (%s,%s,%s)...Cache size %s' % (g,n,stratum,len(cache_poly)))
-        if not stratum or n != 2-2*g+1/ZZ(2)*sum(stratum) or g<0 or n<1: return S.zero()
+        if not stratum or n != 2-2*g+1/ZZ(2)*sum(stratum) or g<0 or n<1: return B.zero()
         if type(stratum) == list: stratum = tuple(stratum)
         if (g,n,stratum) in cache_poly:
             if labeled: return cache_poly[(g,n,stratum)]
@@ -106,7 +106,7 @@ def Nlocal(g,n,stratum,labeled=False,mode='derivative'):
             cache_labeling[(g,n,stratum)] = ZZ(prod(factorial(stratum.count(i)) for i in range(-1,max(stratum)+1)))
             return cache_poly[(g,n,stratum)]
         elif mode == 'derivative' or len(m) == 2:             # case without poles
-            _Fs = stratum_to_F(g,n,stratum) 
+            _Fs = stratum_to_F(g,n,stratum)
             deg = ZZ(3*g-3+n-1/2*sum(d-1 for d in stratum))
             M = sum(m[i]*(i-1) for i in range(len(m)))
             mondeg = Partitions(deg+n, length=n)
@@ -114,8 +114,8 @@ def Nlocal(g,n,stratum,labeled=False,mode='derivative'):
             labeling = prod(factorial(stratum.count(i)) for i in range(1,max(stratum)+1))
             N_lab = ZZ(1)/const*labeling*sum(prod(ZZ(1)/factorial(d-1) for d in par)*\
                             prod(factorial(i) for i in par.to_exp())*\
-                            _Fs.monomial_coefficient(prod(R.gen(d-1) for d in par))*\
-                            sum(prod(S.gen(j)**(2*(sympar[j]-1)) for j in range(n)) for sympar in Permutations(par))\
+                            _Fs.monomial_coefficient(prod(T.gen(d-1) for d in par))*\
+                            sum(prod(B.gen(j)**(2*(sympar[j]-1)) for j in range(n)) for sympar in Permutations(par))\
                             for par in mondeg)
             cache_poly[(g,n,stratum)] = N_lab
             cache_labeling[(g,n,stratum)] = ZZ(prod(factorial(stratum.count(i)) for i in range(-1,max(stratum)+1)))
@@ -136,6 +136,6 @@ def Nlocal(g,n,stratum,labeled=False,mode='derivative'):
             cache_poly[(g,n,stratum)] = N_unlab*cache_labeling[(g,n,stratum)]
             return cache_poly[(g,n,stratum)]
     memo_Nlocal(g,n,stratum,labeled,mode)
-    if labeled: return cache_poly.get((g,n,stratum),S.zero())
-    else: return cache_poly.get((g,n,stratum),S.zero())/cache_labeling.get((g,n,stratum),1)
+    if labeled: return cache_poly.get((g,n,stratum),B.zero())
+    else: return cache_poly.get((g,n,stratum),B.zero())/cache_labeling.get((g,n,stratum),1)
     
