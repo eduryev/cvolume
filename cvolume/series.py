@@ -116,9 +116,6 @@ def get_Fs222(F,w):
     Fs222 = ZZ(1)/6*(1728*diff(F,t2,t2,t2).truncate(w+1) - 30240*diff(F,t2,t3).truncate(w+1) - 216*diff(F,t0,t0,t2,t2).truncate(w+1) - 432*diff(F,t0,t2).power_trunc(2,w+1) - 432*diff(F,t0)._mul_trunc_(diff(F,t0,t2,t2),w+1) + 864*diff(F,t0,t1,t2).truncate(w+1) + 864*diff(F,t1)._mul_trunc_(diff(F,t0,t2),w+1) + 864*diff(F,t1,t2)._mul_trunc_(diff(F,t0),w+1) + 1260*diff(F,t0,t0,t3).truncate(w+1) + 2520*diff(F,t0)._mul_trunc_(diff(F,t0,t3),w+1) + 9*diff(F,t0,t0,t0,t0,t2).truncate(w+1) + 36*diff(F,t0,t2)._mul_trunc_(diff(F,t0,t0,t0),w+1) + 36*diff(F,t0)._mul_trunc_(diff(F,t0,t0,t0,t2),w+1) + 36*diff(F,t0,t0)._mul_trunc_(diff(F,t0,t0,t2),w+1) + 72*diff(F,t0)._mul_trunc_(diff(F,t0,t2),w+1)._mul_trunc_(diff(F,t0,t0),w+1) + 36*diff(F,t0).power_trunc(2,w+1)._mul_trunc_(diff(F,t0,t0,t2),w+1) + 151200*diff(F,t4).truncate(w+1) - 576*diff(F,t1,t1).truncate(w+1) - 576*diff(F,t1).power_trunc(2,w+1) - 2628*diff(F,t0,t2).truncate(w+1) - 2520*diff(F,t2)._mul_trunc_(diff(F,t0),w+1) - 36*diff(F,t0,t0,t0,t1).truncate(w+1) - 108*diff(F,t0)._mul_trunc_(diff(F,t0,t0,t1),w+1) - 36*diff(F,t1)._mul_trunc_(diff(F,t0,t0,t0),w+1) - 72*diff(F,t0,t1)._mul_trunc_(diff(F,t0,t0),w+1) - 72*diff(F,t1)._mul_trunc_(diff(F,t0),w+1)._mul_trunc_(diff(F,t0,t0),w+1) - 72*diff(F,t0).power_trunc(2,w+1)._mul_trunc_(diff(F,t0,t1),w+1) - diff(F,t0,t0,t0,t0,t0,t0).truncate(w+1)/8 - 3*diff(F,t0)._mul_trunc_(diff(F,t0,t0,t0,t0,t0),w+1)/4 - 3*diff(F,t0,t0)._mul_trunc_(diff(F,t0,t0,t0,t0),w+1)/2 - 5*diff(F,t0,t0,t0).power_trunc(2,w+1)/4 - 6*diff(F,t0)._mul_trunc_(diff(F,t0,t0),w+1)._mul_trunc_(diff(F,t0,t0,t0),w+1) - diff(F,t0,t0).power_trunc(3,w+1) - 3*diff(F,t0).power_trunc(2,w+1)._mul_trunc_(diff(F,t0,t0,t0,t0),w+1)/2 - 3*diff(F,t0).power_trunc(2,w+1)._mul_trunc_(diff(F,t0,t0).power_trunc(2,w+1),w+1) - diff(F,t0).power_trunc(3,w+1)._mul_trunc_(diff(F,t0,t0,t0),w+1) + 63*diff(F,t0,t0,t0).truncate(w+1)/2 + 90*diff(F,t0)._mul_trunc_(diff(F,t0,t0),w+1) + 27*diff(F,t0).power_trunc(3,w+1) + 378*diff(F,t1).truncate(w+1) - ZZ(63)/20)
     return Fs222(z=1)
 
-# def get_Fs222(F):
-#     return ZZ(1)/6*(1728*diff(F,t2,t2,t2) - 30240*diff(F,t2,t3) - 216*diff(F,t0,t0,t2,t2) - 432*diff(F,t0,t2)**2 - 432*diff(F,t0)*diff(F,t0,t2,t2) + 864*diff(F,t0,t1,t2) + 864*diff(F,t1)*diff(F,t0,t2) + 864*diff(F,t1,t2)*diff(F,t0) + 1260*diff(F,t0,t0,t3) + 2520*diff(F,t0)*diff(F,t0,t3) + 9*diff(F,t0,t0,t0,t0,t2) + 36*diff(F,t0,t2)*diff(F,t0,t0,t0) + 36*diff(F,t0)*diff(F,t0,t0,t0,t2) + 36*diff(F,t0,t0)*diff(F,t0,t0,t2) + 72*diff(F,t0)*diff(F,t0,t2)*diff(F,t0,t0) + 36*diff(F,t0)**2*diff(F,t0,t0,t2) + 151200*diff(F,t4) - 576*diff(F,t1,t1) - 576*diff(F,t1)**2 - 2628*diff(F,t0,t2) - 2520*diff(F,t2)*diff(F,t0) - 36*diff(F,t0,t0,t0,t1) - 108*diff(F,t0)*diff(F,t0,t0,t1) - 36*diff(F,t1)*diff(F,t0,t0,t0) - 72*diff(F,t0,t1)*diff(F,t0,t0) - 72*diff(F,t1)*diff(F,t0)*diff(F,t0,t0) - 72*diff(F,t0)**2*diff(F,t0,t1) - diff(F,t0,t0,t0,t0,t0,t0)/8 - 3*diff(F,t0)*diff(F,t0,t0,t0,t0,t0)/4 - 3*diff(F,t0,t0)*diff(F,t0,t0,t0,t0)/2 - 5*diff(F,t0,t0,t0)**2/4 - 6*diff(F,t0)*diff(F,t0,t0)*diff(F,t0,t0,t0) - diff(F,t0,t0)**3 - 3*diff(F,t0)**2*diff(F,t0,t0,t0,t0)/2 - 3*diff(F,t0)**2*diff(F,t0,t0)**2 - diff(F,t0)**3*diff(F,t0,t0,t0) + 63*diff(F,t0,t0,t0)/2 + 90*diff(F,t0)*diff(F,t0,t0) + 27*diff(F,t0)**3 + 378*diff(F,t1) - ZZ(63)/20)
-
 class PartitionFunctions:
     AC_formulae = {(2,):get_Fs2, (3,):get_Fs3, (4,):get_Fs4, (2,2):get_Fs22, (5,):get_Fs5, (2,3):get_Fs23, (6,):get_Fs6,\
                    (2,4):get_Fs24, (3,3):get_Fs33, (7,):get_Fs7, (2,2,2):get_Fs222}
@@ -163,13 +160,13 @@ class PartitionFunctions:
         F = self.F_series.get((),T.zero()) 
         if w > F_max_weight:
             tic = time.time()
-            time_est = time_for_F(w) - time_for_F(F_max_weight)
-            if time_est > 120:
-                command = input(f"    Partition function update might take more than {float2time(time_est,2)}. Do you want to \
-                continue? Print 'n' to abort, to continue press Enter.")
-                if command == 'n':
-                    sys.exit("The computation was aborted by user due to time constraints.")
-            if self.verbose: print(f"    Updating the partition function F from max_weight {F_max_weight} to {w}...Estimated time: {float2time(time_est,2)}")
+#             time_est = time_for_F(w) - time_for_F(F_max_weight)
+#             if time_est > 120:
+#                 command = input(f"    Partition function update might take more than {float2time(time_est,2)}. Do you want to \
+#                 continue? Print 'n' to abort, to continue press Enter.")
+#                 if command == 'n':
+#                     sys.exit("The computation was aborted by user due to time constraints.")
+            if self.verbose: print(f"    Updating the partition function F from max_weight {F_max_weight} to {w}...")
             for i in range(max(F_max_weight,0)+1,w+1):
                 F += sum(coeff(par)*monom(par) for par in Partitions(i))
             self.F_weights[()] = w
@@ -185,13 +182,13 @@ class PartitionFunctions:
         Fs = self.F_series.get(s_part,T.zero()) 
         if w > Fs_max_weight:
             tic = time.time()
-            time_est = self.times[s_part](w)
-            if time_est > 120:
-                command = input(f"Fs function update for s = {s_part}, w = {w} might take more than {float2time(time_est,2)}.\
-                Do you want to continue? Print 'n' to abort, to continue press Enter..")              
-                if command == 'n':
-                    sys.exit("The computation was aborted by user due to time constraints.")
-            if self.verbose: print(f"Updating Fs function for s = {s_part} from max_weight {Fs_max_weight} to {w}...Estimated time: {float2time(time_est,2)}")
+#             time_est = self.times[s_part](w)
+#             if time_est > 120:
+#                 command = input(f"Fs function update for s = {s_part}, w = {w} might take more than {float2time(time_est,2)}.\
+#                 Do you want to continue? Print 'n' to abort, to continue press Enter..")              
+#                 if command == 'n':
+#                     sys.exit("The computation was aborted by user due to time constraints.")
+            if self.verbose: print(f"Updating Fs function for s = {s_part} from max_weight {Fs_max_weight} to {w}...")
             F = self.partition_function(w+self.shifts[s_part])
             Fs = self.AC_formulae[s_part](F,w)
             self.F_weights[s_part] = w
