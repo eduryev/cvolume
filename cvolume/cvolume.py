@@ -26,7 +26,7 @@ def operator(Poly):
     '''
     return sum(Poly.monomial_coefficient(monom)*prod(replmon(k) for k in monom.exponents()[0]) for monom in Poly.monomials())     
 
-def graph_poly(stg):
+def graph_poly(stg,cache=None):
     '''
     Return the 'Kontsevich polynomial' associated to the Labeled Stable Graph.
     
@@ -54,6 +54,7 @@ def graph_poly(stg):
         sage: graph_poly(stg) == 1/2*1/8*b1*b2*b3*Nlocal(0,3,[3,-1])(b1=b1,b2=b1,b3=b2)*Nlocal(0,3,[3,-1])(b1=b2,b2=b3,b3=b3)
         True
     '''
+    if cache is None: cache = {}
     edges,loops,kappa,graph = stg.edges,stg.loops,stg.kappa,stg.graph
     c = ZZ(1)/2**(len(graph.vertices())-1)*1/ZZ(stg.Aut())
     variables = list(B.gens())
@@ -90,22 +91,28 @@ def graph_poly(stg):
             plug_in.append(var)
         used_vars = used_vars + plug_in
         plug_in = plug_in + variables[len(plug_in):]
-        Nlocal_at_v = Nlocal(stg.genera[v],valency[v],kappa[v])(*plug_in)
+        if (stg.genera[v],valency[v],kappa[v]) in cache:
+            Nlocal_at_v = cache[(stg.genera[v],valency[v],kappa[v])]
+        else:
+            Nlocal_at_v = Nlocal(stg.genera[v],valency[v],kappa[v])
+            cache[(stg.genera[v],valency[v],kappa[v])] = Nlocal_at_v
+        Nlocal_at_v = Nlocal_at_v(*plug_in)
         vert_to_Poly.append(Nlocal_at_v)
     twists = prod(list(set(used_vars)))
     return c*twists*prod(local_poly for local_poly in vert_to_Poly)
 
-def completed_volume(stratum, with_pi=True, verbose=False, one_vertex=False):
+def completed_volume(stratum, verbose=False, one_vertex=False, with_pi=True, cache=None):
     '''
     Return the completed volume of the stratum.
     
     INPUT:
     
-    - ``stratum``    -- list, a list of orders of zeros of the stratum
-    - ``with_pi``    -- boolean (default `True`), when False returns completed volume as a rational number (volume divided by 
-      an appropriate degree of pi
+    - ``stratum``    -- list or tuple, orders of zeros of the stratum
     - ``verbose``    -- boolean (default `False`), when True prints progress of the computation: time to generate and the number       of stable graphs in each codimension and in total; progress of computing contribution of stable graphs
     - ``one_vertex`` -- boolean (default `False`), when True only computes contribution of one-vertex labeled stable graphs.
+    - ``with_pi``    -- boolean (default `True`), when False returns completed volume as a rational number (volume divided by 
+      an appropriate degree of pi
+    - ``cache``      -- dict (default `None`), a cache to store computed local polynomials
     
     EXAMPLES:
 
@@ -139,6 +146,7 @@ def completed_volume(stratum, with_pi=True, verbose=False, one_vertex=False):
         sage: assert completed_volume([1, -1]) == 2/3*pi^2
         sage: assert completed_volume([-1, -1, -1, -1]) == 2*pi^2
     '''
+    if cache is None: cache = {}
     stratum = tuple(sorted(stratum,reverse=True))
     if stratum in cvolumes_dict and one_vertex == False:
         cvolume = cvolumes_dict[stratum]
@@ -146,7 +154,7 @@ def completed_volume(stratum, with_pi=True, verbose=False, one_vertex=False):
         else: return cvolume.coefficient(pi**cvolume.degree(pi))
     def max_weight(stratum): return sum(stratum)/ZZ(2) + len(stratum)/ZZ(2) + stratum.count(-1) + 1
     higher_part = [i for i in stratum if i > 1]
-    lower_part = [i for i in stratum if i not in higher_part]
+    lower_part = [abs(i) for i in stratum if i not in higher_part]
     for new_higher_part in reversed(Combinations(higher_part).list()):
         rest_is_odd = (sum(higher_part) - sum(new_higher_part)) % 2
         w = max_weight(new_higher_part + lower_part) - rest_is_odd
@@ -164,11 +172,11 @@ def completed_volume(stratum, with_pi=True, verbose=False, one_vertex=False):
     vol, count, period = 0, 0, 10
     tic = time.time()
     for stg in stgs:      
-        vol += operator(graph_poly(stg)) 
+        vol += operator(graph_poly(stg, cache = cache)) 
         count += 1        
         if verbose and (count%period == 0 or count == total_num):
             toc = time.time()
-            print(f"\rComputed contribution of {count}/{total_num} graphs. Time elapsed: {float2time(toc-tic,3)}. ETA: {float2time((toc-tic)/count*(total_num-count),3)}", end = "") 
+            print(f"\rComputed contribution of {count}/{total_num} graphs. Time elapsed: {float2time(toc-tic,3)}. ETA: {float2time((toc-tic)/count*(total_num-count),3)}          ", end = "") 
     if verbose:
         toc_total = time.time()
         print(f"\nCompleted volume of {stratum2print(stratum)} is: {f*mu*vol*pi**d}. Computed in: {float2time(toc_total-tic_total,3)}")
@@ -183,7 +191,7 @@ def cvolume_by_graphs(stratum, graphs):
     
     INPUT:
     
-    - ``stratum``    -- list, a list of orders of zeros of the stratum
+    - ``stratum``    -- list or tuple, orders of zeros of the stratum
     - ``graphs``     -- iterable, e.g. a set, of Labeled Stable Graphs
     '''
     f = c_f(stratum)
@@ -193,6 +201,7 @@ def cvolume_by_graphs(stratum, graphs):
 def cvolume_by_cylinders(stratum):    
     '''
     Return the contributions of k-cylinder surfaces to the completed volume of the stratum for each k.
+    
     '''
     stgs = stable_lab_graphs(stratum, by_codim = True)
     for i in range(1,len(stgs)):    # don't include the 0-th set, as it consists of the original non-degenrated graph
@@ -201,6 +210,7 @@ def cvolume_by_cylinders(stratum):
 def CKazarian(g,k,memo=None):
     '''
     Return Kazarian constant for recursion on volumes of principal strata.
+    
     '''
     if g<=0 or k<0 or k>g: return 0
     if (g,k) == (1,0): return ZZ(1)/12
@@ -233,8 +243,26 @@ def principal_volume(g_or_stratum,n=None):
     
 def MV_volume(stratum,verbose=False,mode='default'):
     '''
-    TODO: Add assertions for MV_volume.
-    Return the Masur-Veech volume of any startum of quadratic differentials, if it is known. This inlcudes all principal strata, strata covered by the table of volumes of Elise Goujard and strata [3,1,1...-1,-1] and [5,1,1...-1,-1], for which we make use of completed volumes. The mode can be set to 'conjecture', the Masur-Veech volumes are computed using their conjectural relations with completed volumes.
+    Return the Masur-Veech volume of startum, if it is known, or compute its conjectural value. Known cases inlcude: all principal strata, strata covered by the table of volumes of Elise Goujard and strata [3,1,1...-1,-1] and [5,1,1...-1,-1]. Conjectural cases use relation between completed and Masur-Veech volumes.
+    
+    INPUT:
+    
+    - ``stratum``  -- list or tuple, orders of zeros of the stratum
+    - ``verbose``  -- boolean (default `False`), when True prints progress of the computation, similar to ``completed_volume``
+    - ``mode``     -- string (`default` or `conjecture`), in `default` mode return the Masur-Veech volume calculated with proven method, in `conjecture` return the Masur-Veech volume computed with conjectural formula relating completed and Masur-Veech volumes
+
+    EXAMPLES:
+    
+    Here we compute Masur-Veech volume of the stratum :math:`\\mathcal{Q}(3,1^2,-1)` and obtain result compatible with Elise Goujard table of volumes::
+        
+        sage: from cvolume import MV_volume 
+        sage: MV_volume([3, 1, 1, -1])
+        1/9*pi^6
+        
+    Here we compute Masur-Veech volume of the same stratum, but in `conjecture` mode::
+    
+        sage: MV_volume([3, 1, 1, -1], mode='conjecture')
+        1/9*pi^6
     '''
     stratum = tuple(sorted(stratum,reverse=True))
     if sum(stratum) < -4 or sum(stratum)%4 != 0:
@@ -341,6 +369,7 @@ def MV_volume(stratum,verbose=False,mode='default'):
 def asymptotic_volume(stratum):
     '''
     Return conjectural asymptotics for the volume of the stratum from [ADGZZ]. Note that formula is only conjectured in the case when the number of poles is logarithmically small compared to the genus.
+    
     '''
     return ZZ(4)/pi*prod(2**(d+2)/(d+2) for d in stratum)
 
