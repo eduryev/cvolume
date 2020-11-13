@@ -81,9 +81,19 @@ Or directly inside a Sage session::
 
     sage: cd /Amazing/Organized/Folder/System/admcycles
 
+Quick start
+-----------
+
+Documentation
+^^^^^^^^^^^^^
+Check this page for documentation. Also see Example below.
+
+Demonstration
+^^^^^^^^^^^^^
+You can find a demo of functionality of ``cvolume`` in this `jypiter notebook<https://github.com/eduryev/cvolume/blob/master/demo.ipynb>`__.
 
 Examples
--------
+^^^^^^^^
 
 To start using cvolume, start a Sage session: either in the command line::
 
