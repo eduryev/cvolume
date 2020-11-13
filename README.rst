@@ -86,11 +86,11 @@ Quick start
 
 Documentation
 ^^^^^^^^^^^^^
-Check this page for documentation. Also see Example below.
+Check this page for `documentation <https://eduryev.github.io/cvolume/index.html>`_. Also see Examples below.
 
 Demonstration
 ^^^^^^^^^^^^^
-You can find a demo of functionality of ``cvolume`` in this `jypiter notebook<https://github.com/eduryev/cvolume/blob/master/demo.ipynb>`__.
+You can find a demo of functionality of ``cvolume`` in this `jypiter notebook <https://github.com/eduryev/cvolume/blob/master/demo.ipynb>`_.
 
 Examples
 ^^^^^^^^
