@@ -90,7 +90,7 @@ Check this page for `documentation <https://eduryev.github.io/cvolume/index.html
 
 Demonstration
 ^^^^^^^^^^^^^
-You can find a demo of functionality of ``cvolume`` in this `jypiter notebook <https://github.com/eduryev/cvolume/blob/master/demo.ipynb>`_.
+You can find a demo of functionality of ``cvolume`` in this `jupyter notebook <https://github.com/eduryev/cvolume/blob/master/demo.ipynb>`_.
 
 Examples
 ^^^^^^^^
