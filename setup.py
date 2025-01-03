@@ -15,7 +15,7 @@ setup(
     description="Completed volumes of strata of quadratic differentials with odd zeros",
     long_description=readfile("README.rst"), # get the long description from the README
     url="https://github.com/eduryev/cvolume",
-    install_requires=['admcycles'],
+    install_requires=['admcycles @ git+https://gitlab.com/modulispaces/admcycles.git'],
     author="Vincent Delecroix, Eduard Duryev",
     author_email="edwardduriev@gmail.com",
     license="GPLv2+",
@@ -29,4 +29,9 @@ setup(
     ], # classifiers list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
     keywords = "SageMath geometry moduli space curve differential",
     packages = ["cvolume"],
+    extras_require={
+        'passagemath': [
+            'admcycles[passagemath]',
+        ],
+    }
 )
