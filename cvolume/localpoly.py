@@ -1,7 +1,13 @@
-from sage.all import ZZ, factorial, prod, Partitions, Permutations, OrderedSetPartitions, diff
+from sage.rings.integer_ring import Z as ZZ
+from sage.functions.other import factorial
+from sage.misc.misc_c import prod
+from sage.combinat.partition import Partitions
+from sage.combinat.permutation import Permutations
+from sage.combinat.set_partition_ordered import OrderedSetPartitions
+from sage.calculus.functional import derivative as diff
 from .utils import *
 from .series import Fs
-        
+
 def stratum_to_F(g,n,stratum):
     '''
     Return partition function Fs corresponding to the stratum. Function is truncated at a minimal admissible weight.

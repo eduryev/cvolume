@@ -1,4 +1,9 @@
-from sage.all import PolynomialRing, ZZ, QQ, N, exp, factorial
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.integer_ring import Z as ZZ
+from sage.rings.rational_field import Q as QQ
+from sage.misc.functional import N
+from sage.functions.log import exp
+from sage.functions.other import factorial
 from collections import Counter
 
 NUM_T_VAR, NUM_B_VAR = 30, 30

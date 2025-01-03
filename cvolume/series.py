@@ -1,4 +1,9 @@
-from sage.all import ZZ, diff, factorial, Partitions, Partition, prod
+from sage.rings.integer_ring import Z as ZZ
+from sage.calculus.functional import derivative as diff
+from sage.functions.other import factorial
+from sage.combinat.partition import Partitions
+from sage.combinat.partition import Partition
+from sage.misc.misc_c import prod
 import time
 import sys
 from .utils import *

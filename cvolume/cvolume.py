@@ -1,4 +1,9 @@
-from sage.all import factorial, Rational, prod, Combinations, zeta, pi
+from sage.functions.other import factorial
+from sage.rings.rational import Rational
+from sage.misc.misc_c import prod
+from sage.combinat.combination import Combinations
+from sage.functions.transcendental import zeta
+from sage.symbolic.constants import pi
 import itertools
 import time
 from .localpoly import Nlocal
