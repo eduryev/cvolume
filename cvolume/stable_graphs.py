@@ -1,4 +1,8 @@
-from sage.all import Graph, ZZ, Combinations, prod, factorial
+from sage.graphs.graph import Graph
+from sage.rings.integer_ring import Z as ZZ
+from sage.combinat.combination import Combinations
+from sage.misc.misc_c import prod
+from sage.functions.other import factorial
 import itertools
 import time
 from .utils import float2time, stratum2print
