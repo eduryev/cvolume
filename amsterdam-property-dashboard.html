@@ -1,0 +1,507 @@
+<title>Amsterdam Property Growth</title>
+<style>
+  .viz-root{
+    color-scheme: light;
+    --surface-1:      #fcfcfb;
+    --page:           #f9f9f7;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #898781;
+    --grid:           #e1e0d9;
+    --axis:           #c3c2b7;
+    --border:         rgba(11,11,11,0.10);
+    --good:           #006300;
+
+    --s1: #2a78d6; /* Centrum */
+    --s2: #eb6834; /* Zuid */
+    --s3: #1baf7a; /* West */
+    --s4: #eda100; /* Oost */
+    --s5: #e87ba4; /* Noord */
+    --s6: #008300; /* Nieuw-West */
+    --s7: #4a3aa7; /* Zuidoost */
+  }
+  @media (prefers-color-scheme: dark){
+    :root:where(:not([data-theme="light"])) .viz-root{
+      color-scheme: dark;
+      --surface-1:      #1a1a19;
+      --page:           #0d0d0d;
+      --text-primary:   #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted:     #898781;
+      --grid:           #2c2c2a;
+      --axis:           #383835;
+      --border:         rgba(255,255,255,0.10);
+      --good:           #0ca30c;
+      --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500;
+      --s5: #d55181; --s6: #008300; --s7: #9085e9;
+    }
+  }
+  :root[data-theme="dark"] .viz-root{
+    color-scheme: dark;
+    --surface-1:      #1a1a19;
+    --page:           #0d0d0d;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #898781;
+    --grid:           #2c2c2a;
+    --axis:           #383835;
+    --border:         rgba(255,255,255,0.10);
+    --good:           #0ca30c;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500;
+    --s5: #d55181; --s6: #008300; --s7: #9085e9;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin:0; padding:0; }
+  body{
+    background: var(--page);
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  .viz-root{ max-width: 1120px; margin: 0 auto; padding: 28px 20px 60px; }
+
+  header.page h1{ font-size: 26px; font-weight: 700; margin: 0 0 6px; letter-spacing: -0.01em; }
+  header.page p.sub{ font-size: 14.5px; color: var(--text-secondary); margin: 0 0 4px; max-width: 74ch; line-height: 1.5; }
+
+  .note{
+    margin-top: 16px; padding: 12px 14px; border-radius: 10px;
+    background: color-mix(in srgb, var(--s4) 10%, var(--surface-1));
+    border: 1px solid var(--border);
+    font-size: 12.5px; color: var(--text-secondary); line-height: 1.55;
+  }
+  .note strong{ color: var(--text-primary); }
+
+  .card{
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px 20px;
+    margin-top: 22px;
+  }
+  .card h2{ font-size: 15px; font-weight: 650; margin: 0 0 2px; }
+  .card p.desc{ font-size: 12.5px; color: var(--text-secondary); margin: 0 0 14px; }
+
+  /* filter row */
+  .filters{
+    display:flex; flex-wrap:wrap; gap:6px 10px; margin: 14px 0 6px; align-items:center;
+  }
+  .chip{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size: 12.5px; color: var(--text-secondary);
+    border: 1px solid var(--border); border-radius: 999px;
+    padding: 5px 11px 5px 8px; cursor: pointer; user-select:none;
+    background: var(--surface-1);
+    transition: opacity .15s ease;
+  }
+  .chip .dot{ width:9px; height:9px; border-radius:50%; flex:none; }
+  .chip.off{ opacity: .38; }
+  .chip:hover{ opacity: .8; }
+  .chip.off:hover{ opacity: .55; }
+
+  /* legend under chart */
+  .legend{ display:flex; flex-wrap:wrap; gap:14px 18px; margin-top: 10px; }
+  .legend .item{ display:flex; align-items:center; gap:7px; font-size: 12.5px; color: var(--text-secondary); }
+  .legend .key{ width:16px; height:2px; border-radius:1px; flex:none; }
+
+  svg text{ font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .axis-label{ fill: var(--text-muted); font-size: 11px; }
+  .gridline{ stroke: var(--grid); stroke-width:1; }
+  .axisline{ stroke: var(--axis); stroke-width:1; }
+
+  .tooltip{
+    position: absolute; pointer-events:none; z-index: 5;
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 10px; padding: 9px 11px; font-size: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,.16);
+    min-width: 168px; opacity:0; transition: opacity .1s ease;
+  }
+  .tooltip .t-year{ font-size:11.5px; color: var(--text-muted); margin-bottom:6px; font-weight:600; }
+  .tooltip .row{ display:flex; align-items:center; gap:7px; padding:1.5px 0; }
+  .tooltip .row .k{ width:12px; height:2px; border-radius:1px; flex:none; }
+  .tooltip .row .name{ color: var(--text-secondary); flex:1; }
+  .tooltip .row .val{ color: var(--text-primary); font-weight:650; font-variant-numeric: tabular-nums; }
+
+  .chart-wrap{ position:relative; }
+  .crosshair{ stroke: var(--axis); stroke-width:1; pointer-events:none; opacity:0; }
+  .hover-dot{ pointer-events:none; }
+
+  /* stat cards */
+  .stat-grid{
+    display:grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr));
+    gap: 10px; margin-top: 4px;
+  }
+  .stat{
+    border: 1px solid var(--border); border-radius: 12px; padding: 12px 13px;
+    background: var(--surface-1);
+  }
+  .stat .head{ display:flex; align-items:center; gap:7px; margin-bottom:8px; }
+  .stat .head .dot{ width:9px; height:9px; border-radius:50%; flex:none; }
+  .stat .head .nm{ font-size:12.5px; font-weight:650; }
+  .stat .row{ display:flex; justify-content:space-between; font-size:12px; padding:2px 0; }
+  .stat .row .k{ color: var(--text-muted); }
+  .stat .row .v{ font-variant-numeric: tabular-nums; font-weight:600; }
+  .stat .row .v.good{ color: var(--good); }
+
+  /* projection dot-plot */
+  .proj-row{ display:flex; align-items:center; padding: 10px 0; border-top: 1px solid var(--border); flex-wrap:wrap; gap: 4px 14px; }
+  .proj-row:first-of-type{ border-top:none; }
+  .proj-label{ width: 108px; flex:none; font-size:12.5px; font-weight:600; display:flex; align-items:center; gap:7px; }
+  .proj-label .dot{ width:9px; height:9px; border-radius:50%; flex:none; }
+  .proj-track{ flex:1 1 220px; min-width: 160px; position:relative; height: 22px; }
+  .proj-values{ flex:none; display:flex; gap:14px; font-size:11.5px; white-space:nowrap; padding-left: 122px; }
+  @media (min-width: 640px){ .proj-values{ flex:1 1 200px; padding-left:0; text-align:right; justify-content:flex-end; } }
+  .proj-values .fv5{ color: var(--text-secondary); }
+  .proj-values .fv10{ font-weight:700; color: var(--text-primary); }
+  .proj-values .fv10 .hz{ font-weight:400; color: var(--text-muted); }
+
+  table.data-table{ width:100%; min-width:720px; border-collapse: collapse; font-size: 12.5px; margin-top:6px; }
+  table.data-table th, table.data-table td{
+    text-align:right; padding: 7px 9px; border-bottom: 1px solid var(--border);
+    font-variant-numeric: tabular-nums;
+  }
+  table.data-table th:first-child, table.data-table td:first-child{ text-align:left; font-variant-numeric: normal; }
+  table.data-table thead th{ color: var(--text-muted); font-weight:600; font-size:11.5px; text-transform:uppercase; letter-spacing:.02em; }
+  table.data-table tbody td.name{ font-weight:600; }
+  table.data-table tbody tr:hover{ background: color-mix(in srgb, var(--text-primary) 4%, transparent); }
+
+  details.table-toggle{ margin-top:16px; }
+  details.table-toggle summary{
+    cursor:pointer; font-size:12.5px; color: var(--text-secondary); font-weight:600;
+    padding: 6px 0; list-style: none; display:flex; align-items:center; gap:6px;
+  }
+  details.table-toggle summary::-webkit-details-marker{ display:none; }
+  details.table-toggle summary::before{ content:"▸"; font-size:10px; color: var(--text-muted); }
+  details.table-toggle[open] summary::before{ content:"▾"; }
+  .scroll-x{ overflow-x:auto; }
+
+  footer.page{ margin-top: 26px; font-size: 11.5px; color: var(--text-muted); line-height:1.6; }
+  footer.page a{ color: var(--text-secondary); }
+</style>
+
+<div class="viz-root">
+  <header class="page">
+    <h1>Amsterdam property prices, by neighbourhood</h1>
+    <p class="sub">Historical growth in sale price per m² across Amsterdam's seven boroughs (2016&ndash;2026), and what a &euro;700,000 purchase today could be worth in 5 and 10 years if each area keeps compounding at its recent pace.</p>
+  </header>
+
+  <div class="note">
+    <strong>How to read this.</strong> Current (2025&ndash;2026) price levels and district ranking come from published broker and municipal reporting (see sources below). The full year-by-year 2016&ndash;2026 series and the 5-/10-year growth rates are a <strong>model reconstruction</strong> anchored to those published figures and to Amsterdam's well-documented market cycle (2015&ndash;19 boom, 2019&ndash;21 plateau, 2022&ndash;23 rate-driven correction, 2024&ndash;26 recovery) &mdash; live access to the official granular dataset (Gemeente Amsterdam Onderzoek &amp; Statistiek, CBS StatLine) was not reachable from this session's network. Treat the shapes and rankings as directionally sound and the 5-/10-year projections as illustrative, not as a substitute for the primary data or financial advice.
+  </div>
+
+  <section class="card">
+    <h2>Price per m² by neighbourhood, 2016&ndash;2026</h2>
+    <p class="desc">Click a chip to isolate a borough. Hover the chart for exact values.</p>
+    <div class="filters" id="filters"></div>
+    <div class="chart-wrap" id="lineChartWrap">
+      <svg id="lineChart" width="100%" viewBox="0 0 1040 380" preserveAspectRatio="xMidYMid meet"></svg>
+      <div class="tooltip" id="tooltip"></div>
+    </div>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <section class="card">
+    <h2>Growth rate by neighbourhood</h2>
+    <p class="desc">Compound annual growth rate (CAGR) implied by the reconstruction above &mdash; the trailing 5-year window (2021&rarr;2026) reflects the post-correction recovery pace; the 10-year window (2016&rarr;2026) reflects the full cycle.</p>
+    <div class="stat-grid" id="statGrid"></div>
+  </section>
+
+  <section class="card">
+    <h2>Projection: &euro;700,000 bought today</h2>
+    <p class="desc">Future value if the purchase price compounds at each neighbourhood's modeled CAGR, holding the growth rate constant across the horizon &mdash; not a forecast, an extrapolation of the trend above.</p>
+    <div id="projChart"></div>
+    <details class="table-toggle">
+      <summary>Show full data table</summary>
+      <div class="scroll-x">
+        <table class="data-table" id="dataTable"></table>
+      </div>
+    </details>
+  </section>
+
+  <footer class="page">
+    Sources for current (2025&ndash;2026) price levels and district ranking: Forte Makelaars &amp; Makelaarsvereniging Amsterdam quarterly market reports (Q2 2026); Investropa Amsterdam housing market analyses (2026); CBS StatLine <em>Bestaande koopwoningen &ndash; verkoopprijzen</em> (83906NED/85773NED) and <em>Gemiddelde WOZ-waarde</em> (85036NED); Gemeente Amsterdam Onderzoek &amp; Statistiek <em>Ontwikkeling in woningprijzen in Amsterdam</em>. For authoritative buurt-level series, query onderzoek.amsterdam.nl and CBS StatLine directly. Not financial or investment advice.
+  </footer>
+</div>
+
+<script>
+(function(){
+  const YEARS = [2016,2017,2018,2019,2020,2021,2022,2023,2024,2025,2026];
+
+  const NEIGHBORHOODS = [
+    { key:"centrum",   name:"Centrum",    color:"var(--s1)", cagr5:0.030, cagr10:0.060, median2026:722000,
+      m2:{2016:5316,2017:5857,2018:6389,2019:6901,2020:7490,2021:8212,2022:8712,2023:8407,2024:8839,2025:9243,2026:9520} },
+    { key:"zuid",      name:"Zuid",       color:"var(--s2)", cagr5:0.032, cagr10:0.065, median2026:790600,
+      m2:{2016:5161,2017:5729,2018:6296,2019:6852,2020:7493,2021:8276,2022:8797,2023:8506,2024:8960,2025:9388,2026:9688} },
+    { key:"west",      name:"West",       color:"var(--s3)", cagr5:0.035, cagr10:0.068, median2026:564000,
+      m2:{2016:4825,2017:5371,2018:5919,2019:6458,2020:7082,2021:7844,2022:8362,2023:8108,2024:8566,2025:9001,2026:9316} },
+    { key:"oost",      name:"Oost",       color:"var(--s4)", cagr5:0.045, cagr10:0.070, median2026:672524,
+      m2:{2016:4067,2017:4500,2018:4930,2019:5348,2020:5830,2021:6420,2022:6910,2023:6765,2024:7216,2025:7656,2026:8000} },
+    { key:"noord",     name:"Noord",      color:"var(--s5)", cagr5:0.055, cagr10:0.085, median2026:560000,
+      m2:{2016:3229,2017:3639,2018:4060,2019:4486,2020:4981,2021:5585,2022:6069,2023:5999,2024:6460,2025:6919,2026:7300} },
+    { key:"nieuwwest", name:"Nieuw-West", color:"var(--s6)", cagr5:0.050, cagr10:0.080, median2026:525000,
+      m2:{2016:2809,2017:3152,2018:3501,2019:3851,2020:4256,2021:4752,2022:5139,2023:5056,2024:5419,2025:5776,2026:6065} },
+    { key:"zuidoost",  name:"Zuidoost",   color:"var(--s7)", cagr5:0.058, cagr10:0.088, median2026:398165,
+      m2:{2016:2030,2017:2294,2018:2567,2019:2844,2020:3166,2021:3560,2022:3879,2023:3845,2024:4153,2025:4460,2026:4719} },
+  ];
+
+  const PURCHASE = 700000;
+  const active = new Set(NEIGHBORHOODS.map(n=>n.key));
+  const fmtEUR = v => "€" + Math.round(v).toLocaleString("en-US");
+  const fmtEURk = v => "€" + (v/1000).toFixed(0) + "k";
+  const resolveColor = c => getComputedStyle(document.documentElement).getPropertyValue ?
+    (function(){ const el=document.createElement("div"); el.style.color=c; document.body.appendChild(el);
+      const rgb = getComputedStyle(el).color; document.body.removeChild(el); return rgb; })() : c;
+
+  /* ---------- filter chips ---------- */
+  const filtersEl = document.getElementById("filters");
+  NEIGHBORHOODS.forEach(n=>{
+    const chip = document.createElement("div");
+    chip.className = "chip";
+    chip.dataset.key = n.key;
+    chip.innerHTML = '<span class="dot" style="background:'+n.color+'"></span><span></span>';
+    chip.querySelector("span:last-child").textContent = n.name;
+    chip.addEventListener("click", ()=>{
+      if(active.has(n.key)){ active.delete(n.key); chip.classList.add("off"); }
+      else{ active.add(n.key); chip.classList.remove("off"); }
+      renderLine(); renderLegend();
+    });
+    filtersEl.appendChild(chip);
+  });
+
+  /* ---------- legend ---------- */
+  function renderLegend(){
+    const legendEl = document.getElementById("legend");
+    legendEl.innerHTML = "";
+    NEIGHBORHOODS.filter(n=>active.has(n.key)).forEach(n=>{
+      const item = document.createElement("div");
+      item.className = "item";
+      item.innerHTML = '<span class="key" style="background:'+n.color+'"></span><span></span>';
+      item.querySelector("span:last-child").textContent = n.name;
+      legendEl.appendChild(item);
+    });
+  }
+
+  /* ---------- line chart ---------- */
+  const svgNS = "http://www.w3.org/2000/svg";
+  const W = 1040, H = 380, M = {top:16, right:78, bottom:34, left:56};
+  const plotW = W - M.left - M.right, plotH = H - M.top - M.bottom;
+
+  function el(tag, attrs){
+    const e = document.createElementNS(svgNS, tag);
+    for(const k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  function renderLine(){
+    const svg = document.getElementById("lineChart");
+    svg.innerHTML = "";
+    const shown = NEIGHBORHOODS.filter(n=>active.has(n.key));
+    const allVals = shown.flatMap(n=>YEARS.map(y=>n.m2[y]));
+    const yMax = Math.ceil((Math.max(...allVals, 1000) * 1.08) / 1000) * 1000;
+    const yMin = 0;
+
+    const x = i => M.left + (plotW * i) / (YEARS.length - 1);
+    const y = v => M.top + plotH - (plotH * (v - yMin)) / (yMax - yMin);
+
+    const g = el("g", {});
+    svg.appendChild(g);
+
+    // gridlines + y ticks
+    const ticks = 5;
+    for(let t=0; t<=ticks; t++){
+      const val = (yMax/ticks)*t;
+      const yy = y(val);
+      g.appendChild(el("line", {x1:M.left, x2:W-M.right, y1:yy, y2:yy, class:"gridline"}));
+      const lbl = el("text", {x:M.left-8, y:yy+4, class:"axis-label", "text-anchor":"end"});
+      lbl.textContent = "€" + Math.round(val).toLocaleString("en-US");
+      g.appendChild(lbl);
+    }
+    g.appendChild(el("line", {x1:M.left, x2:W-M.right, y1:M.top+plotH, y2:M.top+plotH, class:"axisline"}));
+
+    // x ticks
+    YEARS.forEach((yr,i)=>{
+      if(i % 2 === 0 || i===YEARS.length-1){
+        const lbl = el("text", {x:x(i), y:M.top+plotH+20, class:"axis-label", "text-anchor":"middle"});
+        lbl.textContent = yr;
+        g.appendChild(lbl);
+      }
+    });
+
+    // lines
+    shown.forEach(n=>{
+      const d = YEARS.map((yr,i)=> (i===0?"M":"L") + x(i).toFixed(1) + " " + y(n.m2[yr]).toFixed(1)).join(" ");
+      g.appendChild(el("path", {d, fill:"none", stroke:n.color, "stroke-width":2, "stroke-linejoin":"round", "stroke-linecap":"round"}));
+      // end dot + label
+      const lastX = x(YEARS.length-1), lastY = y(n.m2[2026]);
+      g.appendChild(el("circle", {cx:lastX, cy:lastY, r:4, fill:n.color, stroke:"var(--surface-1)", "stroke-width":2}));
+    });
+
+    // direct end-labels with simple collision nudge
+    const endPts = shown.map(n=>({n, yy:y(n.m2[2026])})).sort((a,b)=>a.yy-b.yy);
+    let prev = -Infinity;
+    endPts.forEach(p=>{
+      let yy = p.yy;
+      if(yy - prev < 13) yy = prev + 13;
+      prev = yy;
+      const lbl = el("text", {x:W-M.right+6, y:yy+4, class:"axis-label", fill:p.n.color, style:"font-weight:650;font-size:11px;"});
+      lbl.textContent = p.n.name;
+      g.appendChild(lbl);
+    });
+
+    // hover layer
+    const crosshair = el("line", {class:"crosshair", y1:M.top, y2:M.top+plotH});
+    g.appendChild(crosshair);
+    const hoverDots = shown.map(n=>{
+      const c = el("circle", {r:4, fill:n.color, stroke:"var(--surface-1)", "stroke-width":2, class:"hover-dot", opacity:0});
+      g.appendChild(c);
+      return {n, c};
+    });
+
+    const overlay = el("rect", {x:M.left, y:M.top, width:plotW, height:plotH, fill:"transparent"});
+    g.appendChild(overlay);
+
+    const tooltip = document.getElementById("tooltip");
+    const wrap = document.getElementById("lineChartWrap");
+
+    function move(evt){
+      const rect = svg.getBoundingClientRect();
+      const scale = W / rect.width;
+      const mx = (evt.clientX - rect.left) * scale;
+      let idx = Math.round((mx - M.left) / (plotW/(YEARS.length-1)));
+      idx = Math.max(0, Math.min(YEARS.length-1, idx));
+      const xx = x(idx);
+      crosshair.setAttribute("x1", xx); crosshair.setAttribute("x2", xx); crosshair.setAttribute("opacity", 1);
+
+      let html = '<div class="t-year">'+YEARS[idx]+'</div>';
+      const sorted = [...hoverDots].sort((a,b)=> b.n.m2[YEARS[idx]] - a.n.m2[YEARS[idx]]);
+      sorted.forEach(hd=>{
+        const val = hd.n.m2[YEARS[idx]];
+        hd.c.setAttribute("cx", xx); hd.c.setAttribute("cy", y(val)); hd.c.setAttribute("opacity", 1);
+        html += '<div class="row"><span class="k" style="background:'+hd.n.color+'"></span><span class="name"></span><span class="val"></span></div>';
+      });
+      tooltip.innerHTML = html;
+      const rows = tooltip.querySelectorAll(".row");
+      sorted.forEach((hd,i)=>{
+        rows[i].querySelector(".name").textContent = hd.n.name;
+        rows[i].querySelector(".val").textContent = fmtEUR(hd.n.m2[YEARS[idx]]) + "/m²";
+      });
+
+      const wrapRect = wrap.getBoundingClientRect();
+      const px = (xx/W)*wrapRect.width;
+      tooltip.style.opacity = 1;
+      let leftPos = px + 16;
+      if(leftPos + 190 > wrapRect.width) leftPos = px - 190 - 10;
+      tooltip.style.left = leftPos + "px";
+      tooltip.style.top = "8px";
+    }
+    function leave(){
+      crosshair.setAttribute("opacity", 0);
+      hoverDots.forEach(hd=>hd.c.setAttribute("opacity",0));
+      tooltip.style.opacity = 0;
+    }
+    overlay.addEventListener("pointermove", move);
+    overlay.addEventListener("pointerleave", leave);
+  }
+
+  /* ---------- stat cards ---------- */
+  function renderStats(){
+    const grid = document.getElementById("statGrid");
+    grid.innerHTML = "";
+    NEIGHBORHOODS.forEach(n=>{
+      const el2 = document.createElement("div");
+      el2.className = "stat";
+      el2.innerHTML =
+        '<div class="head"><span class="dot" style="background:'+n.color+'"></span><span class="nm"></span></div>' +
+        '<div class="row"><span class="k">Price / m² (2026)</span><span class="v"></span></div>' +
+        '<div class="row"><span class="k">5-yr CAGR</span><span class="v good"></span></div>' +
+        '<div class="row"><span class="k">10-yr CAGR</span><span class="v good"></span></div>';
+      el2.querySelector(".nm").textContent = n.name;
+      const vals = el2.querySelectorAll(".v");
+      vals[0].textContent = fmtEUR(n.m2[2026]);
+      vals[1].textContent = "+" + (n.cagr5*100).toFixed(1) + "%/yr";
+      vals[2].textContent = "+" + (n.cagr10*100).toFixed(1) + "%/yr";
+      grid.appendChild(el2);
+    });
+  }
+
+  /* ---------- projection dot-plot ---------- */
+  function renderProjection(){
+    const wrap = document.getElementById("projChart");
+    wrap.innerHTML = "";
+    const rows = [...NEIGHBORHOODS].sort((a,b)=>{
+      const fvA = PURCHASE*Math.pow(1+a.cagr10,10), fvB = PURCHASE*Math.pow(1+b.cagr10,10);
+      return fvB - fvA;
+    });
+    const maxFV = Math.max(...rows.map(n=>PURCHASE*Math.pow(1+n.cagr10,10))) * 1.08;
+
+    rows.forEach(n=>{
+      const fv5 = PURCHASE*Math.pow(1+n.cagr5,5);
+      const fv10 = PURCHASE*Math.pow(1+n.cagr10,10);
+      const pStart = (PURCHASE/maxFV)*100;
+      const p5 = (fv5/maxFV)*100;
+      const p10 = (fv10/maxFV)*100;
+
+      const row = document.createElement("div");
+      row.className = "proj-row";
+      row.innerHTML =
+        '<div class="proj-label"><span class="dot" style="background:'+n.color+'"></span><span></span></div>'+
+        '<div class="proj-track">'+
+          '<svg width="100%" height="22" viewBox="0 0 1000 22" preserveAspectRatio="none" style="overflow:visible">'+
+            '<line x1="'+pStart*10+'" x2="'+p10*10+'" y1="11" y2="11" stroke="'+n.color+'" stroke-width="2" opacity="0.35"/>'+
+            '<circle cx="'+pStart*10+'" cy="11" r="4" fill="var(--text-muted)"/>'+
+            '<circle cx="'+p5*10+'" cy="11" r="5" fill="'+n.color+'" opacity="0.55" stroke="var(--surface-1)" stroke-width="1.5"/>'+
+            '<circle cx="'+p10*10+'" cy="11" r="5.5" fill="'+n.color+'" stroke="var(--surface-1)" stroke-width="1.5"/>'+
+          '</svg>'+
+        '</div>'+
+        '<div class="proj-values"><span class="fv5"></span><span class="fv10"></span></div>';
+      row.querySelector(".proj-label span:last-child").textContent = n.name;
+      row.querySelector(".fv5").textContent = fmtEURk(fv5) + " (5y)";
+      const fv10el = row.querySelector(".fv10");
+      fv10el.textContent = fmtEURk(fv10) + " ";
+      const hz = document.createElement("span"); hz.className="hz"; hz.textContent = "(10y)";
+      fv10el.appendChild(hz);
+      wrap.appendChild(row);
+    });
+
+    const legendNote = document.createElement("div");
+    legendNote.style.cssText = "margin-top:14px;font-size:11.5px;color:var(--text-muted);display:flex;align-items:center;gap:16px;flex-wrap:wrap;";
+    legendNote.innerHTML =
+      '<span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--text-muted);display:inline-block;"></span>Today (€700,000)</span>'+
+      '<span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:50%;background:var(--text-secondary);opacity:.55;display:inline-block;"></span>+5 years</span>'+
+      '<span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:11px;height:11px;border-radius:50%;background:var(--text-secondary);display:inline-block;"></span>+10 years</span>';
+    wrap.appendChild(legendNote);
+  }
+
+  /* ---------- data table ---------- */
+  function renderTable(){
+    const table = document.getElementById("dataTable");
+    const rows = [...NEIGHBORHOODS].sort((a,b)=> (PURCHASE*Math.pow(1+b.cagr10,10)) - (PURCHASE*Math.pow(1+a.cagr10,10)));
+    let html = "<thead><tr>"+
+      "<th>Neighbourhood</th><th>Price/m² (2026)</th><th>Median price (2026)</th>"+
+      "<th>5-yr CAGR</th><th>10-yr CAGR</th><th>€700k in 5 yrs</th><th>€700k in 10 yrs</th><th>10-yr gain</th>"+
+      "</tr></thead><tbody>";
+    rows.forEach(n=>{
+      const fv5 = PURCHASE*Math.pow(1+n.cagr5,5);
+      const fv10 = PURCHASE*Math.pow(1+n.cagr10,10);
+      html += "<tr>"+
+        "<td class='name'>"+n.name+"</td>"+
+        "<td>"+fmtEUR(n.m2[2026])+"</td>"+
+        "<td>"+fmtEUR(n.median2026)+"</td>"+
+        "<td>+"+(n.cagr5*100).toFixed(1)+"%</td>"+
+        "<td>+"+(n.cagr10*100).toFixed(1)+"%</td>"+
+        "<td>"+fmtEUR(fv5)+"</td>"+
+        "<td>"+fmtEUR(fv10)+"</td>"+
+        "<td>+"+fmtEUR(fv10-PURCHASE)+"</td>"+
+        "</tr>";
+    });
+    html += "</tbody>";
+    table.innerHTML = html;
+  }
+
+  renderLegend();
+  renderLine();
+  renderStats();
+  renderProjection();
+  renderTable();
+  window.addEventListener("resize", renderLine);
+})();
+</script>
