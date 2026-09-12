@@ -1,0 +1,775 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AVT House Hunt</title>
+<meta name="description" content="Kanban board and map of the Amsterdam apartments AVT Makelaars has sent through.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{
+  --paper:#F7F6F3; --surface:#FFFFFF; --surface-2:#FBFAF8;
+  --ink:#14181F; --ink-2:#4A5260; --ink-3:#7C8494;
+  --line:#E3E0DA; --line-2:#EFEDE8;
+  --brick:#C8412B; --canal:#2F6F7E;
+  --s-backlog:#6B7A8C; --s-viewed:#2F6F7E; --s-applied:#C0782A;
+  --s-visited:#46774E; --s-archived:#9A958C;
+  --shadow:0 1px 2px rgba(20,24,31,.06), 0 4px 14px rgba(20,24,31,.05);
+  --shadow-lift:0 2px 6px rgba(20,24,31,.10), 0 12px 28px rgba(20,24,31,.12);
+  --r:10px;
+  --ui:'Archivo', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono:'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --display:'Instrument Serif', Georgia, 'Times New Roman', serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#12151A; --surface:#1A1E25; --surface-2:#20252D;
+    --ink:#ECEAE5; --ink-2:#A8AEBA; --ink-3:#7A8291;
+    --line:#2C323B; --line-2:#242A32;
+    --brick:#E8674F; --canal:#5BA3B4;
+    --s-backlog:#8B9AAC; --s-viewed:#5BA3B4; --s-applied:#D89B52;
+    --s-visited:#6FA377; --s-archived:#8A857C;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 4px 14px rgba(0,0,0,.3);
+    --shadow-lift:0 2px 6px rgba(0,0,0,.5), 0 12px 28px rgba(0,0,0,.45);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#12151A; --surface:#1A1E25; --surface-2:#20252D;
+  --ink:#ECEAE5; --ink-2:#A8AEBA; --ink-3:#7A8291;
+  --line:#2C323B; --line-2:#242A32;
+  --brick:#E8674F; --canal:#5BA3B4;
+  --s-backlog:#8B9AAC; --s-viewed:#5BA3B4; --s-applied:#D89B52;
+  --s-visited:#6FA377; --s-archived:#8A857C;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 4px 14px rgba(0,0,0,.3);
+  --shadow-lift:0 2px 6px rgba(0,0,0,.5), 0 12px 28px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:var(--ui); font-size:14px; line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+a{color:inherit}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brick); outline-offset:2px; border-radius:4px}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+
+/* ---------- masthead ---------- */
+.masthead{
+  position:sticky; top:0; z-index:600;
+  background:color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter:saturate(1.4) blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.mast-in{padding:10px 16px 0; display:flex; flex-direction:column; gap:9px}
+.mast-top{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap}
+.wordmark{
+  font-family:var(--display); font-style:italic; font-size:27px; line-height:1;
+  letter-spacing:-.01em; margin:0; white-space:nowrap;
+}
+.wordmark .xxx{ font-family:var(--ui); font-style:normal; font-weight:700;
+  color:var(--brick); letter-spacing:.16em; font-size:15px; vertical-align:2px; margin-right:7px}
+.mast-sub{color:var(--ink-2); font-size:12.5px; display:flex; gap:7px; flex-wrap:wrap; align-items:baseline}
+.mast-sub b{font-family:var(--mono); font-weight:600; color:var(--ink); font-variant-numeric:tabular-nums}
+.sep{color:var(--line)}
+.mast-actions{margin-left:auto; display:flex; gap:6px; align-items:center}
+
+.btn{
+  background:var(--surface); border:1px solid var(--line); color:var(--ink-2);
+  border-radius:7px; padding:5px 10px; font-size:12.5px; font-weight:500;
+  cursor:pointer; white-space:nowrap; transition:border-color .12s, color .12s, background .12s;
+}
+.btn:hover{border-color:var(--ink-3); color:var(--ink)}
+.btn-accent{background:var(--brick); border-color:var(--brick); color:#fff}
+.btn-accent:hover{filter:brightness(1.07); color:#fff}
+
+/* ---------- filters ---------- */
+.filters{display:flex; gap:7px; flex-wrap:wrap; align-items:center; padding-bottom:10px}
+.f-group{display:flex; align-items:center; gap:5px; background:var(--surface);
+  border:1px solid var(--line); border-radius:7px; padding:3px 8px; height:29px}
+.f-lab{font-size:10.5px; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:var(--ink-3)}
+.f-group input[type=search]{border:0;background:transparent;width:130px;outline:none;font-size:12.5px}
+.f-group input[type=number]{border:0;background:transparent;width:62px;outline:none;
+  font-family:var(--mono); font-size:12px; font-variant-numeric:tabular-nums}
+.f-group select{border:0;background:transparent;outline:none;font-size:12.5px;max-width:150px}
+.toggle{
+  border:1px solid var(--line); background:var(--surface); border-radius:7px;
+  height:29px; padding:0 9px; font-size:12.5px; font-weight:600; cursor:pointer; color:var(--ink-3);
+}
+.toggle[aria-pressed="true"]{background:var(--canal); border-color:var(--canal); color:#fff}
+.f-clear{color:var(--brick); background:none; border:0; cursor:pointer; font-size:12.5px; font-weight:500; padding:4px}
+
+/* ---------- map ---------- */
+.map-wrap{position:relative; border-bottom:1px solid var(--line)}
+#map{height:clamp(230px, 34vh, 380px); width:100%; background:var(--surface-2); z-index:1}
+.map-wrap.map-off #map{height:0; border:0}
+.map-wrap.map-off .map-note{position:static; margin:6px 16px; display:inline-block}
+.leaflet-container{font-family:var(--ui)}
+.map-note{
+  position:absolute; left:10px; bottom:10px; z-index:500;
+  background:color-mix(in srgb, var(--surface) 92%, transparent);
+  border:1px solid var(--line); border-radius:6px; padding:3px 8px;
+  font-size:11px; color:var(--ink-3); pointer-events:none;
+}
+.pin{border-radius:50%; border:2.5px solid var(--surface); box-shadow:0 1px 4px rgba(0,0,0,.35)}
+.pin.sel{box-shadow:0 0 0 4px color-mix(in srgb, var(--brick) 45%, transparent)}
+.pop{font-family:var(--ui); min-width:170px}
+.pop b{display:block; font-size:13.5px; margin-bottom:2px}
+.pop .pm{font-family:var(--mono); font-size:12px; color:var(--ink-2); font-variant-numeric:tabular-nums}
+
+/* ---------- board ---------- */
+.board-scroll{overflow-x:auto; overflow-y:hidden; padding:14px 16px 22px; -webkit-overflow-scrolling:touch}
+.board{display:flex; gap:12px; align-items:flex-start; min-height:200px; width:max-content}
+.col{
+  width:286px; flex:0 0 286px; background:var(--surface-2);
+  border:1px solid var(--line); border-radius:12px; display:flex; flex-direction:column;
+  max-height:calc(100vh - 210px);
+}
+.col.drop{border-color:var(--brick); background:color-mix(in srgb, var(--brick) 6%, var(--surface-2))}
+.col-head{
+  display:flex; align-items:center; gap:7px; padding:9px 11px;
+  border-bottom:1px solid var(--line); position:sticky; top:0;
+  background:var(--surface-2); border-radius:12px 12px 0 0; z-index:2;
+}
+.col-dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+.col-name{font-size:11.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase}
+.col-n{margin-left:auto; font-family:var(--mono); font-size:11.5px; font-weight:600;
+  color:var(--ink-3); font-variant-numeric:tabular-nums;
+  background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:1px 7px}
+.col-body{overflow-y:auto; padding:9px; display:flex; flex-direction:column; gap:9px; flex:1}
+.col-empty{color:var(--ink-3); font-size:12.5px; text-align:center; padding:18px 8px; font-style:italic}
+
+/* ---------- card ---------- */
+.card{
+  flex:0 0 auto;   /* never let a tall column squash its cards */
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
+  box-shadow:var(--shadow); overflow:hidden; cursor:grab; position:relative;
+  transition:box-shadow .14s, border-color .14s, transform .14s;
+}
+.card:hover{box-shadow:var(--shadow-lift); border-color:var(--ink-3)}
+.card.dragging{opacity:.45; cursor:grabbing}
+.card.flash{border-color:var(--brick); box-shadow:0 0 0 3px color-mix(in srgb, var(--brick) 30%, transparent)}
+.card-stripe{position:absolute; left:0; top:0; bottom:0; width:3px}
+.card-img{display:block; width:100%; height:104px; object-fit:cover; background:var(--surface-2); border-bottom:1px solid var(--line-2)}
+.card-body{padding:9px 11px 10px 13px}
+.card-addr{
+  font-size:14px; font-weight:600; line-height:1.25; margin:0 0 1px;
+  text-decoration:none; display:inline-block; text-wrap:balance;
+}
+.card-addr:hover{color:var(--brick); text-decoration:underline; text-underline-offset:2px}
+.card-addr .ext{font-size:10px; color:var(--ink-3); vertical-align:1px; margin-left:3px}
+.card-hood{font-size:11.5px; color:var(--ink-3); margin-bottom:6px}
+.card-hood .pc{font-family:var(--mono); font-size:11px}
+.stats{display:flex; align-items:baseline; gap:6px; flex-wrap:wrap; font-family:var(--mono);
+  font-size:12.5px; font-variant-numeric:tabular-nums; margin-bottom:7px}
+.price{font-weight:600; font-size:13.5px}
+.kk{font-size:9.5px; color:var(--ink-3); letter-spacing:.04em; font-family:var(--ui); font-weight:600}
+.stats .dim{color:var(--ink-3)}
+.ppm{color:var(--canal); font-weight:500; font-size:11.5px; margin-left:auto; padding-left:6px}
+.chips{display:flex; gap:5px; flex-wrap:wrap; align-items:center}
+.chip{
+  font-size:10.5px; font-weight:700; letter-spacing:.05em; border-radius:5px;
+  padding:2px 6px; border:1px solid var(--line); color:var(--ink-2); background:var(--surface-2);
+  display:inline-flex; align-items:center; gap:3px;
+}
+.chip.rooms{font-family:var(--mono); font-variant-numeric:tabular-nums; letter-spacing:0}
+.chip.energy{color:#fff; border:0; padding:2px 7px}
+.chip.energy.unset{background:var(--surface-2); color:var(--ink-3); border:1px dashed var(--line)}
+.chip.gt{background:var(--surface-2); color:var(--s-visited); border-color:color-mix(in srgb, var(--s-visited) 40%, var(--line))}
+.chip.muted{color:var(--ink-3)}
+.card-foot{display:flex; align-items:center; gap:6px; margin-top:8px; padding-top:7px; border-top:1px solid var(--line-2)}
+.seen{font-size:10.5px; color:var(--ink-3); font-family:var(--mono)}
+.card-note{font-size:11.5px; color:var(--ink-2); margin-top:6px; padding-left:7px;
+  border-left:2px solid var(--line); white-space:pre-wrap; word-break:break-word}
+.icon-btn{
+  margin-left:auto; background:none; border:1px solid transparent; border-radius:6px;
+  color:var(--ink-3); cursor:pointer; font-size:11px; font-weight:600; padding:2px 7px;
+}
+.icon-btn:hover{border-color:var(--line); color:var(--ink); background:var(--surface-2)}
+.mv{font-size:11px; border:1px solid var(--line); border-radius:6px; background:var(--surface-2);
+  color:var(--ink-2); padding:2px 4px; max-width:104px; cursor:pointer}
+
+/* ---------- editor ---------- */
+dialog.sheet{
+  border:1px solid var(--line); border-radius:14px; padding:0; background:var(--surface);
+  color:var(--ink); box-shadow:var(--shadow-lift); width:min(410px, calc(100vw - 32px)); max-width:410px;
+}
+dialog.sheet::backdrop{background:rgba(10,12,16,.44); backdrop-filter:blur(2px)}
+.sheet-head{padding:13px 16px 10px; border-bottom:1px solid var(--line)}
+.sheet-head h2{margin:0; font-size:15.5px; font-weight:600; line-height:1.25}
+.sheet-head p{margin:2px 0 0; font-size:11.5px; color:var(--ink-3); font-family:var(--mono)}
+.sheet-body{padding:14px 16px; display:flex; flex-direction:column; gap:13px}
+.field label{display:block; font-size:10.5px; font-weight:700; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--ink-3); margin-bottom:6px}
+.swatches{display:flex; gap:5px; flex-wrap:wrap}
+.sw{
+  width:34px; height:30px; border-radius:7px; border:2px solid transparent; cursor:pointer;
+  font-weight:700; font-size:12px; color:#fff; display:grid; place-items:center;
+}
+.sw.none{background:var(--surface-2); color:var(--ink-3); border:1px dashed var(--line); width:44px}
+.sw[aria-pressed="true"]{border-color:var(--ink); box-shadow:0 0 0 2px var(--surface), 0 0 0 4px var(--ink)}
+.opts{display:flex; gap:7px; flex-wrap:wrap}
+.opt{
+  border:1px solid var(--line); background:var(--surface-2); border-radius:7px;
+  padding:6px 11px; font-size:12.5px; font-weight:600; cursor:pointer; color:var(--ink-2);
+}
+.opt[aria-pressed="true"]{background:var(--s-visited); border-color:var(--s-visited); color:#fff}
+textarea{
+  width:100%; min-height:62px; resize:vertical; border:1px solid var(--line); border-radius:8px;
+  background:var(--surface-2); padding:8px 9px; font-size:12.5px; font-family:var(--ui); outline:none;
+}
+textarea:focus{border-color:var(--canal)}
+.sheet-foot{display:flex; gap:7px; padding:11px 16px 14px; border-top:1px solid var(--line); align-items:center}
+.sheet-foot .spacer{margin-left:auto}
+.sheet-link{font-size:12px; color:var(--canal); font-weight:600; text-decoration:none}
+.sheet-link:hover{text-decoration:underline}
+
+/* ---------- sync sheet ---------- */
+.sync-body{padding:14px 16px; display:flex; flex-direction:column; gap:11px; font-size:12.5px; color:var(--ink-2)}
+.sync-body textarea{min-height:130px; font-family:var(--mono); font-size:11px}
+.sync-body p{margin:0}
+.sync-body code{font-family:var(--mono); font-size:11px; background:var(--surface-2);
+  border:1px solid var(--line); border-radius:4px; padding:1px 4px}
+
+.toast{
+  position:fixed; left:50%; bottom:22px; transform:translateX(-50%);
+  background:var(--ink); color:var(--paper); padding:8px 15px; border-radius:8px;
+  font-size:12.5px; font-weight:500; z-index:900; box-shadow:var(--shadow-lift);
+  opacity:0; pointer-events:none; transition:opacity .2s, transform .2s;
+}
+.toast.on{opacity:1; transform:translateX(-50%) translateY(-3px)}
+
+@media (max-width:720px){
+  .mast-in{padding:9px 12px 0}
+  .wordmark{font-size:23px}
+  .mast-actions{margin-left:0; width:100%}
+  .board-scroll{padding:12px 12px 20px}
+  .col{width:min(84vw, 300px); flex-basis:min(84vw, 300px); max-height:none}
+  .col-body{max-height:62vh}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="mast-in">
+    <div class="mast-top">
+      <h1 class="wordmark"><span class="xxx">XXX</span>AVT House Hunt</h1>
+      <div class="mast-sub" id="summary"></div>
+      <div class="mast-actions">
+        <button class="btn" id="btn-theme" type="button" title="Switch light / dark">Theme</button>
+        <button class="btn" id="btn-sync" type="button">Share board</button>
+      </div>
+    </div>
+    <div class="filters">
+      <div class="f-group">
+        <span class="f-lab">Find</span>
+        <input type="search" id="f-q" placeholder="street or area" aria-label="Search street or area">
+      </div>
+      <div class="f-group">
+        <span class="f-lab">€ max</span>
+        <input type="number" id="f-price" step="25000" placeholder="no max" aria-label="Maximum price">
+      </div>
+      <div class="f-group">
+        <span class="f-lab">m² min</span>
+        <input type="number" id="f-m2" step="5" placeholder="any" aria-label="Minimum living area">
+      </div>
+      <div class="f-group">
+        <span class="f-lab">Beds</span>
+        <select id="f-beds" aria-label="Minimum bedrooms">
+          <option value="">any</option><option value="1">1+</option><option value="2">2+</option>
+          <option value="3">3+</option><option value="4">4+</option>
+        </select>
+      </div>
+      <div class="f-group">
+        <span class="f-lab">Area</span>
+        <select id="f-hood" aria-label="Neighbourhood"><option value="">all Amsterdam</option></select>
+      </div>
+      <button class="toggle" id="f-g" type="button" aria-pressed="false" title="Only listings marked with a garden">G</button>
+      <button class="toggle" id="f-t" type="button" aria-pressed="false" title="Only listings marked with a terrace">T</button>
+      <button class="f-clear" id="f-clear" type="button">reset</button>
+    </div>
+  </div>
+</header>
+
+<div class="map-wrap">
+  <div id="map"></div>
+  <div class="map-note" id="map-note">approximate pins — refining…</div>
+</div>
+
+<main class="board-scroll"><div class="board" id="board"></div></main>
+
+<dialog class="sheet" id="editor">
+  <form method="dialog">
+    <div class="sheet-head">
+      <h2 id="ed-title">—</h2>
+      <p id="ed-sub">—</p>
+    </div>
+    <div class="sheet-body">
+      <div class="field">
+        <label id="lab-energy">Energielabel</label>
+        <div class="swatches" id="ed-energy" role="group" aria-labelledby="lab-energy"></div>
+      </div>
+      <div class="field">
+        <label id="lab-out">Outdoor space</label>
+        <div class="opts" role="group" aria-labelledby="lab-out">
+          <button class="opt" type="button" id="ed-g" aria-pressed="false">G · Garden</button>
+          <button class="opt" type="button" id="ed-t" aria-pressed="false">T · Terrace</button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="ed-note">Notes</label>
+        <textarea id="ed-note" placeholder="Ceiling height, noise, who viewed it…"></textarea>
+      </div>
+    </div>
+    <div class="sheet-foot">
+      <a class="sheet-link" id="ed-open" href="#" target="_blank" rel="noopener">Open listing ↗</a>
+      <span class="spacer"></span>
+      <button class="btn" value="cancel" type="submit">Cancel</button>
+      <button class="btn btn-accent" id="ed-save" value="save" type="submit">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog class="sheet" id="sync">
+  <div class="sheet-head">
+    <h2>Share the board</h2>
+    <p>keeps both of you on the same page</p>
+  </div>
+  <div class="sync-body">
+    <p>Your board lives in this browser. To pass it to Katia (or pick up her changes), copy this text across — importing <b>merges</b>, keeping whichever edit is newer per listing.</p>
+    <textarea id="sync-text" spellcheck="false" aria-label="Board state"></textarea>
+    <p>To make it the shared default for both of you, commit this as <code>docs/board.json</code> in the repo.</p>
+  </div>
+  <div class="sheet-foot">
+    <button class="btn" id="sync-copy" type="button">Copy</button>
+    <button class="btn" id="sync-import" type="button">Import &amp; merge</button>
+    <span class="spacer"></span>
+    <button class="btn" id="sync-close" type="button">Done</button>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+/* ====== data (built from the AVT digest emails) ====== */
+const LISTINGS = __LISTINGS__;
+const PC4 = __PC4__;
+const BUILT = "__BUILT__";
+const CUTOFF = "__CUTOFF__";
+
+const STAGES = [
+  {id:'backlog',  name:'Backlog',  color:'var(--s-backlog)'},
+  {id:'viewed',   name:'Viewed',   color:'var(--s-viewed)'},
+  {id:'applied',  name:'Applied',  color:'var(--s-applied)'},
+  {id:'visited',  name:'Visited',  color:'var(--s-visited)'},
+  {id:'archived', name:'Archived', color:'var(--s-archived)'},
+];
+const STAGE_HEX = {backlog:'#6B7A8C', viewed:'#2F6F7E', applied:'#C0782A', visited:'#46774E', archived:'#9A958C'};
+/* EU / Dutch energielabel colours */
+const ENERGY = {'A+++':'#009640','A++':'#009640','A+':'#009640','A':'#009640','B':'#52AE32',
+  'C':'#C8D200','D':'#FFED00','E':'#FBBA00','F':'#EC6608','G':'#E30613'};
+const ENERGY_ORDER = ['A+++','A++','A+','A','B','C','D','E','F','G'];
+const DARK_TEXT = new Set(['C','D']);
+
+const LS_STATE = 'avt-house-hunt/board/v1';
+const LS_GEO   = 'avt-house-hunt/geo/v1';
+const LS_THEME = 'avt-house-hunt/theme/v1';
+
+/* ====== state ====== */
+const byId = new Map(LISTINGS.map(l => [l.id, l]));
+let state = load(LS_STATE, {items:{}});
+let geo   = load(LS_GEO, {});
+let selected = null;
+let editing = null;
+
+function load(k, fb){ try{ return JSON.parse(localStorage.getItem(k)) || fb; }catch(e){ return fb; } }
+function save(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+
+function entry(id){ return state.items[id] || {}; }
+function stageOf(id){ return entry(id).stage || byId.get(id).defaultStage; }
+function patch(id, changes){
+  state.items[id] = Object.assign({}, entry(id), changes, {ts: Date.now()});
+  save(LS_STATE, state);
+}
+
+/* ====== formatting ====== */
+const eur = new Intl.NumberFormat('nl-NL', {style:'currency', currency:'EUR', maximumFractionDigits:0});
+const money = n => eur.format(n).replace(/ /g,' ');
+const hoodOf = l => (PC4[l.postcode.slice(0,4)] || [l.postcode.slice(0,4)])[0];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ====== filters ====== */
+const F = {q:'', price:null, m2:null, beds:null, hood:'', g:false, t:false};
+function passes(l){
+  const e = entry(l.id);
+  if (F.q){
+    const hay = (l.address + ' ' + l.postcode + ' ' + hoodOf(l) + ' ' + l.type).toLowerCase();
+    if (!hay.includes(F.q)) return false;
+  }
+  if (F.price != null && l.price > F.price) return false;
+  if (F.m2 != null && l.m2 < F.m2) return false;
+  if (F.beds != null && (l.bedrooms || 0) < F.beds) return false;
+  if (F.hood && l.postcode.slice(0,4) !== F.hood) return false;
+  if (F.g && !e.garden) return false;
+  if (F.t && !e.terrace) return false;
+  return true;
+}
+
+/* ====== render ====== */
+const board = document.getElementById('board');
+
+function cardHTML(l){
+  const e = entry(l.id);
+  const st = stageOf(l.id);
+  const ppm = Math.round(l.price / l.m2);
+  const energy = e.energy;
+  const eColor = energy ? ENERGY[energy] : null;
+  const eStyle = energy ? `background:${eColor};color:${DARK_TEXT.has(energy)?'#14181F':'#fff'}` : '';
+  const rooms = l.bedrooms != null ? `${l.rooms}/${l.bedrooms}` : `${l.rooms}`;
+  return `
+  <article class="card" draggable="true" data-id="${l.id}" tabindex="0" aria-label="${esc(l.address)}">
+    <span class="card-stripe" style="background:${STAGE_HEX[st]}"></span>
+    ${l.image ? `<img class="card-img" src="${esc(l.image)}" alt="" loading="lazy" onerror="this.remove()">` : ''}
+    <div class="card-body">
+      <a class="card-addr" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.address)}<span class="ext">↗</span></a>
+      <div class="card-hood">${esc(hoodOf(l))} <span class="pc">· ${esc(l.postcode)}</span></div>
+      <div class="stats">
+        <span class="price">${money(l.price)}</span><span class="kk">k.k.</span>
+        <span class="dim">·</span><span>${l.m2} m²</span>
+        <span class="ppm">${money(ppm)}/m²</span>
+      </div>
+      <div class="chips">
+        <span class="chip rooms" title="${l.rooms} rooms${l.bedrooms!=null?', '+l.bedrooms+' bedrooms':''}">${rooms}</span>
+        <span class="chip energy ${energy?'':'unset'}" style="${eStyle}" title="Energielabel">${energy ? 'Energy '+esc(energy) : 'Energy —'}</span>
+        ${e.garden  ? '<span class="chip gt" title="Garden">G</span>'  : ''}
+        ${e.terrace ? '<span class="chip gt" title="Terrace">T</span>' : ''}
+        <span class="chip muted" title="Property type">${esc(l.type)}</span>
+      </div>
+      ${e.note ? `<div class="card-note">${esc(e.note)}</div>` : ''}
+      <div class="card-foot">
+        <span class="seen">seen ${esc(l.first_seen)}</span>
+        <select class="mv" data-mv="${l.id}" aria-label="Move ${esc(l.address)} to another column">
+          ${STAGES.map(s => `<option value="${s.id}"${s.id===st?' selected':''}>${s.name}</option>`).join('')}
+        </select>
+        <button class="icon-btn" data-edit="${l.id}" type="button">Edit</button>
+      </div>
+    </div>
+  </article>`;
+}
+
+function render(){
+  const visible = LISTINGS.filter(passes);
+  const groups = {};
+  STAGES.forEach(s => groups[s.id] = []);
+  visible.forEach(l => groups[stageOf(l.id)].push(l));
+  // most recently listed first inside every column
+  Object.values(groups).forEach(g => g.sort((a,b) => b.first_seen.localeCompare(a.first_seen) || a.address.localeCompare(b.address)));
+
+  board.innerHTML = STAGES.map(s => `
+    <section class="col" data-stage="${s.id}">
+      <header class="col-head">
+        <span class="col-dot" style="background:${s.color}"></span>
+        <span class="col-name" style="color:${s.color}">${s.name}</span>
+        <span class="col-n">${groups[s.id].length}</span>
+      </header>
+      <div class="col-body" data-stage="${s.id}">
+        ${groups[s.id].length ? groups[s.id].map(cardHTML).join('')
+          : '<p class="col-empty">nothing here</p>'}
+      </div>
+    </section>`).join('');
+
+  const total = LISTINGS.length, shown = visible.length;
+  const active = LISTINGS.filter(l => stageOf(l.id) !== 'archived').length;
+  document.getElementById('summary').innerHTML =
+    `<b>${total}</b> listings from AVT <span class="sep">|</span> <b>${active}</b> live, <b>${total-active}</b> archived` +
+    (shown !== total ? ` <span class="sep">|</span> <b>${shown}</b> match your filters` : '') +
+    ` <span class="sep">|</span> archived everything before ${CUTOFF} <span class="sep">|</span> built ${BUILT}`;
+
+  syncMarkers(visible);
+}
+
+/* ====== drag & drop ====== */
+let dragId = null;
+board.addEventListener('dragstart', e => {
+  const c = e.target.closest('.card'); if (!c) return;
+  dragId = c.dataset.id; c.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  try { e.dataTransfer.setData('text/plain', dragId); } catch(_){}
+});
+board.addEventListener('dragend', e => {
+  const c = e.target.closest('.card'); if (c) c.classList.remove('dragging');
+  document.querySelectorAll('.col.drop').forEach(x => x.classList.remove('drop'));
+  dragId = null;
+});
+board.addEventListener('dragover', e => {
+  const body = e.target.closest('.col-body'); if (!body || !dragId) return;
+  e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+  document.querySelectorAll('.col.drop').forEach(x => x.classList.remove('drop'));
+  body.closest('.col').classList.add('drop');
+});
+board.addEventListener('drop', e => {
+  const body = e.target.closest('.col-body'); if (!body || !dragId) return;
+  e.preventDefault();
+  const to = body.dataset.stage, id = dragId;
+  if (stageOf(id) !== to){ patch(id, {stage:to}); render(); toast(`${byId.get(id).address} → ${to}`); }
+  dragId = null;
+});
+
+/* ====== card interactions ====== */
+board.addEventListener('change', e => {
+  const sel = e.target.closest('[data-mv]'); if (!sel) return;
+  const id = sel.dataset.mv;
+  patch(id, {stage: sel.value}); render(); toast(`${byId.get(id).address} → ${sel.value}`);
+});
+board.addEventListener('click', e => {
+  const btn = e.target.closest('[data-edit]');
+  if (btn){ openEditor(btn.dataset.edit); return; }
+  const card = e.target.closest('.card');
+  if (card && !e.target.closest('a, select, button')) focusOn(card.dataset.id, true);
+});
+board.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const card = e.target.closest('.card');
+  if (card && e.target === card){ e.preventDefault(); openEditor(card.dataset.id); }
+});
+
+/* ====== editor ====== */
+const dlg = document.getElementById('editor');
+const swatches = document.getElementById('ed-energy');
+swatches.innerHTML =
+  `<button class="sw none" type="button" data-e="" aria-pressed="false">—</button>` +
+  ENERGY_ORDER.map(k => `<button class="sw" type="button" data-e="${k}" aria-pressed="false"
+     style="background:${ENERGY[k]};color:${DARK_TEXT.has(k)?'#14181F':'#fff'}">${k}</button>`).join('');
+
+let draft = {};
+function paintEditor(){
+  swatches.querySelectorAll('.sw').forEach(b =>
+    b.setAttribute('aria-pressed', String((b.dataset.e || '') === (draft.energy || ''))));
+  document.getElementById('ed-g').setAttribute('aria-pressed', String(!!draft.garden));
+  document.getElementById('ed-t').setAttribute('aria-pressed', String(!!draft.terrace));
+}
+function openEditor(id){
+  editing = id;
+  const l = byId.get(id), e = entry(id);
+  draft = {energy:e.energy || '', garden:!!e.garden, terrace:!!e.terrace};
+  document.getElementById('ed-title').textContent = l.address;
+  document.getElementById('ed-sub').textContent =
+    `${hoodOf(l)} · ${l.postcode} · ${l.m2} m² · ${l.rooms}${l.bedrooms!=null?'/'+l.bedrooms:''} · ${money(l.price)} k.k.`;
+  document.getElementById('ed-note').value = e.note || '';
+  document.getElementById('ed-open').href = l.url;
+  paintEditor();
+  dlg.showModal();
+}
+swatches.addEventListener('click', e => {
+  const b = e.target.closest('.sw'); if (!b) return;
+  draft.energy = b.dataset.e || ''; paintEditor();
+});
+document.getElementById('ed-g').addEventListener('click', () => { draft.garden = !draft.garden; paintEditor(); });
+document.getElementById('ed-t').addEventListener('click', () => { draft.terrace = !draft.terrace; paintEditor(); });
+dlg.addEventListener('close', () => {
+  if (dlg.returnValue === 'save' && editing){
+    patch(editing, {energy:draft.energy || undefined, garden:draft.garden,
+                    terrace:draft.terrace, note:document.getElementById('ed-note').value.trim() || undefined});
+    render(); toast('Saved');
+  }
+  editing = null;
+});
+
+/* ====== map ====== */
+let map, layer, markers = new Map();
+function initMap(){
+  // the board is the point; the map is an enhancement. If Leaflet can't load
+  // (offline, blocked CDN) fold the map away rather than break everything.
+  if (typeof L === 'undefined'){
+    document.querySelector('.map-wrap').classList.add('map-off');
+    document.getElementById('map-note').textContent = 'map unavailable offline';
+    return;
+  }
+  try {
+    map = L.map('map', {scrollWheelZoom:false, zoomControl:true}).setView([52.3676, 4.9041], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom:19, attribution:'&copy; OpenStreetMap contributors'
+    }).addTo(map);
+    layer = L.layerGroup().addTo(map);
+  } catch(err){
+    map = null;
+    document.querySelector('.map-wrap').classList.add('map-off');
+    document.getElementById('map-note').textContent = 'map unavailable';
+  }
+}
+function coordsFor(l){
+  if (geo[l.id]) return {ll:geo[l.id], exact:true};
+  const c = PC4[l.postcode.slice(0,4)];
+  if (!c) return null;
+  // deterministic scatter inside the postcode area so pins don't stack
+  let h = 0; for (const ch of l.id) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  return {ll:[c[1] + ((h % 200) - 100) / 45000, c[2] + (((h >> 8) % 200) - 100) / 28000], exact:false};
+}
+function syncMarkers(visible){
+  if (!map) return;
+  layer.clearLayers(); markers.clear();
+  const pts = [];
+  visible.forEach(l => {
+    const c = coordsFor(l); if (!c) return;
+    const st = stageOf(l.id), r = st === 'archived' ? 5 : 7;
+    const m = L.circleMarker(c.ll, {
+      radius:r, color:'#fff', weight:2, opacity:.95,
+      fillColor:STAGE_HEX[st], fillOpacity: st === 'archived' ? .5 : .92
+    });
+    const e = entry(l.id);
+    m.bindPopup(`<div class="pop"><b>${esc(l.address)}</b>
+      <span class="pm">${money(l.price)} · ${l.m2} m² · ${l.rooms}${l.bedrooms!=null?'/'+l.bedrooms:''}${e.energy?' · '+esc(e.energy):''}</span>
+      <span class="pm">${esc(hoodOf(l))}</span>
+      <a href="${esc(l.url)}" target="_blank" rel="noopener">Open listing ↗</a></div>`);
+    m.on('click', () => focusOn(l.id, false));
+    m.addTo(layer); markers.set(l.id, m); pts.push(c.ll);
+  });
+  if (pts.length && !map._avtFitted){ map.fitBounds(L.latLngBounds(pts).pad(.12)); map._avtFitted = true; }
+}
+function focusOn(id, fromCard){
+  selected = id;
+  const m = map && markers.get(id);
+  if (m && fromCard){ map.setView(m.getLatLng(), Math.max(map.getZoom(), 15)); m.openPopup(); }
+  const card = board.querySelector(`.card[data-id="${CSS.escape(id)}"]`);
+  if (card && !fromCard){
+    card.scrollIntoView({behavior:'smooth', block:'center'});
+    card.classList.add('flash'); setTimeout(() => card.classList.remove('flash'), 1500);
+  }
+}
+
+/* ====== geocoding (runs in the visitor's browser) ====== */
+async function geocode(){
+  if (!map) return;
+  const todo = LISTINGS.filter(l => !geo[l.id]);
+  const note = document.getElementById('map-note');
+  if (!todo.length){ note.textContent = 'pins geocoded'; setTimeout(() => note.remove(), 2500); return; }
+  let done = 0, failed = 0;
+  for (const l of todo){
+    let ll = null;
+    try {
+      const q = encodeURIComponent(`${l.address} ${l.postcode} Amsterdam`);
+      const r = await fetch(`https://api.pdok.nl/bzk/locatieserver/search/v3_1/free?q=${q}&fq=type:adres&rows=1`);
+      if (r.ok){
+        const j = await r.json();
+        const p = j?.response?.docs?.[0]?.centroide_ll;       // "POINT(4.89 52.37)"
+        const mm = p && p.match(/POINT\(([-\d.]+) ([-\d.]+)\)/);
+        if (mm) ll = [parseFloat(mm[2]), parseFloat(mm[1])];
+      }
+    } catch(_){}
+    if (ll){ geo[l.id] = ll; done++; } else { failed++; }
+    if (done && done % 12 === 0){ save(LS_GEO, geo); render(); }
+    note.textContent = `refining pins… ${done + failed}/${todo.length}`;
+    await new Promise(r => setTimeout(r, 90));
+  }
+  save(LS_GEO, geo); render();
+  note.textContent = failed === todo.length ? 'approximate pins (by postcode)' : 'pins geocoded';
+  setTimeout(() => note.remove(), 3000);
+}
+
+/* ====== shared board file ====== */
+async function loadShared(){
+  try {
+    const r = await fetch('board.json', {cache:'no-store'});
+    if (!r.ok) return;
+    const shared = await r.json();
+    if (mergeInto(shared)){ save(LS_STATE, state); render(); toast('Picked up the shared board'); }
+  } catch(_){}
+}
+function mergeInto(other){
+  let changed = false;
+  for (const [id, inc] of Object.entries(other.items || {})){
+    if (!byId.has(id)) continue;
+    const cur = state.items[id];
+    if (!cur || (inc.ts || 0) > (cur.ts || 0)){ state.items[id] = inc; changed = true; }
+  }
+  return changed;
+}
+
+/* ====== sync sheet ====== */
+const syncDlg = document.getElementById('sync');
+document.getElementById('btn-sync').onclick = () => {
+  document.getElementById('sync-text').value = JSON.stringify(state, null, 1);
+  syncDlg.showModal();
+};
+document.getElementById('sync-close').onclick = () => syncDlg.close();
+document.getElementById('sync-copy').onclick = async () => {
+  const ta = document.getElementById('sync-text');
+  try { await navigator.clipboard.writeText(ta.value); toast('Copied'); }
+  catch(_){ ta.select(); toast('Select and copy'); }
+};
+document.getElementById('sync-import').onclick = () => {
+  try {
+    const incoming = JSON.parse(document.getElementById('sync-text').value);
+    const changed = mergeInto(incoming);
+    save(LS_STATE, state); render();
+    toast(changed ? 'Merged' : 'Nothing newer to merge');
+    syncDlg.close();
+  } catch(e){ toast("That isn't valid board text"); }
+};
+
+/* ====== filter wiring ====== */
+const num = v => v.trim() === '' ? null : Number(v);
+document.getElementById('f-q').oninput     = e => { F.q = e.target.value.trim().toLowerCase(); render(); };
+document.getElementById('f-price').oninput = e => { F.price = num(e.target.value); render(); };
+document.getElementById('f-m2').oninput    = e => { F.m2 = num(e.target.value); render(); };
+document.getElementById('f-beds').onchange = e => { F.beds = num(e.target.value); render(); };
+document.getElementById('f-hood').onchange = e => { F.hood = e.target.value; render(); };
+for (const k of ['g','t']){
+  document.getElementById('f-' + k).onclick = e => {
+    F[k] = !F[k]; e.currentTarget.setAttribute('aria-pressed', String(F[k])); render();
+  };
+}
+document.getElementById('f-clear').onclick = () => {
+  Object.assign(F, {q:'', price:null, m2:null, beds:null, hood:'', g:false, t:false});
+  ['f-q','f-price','f-m2'].forEach(id => document.getElementById(id).value = '');
+  ['f-beds','f-hood'].forEach(id => document.getElementById(id).value = '');
+  ['f-g','f-t'].forEach(id => document.getElementById(id).setAttribute('aria-pressed','false'));
+  render();
+};
+
+/* neighbourhood options, ordered by how many listings sit in each */
+(function(){
+  const counts = {};
+  LISTINGS.forEach(l => { const k = l.postcode.slice(0,4); counts[k] = (counts[k]||0) + 1; });
+  const sel = document.getElementById('f-hood');
+  Object.keys(counts).sort((a,b) => counts[b]-counts[a] || a.localeCompare(b)).forEach(k => {
+    const o = document.createElement('option');
+    o.value = k; o.textContent = `${(PC4[k]||[k])[0]} (${counts[k]})`;
+    sel.appendChild(o);
+  });
+})();
+
+/* ====== theme ====== */
+const savedTheme = load(LS_THEME, null);
+if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+document.getElementById('btn-theme').onclick = () => {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const sysDark = matchMedia('(prefers-color-scheme: dark)').matches;
+  const next = cur ? (cur === 'dark' ? 'light' : 'dark') : (sysDark ? 'light' : 'dark');
+  document.documentElement.setAttribute('data-theme', next);
+  save(LS_THEME, next);
+};
+
+/* ====== toast ====== */
+let toastT;
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('on');
+  clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('on'), 1900);
+}
+
+/* ====== boot ====== */
+try { initMap(); } catch(err){ /* board still renders */ }
+render();
+loadShared().then(geocode);
+</script>
+</body>
+</html>
