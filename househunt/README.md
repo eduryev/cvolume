@@ -57,10 +57,29 @@ including deliberately clearing a field; the panel shows which it is displaying.
 
 ## State and sharing
 
-Board state (column, energy, G/T, notes) lives in the viewer's `localStorage`.
-"Share board" exports/merges JSON; the merge keeps whichever edit is newer per
-listing. Committing that JSON as `docs/househunt/board.json` makes it the shared
-starting point for both viewers.
+Board state (column, energy, G/T, notes) is shared through **`househunt/board.json`
+on the working branch**. Every open board polls it each 10 seconds and merges by
+per-listing timestamp, so the most recent edit to a given listing wins — and only
+for that listing. An edit also pushes within half a second rather than waiting out
+the interval. `localStorage` still holds a local copy, so the board works offline
+and catches up when it reconnects.
+
+Reading needs nothing: the repo is public, and a board with no token polls
+`raw.githubusercontent.com` read-only. **Saving** needs a GitHub
+[fine-grained token](https://github.com/settings/personal-access-tokens) limited to
+`eduryev/cvolume` with **Contents: Read and write**, pasted once into the Sync
+panel. It is kept in that browser's `localStorage` only.
+
+Concurrent writes use the file's blob SHA for optimistic concurrency: if the other
+board committed first, GitHub rejects the write, and the next tick re-reads, merges
+and retries. Conflicts resolve per listing, never by clobbering the whole file.
+
+> A token in browser storage is readable by anything else served from the same
+> origin (`eduryev.github.io`). Keep it scoped to this one repository, set an
+> expiry, and revoke it when the hunt is over.
+
+**Because the board commits to the working branch, anything that pushes to that
+branch must `git pull --rebase` first** — see the daily routine.
 
 Geocoding runs in the visitor's browser against PDOK (the Dutch national
 address service) and is cached locally; until it resolves, pins sit at their
