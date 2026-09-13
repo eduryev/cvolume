@@ -240,6 +240,20 @@ textarea:focus{border-color:var(--canal)}
 .sync-body{padding:14px 16px; display:flex; flex-direction:column; gap:11px; font-size:12.5px; color:var(--ink-2)}
 .sync-body textarea{min-height:130px; font-family:var(--mono); font-size:11px}
 .sync-body p{margin:0}
+.sync-body .hint{font-size:11.5px; color:var(--ink-3); line-height:1.5}
+.sync-body .field label{display:block; font-size:10.5px; font-weight:700; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--ink-3); margin-bottom:6px}
+.sync-body input[type=password]{width:100%; border:1px solid var(--line); border-radius:8px;
+  background:var(--surface-2); padding:8px 9px; font-family:var(--mono); font-size:12px; outline:none}
+.sync-body input[type=password]:focus{border-color:var(--canal)}
+.sync-body .field .hint{margin-top:6px}
+.sync-body details{border-top:1px solid var(--line-2); padding-top:10px}
+.sync-body summary{cursor:pointer; font-size:12px; color:var(--ink-3)}
+.sync-body .row{display:flex; gap:7px; margin-top:8px}
+.dot{display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:6px;
+  background:var(--ink-3); vertical-align:1px; transition:background .2s}
+.dot.ok{background:var(--s-visited)} .dot.busy{background:var(--s-applied)}
+.dot.err{background:var(--brick)} .dot.ro{background:var(--s-viewed)}
 .sync-body code{font-family:var(--mono); font-size:11px; background:var(--surface-2);
   border:1px solid var(--line); border-radius:4px; padding:1px 4px}
 
@@ -270,7 +284,7 @@ textarea:focus{border-color:var(--canal)}
       <div class="mast-sub" id="summary"></div>
       <div class="mast-actions">
         <button class="btn" id="btn-theme" type="button" title="Switch light / dark">Theme</button>
-        <button class="btn" id="btn-sync" type="button">Share board</button>
+        <button class="btn" id="btn-sync" type="button"><span class="dot" id="sync-dot"></span><span id="sync-label">Sync</span></button>
       </div>
     </div>
     <div class="filters">
@@ -354,19 +368,35 @@ textarea:focus{border-color:var(--canal)}
 
 <dialog class="sheet" id="sync">
   <div class="sheet-head">
-    <h2>Share the board</h2>
-    <p>keeps both of you on the same page</p>
+    <h2>Shared board</h2>
+    <p id="sync-sub">—</p>
   </div>
   <div class="sync-body">
-    <p>Your board lives in this browser. To pass it to Katia (or pick up her changes), copy this text across — importing <b>merges</b>, keeping whichever edit is newer per listing.</p>
-    <textarea id="sync-text" spellcheck="false" aria-label="Board state"></textarea>
-    <p>To make it the shared default for both of you, commit this as <code>docs/board.json</code> in the repo.</p>
+    <p>The board lives in <code id="sync-path">—</code>. It reloads every 10 seconds, so a card
+    one of you moves shows up on the other's board shortly after.</p>
+    <div class="field">
+      <label for="sync-token">GitHub token</label>
+      <input type="password" id="sync-token" placeholder="github_pat_…" autocomplete="off" spellcheck="false">
+      <p class="hint">Needed to <b>save</b> changes; reading works without one. Stored only in this
+      browser, never sent anywhere but GitHub. Use a <b>fine-grained</b> token limited to
+      <code>eduryev/cvolume</code> with <b>Contents: Read and write</b>, and give it an expiry date.</p>
+    </div>
+    <p class="hint">Anyone who can read this page's origin could read a token saved here, so keep it
+    scoped to this one repository and revoke it when the hunt is over.</p>
+    <details>
+      <summary>Move the board by hand instead</summary>
+      <textarea id="sync-text" spellcheck="false" aria-label="Board state"></textarea>
+      <div class="row">
+        <button class="btn" id="sync-copy" type="button">Copy</button>
+        <button class="btn" id="sync-import" type="button">Import &amp; merge</button>
+      </div>
+    </details>
   </div>
   <div class="sheet-foot">
-    <button class="btn" id="sync-copy" type="button">Copy</button>
-    <button class="btn" id="sync-import" type="button">Import &amp; merge</button>
+    <button class="btn" id="sync-forget" type="button">Forget token</button>
     <span class="spacer"></span>
-    <button class="btn" id="sync-close" type="button">Done</button>
+    <button class="btn btn-accent" id="sync-save" type="button">Save</button>
+    <button class="btn" id="sync-close" type="button">Close</button>
   </div>
 </dialog>
 
@@ -426,6 +456,7 @@ function stageOf(id){ return entry(id).stage || byId.get(id).defaultStage; }
 function patch(id, changes){
   state.items[id] = Object.assign({}, entry(id), changes, {ts: Date.now()});
   save(LS_STATE, state);
+  if (typeof syncTick === 'function') setTimeout(syncTick, 400);
 }
 
 /* ====== formatting ====== */
@@ -711,15 +742,89 @@ async function geocode(){
   setTimeout(() => note.remove(), 3000);
 }
 
-/* ====== shared board file ====== */
-async function loadShared(){
-  try {
-    const r = await fetch('board.json', {cache:'no-store'});
-    if (!r.ok) return;
-    const shared = await r.json();
-    if (mergeInto(shared)){ save(LS_STATE, state); render(); toast('Picked up the shared board'); }
-  } catch(_){}
+/* ====== shared board, via a JSON file in the repo ======
+   Both boards poll the same file every 10s and merge by per-listing timestamp,
+   so whoever touched a listing most recently wins for that listing only.
+   Reading is public; writing needs a fine-grained token with Contents:write. */
+const GH = {
+  owner: 'eduryev', repo: 'cvolume',
+  branch: 'claude/apartment-kanban-dashboard-wir16n',
+  path: 'househunt/board.json',
+  every: 10000,
+};
+const LS_TOKEN = 'avt-house-hunt/gh-token/v1';
+let token = '';
+try { token = localStorage.getItem(LS_TOKEN) || ''; } catch(_){}
+
+let remoteSha = null, syncing = false, lastPushedAt = 0, syncTimer = null;
+
+const b64encode = str => {
+  const bytes = new TextEncoder().encode(str);
+  let bin = '';
+  for (let i = 0; i < bytes.length; i += 0x8000)
+    bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(bin);
+};
+const b64decode = b64 => new TextDecoder().decode(
+  Uint8Array.from(atob(b64.replace(/\s/g, '')), c => c.charCodeAt(0)));
+
+/* stable form, so "did anything change?" doesn't trip over key order */
+function canon(st){
+  const items = {};
+  for (const id of Object.keys(st.items || {}).sort()){
+    const v = st.items[id] || {};
+    items[id] = {};
+    for (const k of Object.keys(v).sort()) if (v[k] !== undefined) items[id][k] = v[k];
+  }
+  return JSON.stringify({items});
 }
+
+function setSync(kind, text){
+  const dot = document.getElementById('sync-dot');
+  dot.className = 'dot ' + kind;
+  document.getElementById('sync-label').textContent = text;
+}
+
+async function ghGet(){
+  if (token){
+    const r = await fetch(
+      `https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${GH.path}?ref=${encodeURIComponent(GH.branch)}`,
+      {cache:'no-store', headers:{Accept:'application/vnd.github+json',
+        Authorization:'Bearer ' + token, 'X-GitHub-Api-Version':'2022-11-28'}});
+    if (r.status === 404){ remoteSha = null; return null; }
+    if (r.status === 401 || r.status === 403) throw new Error('token rejected');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    remoteSha = j.sha;
+    return JSON.parse(b64decode(j.content));
+  }
+  // no token: the repo is public, so read it straight (CDN-cached a few minutes)
+  const raw = `https://raw.githubusercontent.com/${GH.owner}/${GH.repo}/${GH.branch}/${GH.path}?t=${Date.now()}`;
+  const r = await fetch(raw, {cache:'no-store'});
+  if (r.status === 404) return null;
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return await r.json();
+}
+
+async function ghPut(body){
+  const payload = {
+    message: 'board: ' + new Date().toISOString().replace('T',' ').slice(0,16),
+    content: b64encode(JSON.stringify(body, null, 1)),
+    branch: GH.branch,
+  };
+  if (remoteSha) payload.sha = remoteSha;
+  const r = await fetch(
+    `https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${GH.path}`,
+    {method:'PUT', headers:{Accept:'application/vnd.github+json',
+      Authorization:'Bearer ' + token, 'X-GitHub-Api-Version':'2022-11-28'},
+     body: JSON.stringify(payload)});
+  if (r.status === 409 || r.status === 422){ remoteSha = null; return false; }  // someone beat us; retry next tick
+  if (r.status === 401 || r.status === 403) throw new Error('token rejected');
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  remoteSha = (await r.json()).content.sha;
+  return true;
+}
+
 function mergeInto(other){
   let changed = false;
   for (const [id, inc] of Object.entries(other.items || {})){
@@ -730,13 +835,65 @@ function mergeInto(other){
   return changed;
 }
 
+async function syncTick(){
+  if (syncing || document.hidden) return;
+  syncing = true;
+  try {
+    const before = canon(state);
+    const remote = await ghGet();
+    if (remote && mergeInto(remote)){ save(LS_STATE, state); render(); }
+    const mine = canon(state);
+    const theirs = remote ? canon(remote) : null;
+
+    if (token && mine !== theirs){
+      if (await ghPut(state)) lastPushedAt = Date.now();
+      setSync('ok', 'Synced');
+    } else {
+      setSync(token ? 'ok' : 'ro', token ? 'Synced' : 'Read-only');
+    }
+    if (before !== mine) toast('Board updated');
+  } catch(err){
+    setSync('err', err.message === 'token rejected' ? 'Token rejected' : 'Offline');
+  } finally {
+    syncing = false;
+  }
+}
+
+function startSync(){
+  clearInterval(syncTimer);
+  setSync('busy', 'Syncing…');
+  syncTick();
+  syncTimer = setInterval(syncTick, GH.every);
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) syncTick(); });
+
 /* ====== sync sheet ====== */
 const syncDlg = document.getElementById('sync');
 document.getElementById('btn-sync').onclick = () => {
+  document.getElementById('sync-path').textContent = `${GH.owner}/${GH.repo} · ${GH.path}`;
+  document.getElementById('sync-sub').textContent =
+    token ? 'saving is on — changes reach both boards' : 'read-only — add a token to save your changes';
+  document.getElementById('sync-token').value = token;
   document.getElementById('sync-text').value = JSON.stringify(state, null, 1);
   syncDlg.showModal();
 };
 document.getElementById('sync-close').onclick = () => syncDlg.close();
+document.getElementById('sync-save').onclick = () => {
+  token = document.getElementById('sync-token').value.trim();
+  try { token ? localStorage.setItem(LS_TOKEN, token) : localStorage.removeItem(LS_TOKEN); } catch(_){}
+  remoteSha = null;
+  syncDlg.close();
+  toast(token ? 'Saving turned on' : 'Read-only');
+  startSync();
+};
+document.getElementById('sync-forget').onclick = () => {
+  token = '';
+  try { localStorage.removeItem(LS_TOKEN); } catch(_){}
+  document.getElementById('sync-token').value = '';
+  remoteSha = null;
+  toast('Token forgotten');
+  startSync();
+};
 document.getElementById('sync-copy').onclick = async () => {
   const ta = document.getElementById('sync-text');
   try { await navigator.clipboard.writeText(ta.value); toast('Copied'); }
@@ -744,11 +901,10 @@ document.getElementById('sync-copy').onclick = async () => {
 };
 document.getElementById('sync-import').onclick = () => {
   try {
-    const incoming = JSON.parse(document.getElementById('sync-text').value);
-    const changed = mergeInto(incoming);
+    const changed = mergeInto(JSON.parse(document.getElementById('sync-text').value));
     save(LS_STATE, state); render();
     toast(changed ? 'Merged' : 'Nothing newer to merge');
-    syncDlg.close();
+    syncDlg.close(); syncTick();
   } catch(e){ toast("That isn't valid board text"); }
 };
 
@@ -807,7 +963,8 @@ function toast(msg){
 /* ====== boot ====== */
 try { initMap(); } catch(err){ /* board still renders */ }
 render();
-loadShared().then(geocode);
+startSync();
+geocode();
 </script>
 </body>
 </html>
