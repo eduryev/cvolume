@@ -28,6 +28,13 @@ def main():
             'bedrooms': r.get('bedrooms'),
             'type': r.get('type'),
             'first_seen': r['first_seen'],
+            'energy': r.get('energy'),
+            'garden': r.get('garden'),
+            'terrace': r.get('terrace'),
+            'garden_size': r.get('garden_size'),
+            'status': r.get('status'),
+            'tenure': r.get('tenure'),
+            'enriched': r.get('enriched'),
             'defaultStage': 'backlog' if r['first_seen'] >= CUTOFF else 'archived',
         })
     slim.sort(key=lambda r: (r['first_seen'], r['address']))
@@ -44,8 +51,9 @@ def main():
     open(out, 'w').write(html)
 
     live = sum(1 for r in slim if r['defaultStage'] != 'archived')
+    withE = sum(1 for r in slim if r.get('energy'))
     print(f'{out}: {len(slim)} listings ({live} backlog / {len(slim)-live} archived), '
-          f'{os.path.getsize(out)//1024} KB')
+          f'{withE} with energy class, {os.path.getsize(out)//1024} KB')
 
 if __name__ == '__main__':
     main()
