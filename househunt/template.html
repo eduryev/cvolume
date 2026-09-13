@@ -183,6 +183,12 @@ button,select,input{font:inherit;color:inherit}
 .chip.energy.unset{background:var(--surface-2); color:var(--ink-3); border:1px dashed var(--line)}
 .chip.gt{background:var(--surface-2); color:var(--s-visited); border-color:color-mix(in srgb, var(--s-visited) 40%, var(--line))}
 .chip.muted{color:var(--ink-3)}
+.chip.lease{background:var(--surface-2); color:var(--s-applied);
+  border-color:color-mix(in srgb, var(--s-applied) 40%, var(--line)); text-transform:none; letter-spacing:.02em}
+.card.gone{opacity:.62}
+.card.gone .card-addr{text-decoration:line-through; text-decoration-thickness:1px}
+.card.gone .seen{color:var(--brick); font-weight:600}
+.sheet-head #ed-src{margin-top:3px; font-family:var(--ui); font-size:11px; color:var(--ink-3)}
 .card-foot{display:flex; align-items:center; gap:6px; margin-top:8px; padding-top:7px; border-top:1px solid var(--line-2)}
 .seen{font-size:10.5px; color:var(--ink-3); font-family:var(--mono)}
 .card-note{font-size:11.5px; color:var(--ink-2); margin-top:6px; padding-left:7px;
@@ -291,7 +297,15 @@ textarea:focus{border-color:var(--canal)}
         <span class="f-lab">Area</span>
         <select id="f-hood" aria-label="Neighbourhood"><option value="">all Amsterdam</option></select>
       </div>
-      <button class="toggle" id="f-g" type="button" aria-pressed="false" title="Only listings marked with a garden">G</button>
+      <div class="f-group">
+        <span class="f-lab">Energy</span>
+        <select id="f-energy" aria-label="Minimum energy class">
+          <option value="">any</option><option value="A">A only</option>
+          <option value="B">B or better</option><option value="C">C or better</option>
+          <option value="D">D or better</option>
+        </select>
+      </div>
+      <button class="toggle" id="f-g" type="button" aria-pressed="false" title="Only listings with a garden">G</button>
       <button class="toggle" id="f-t" type="button" aria-pressed="false" title="Only listings marked with a terrace">T</button>
       <button class="f-clear" id="f-clear" type="button">reset</button>
     </div>
@@ -310,6 +324,7 @@ textarea:focus{border-color:var(--canal)}
     <div class="sheet-head">
       <h2 id="ed-title">—</h2>
       <p id="ed-sub">—</p>
+      <p id="ed-src">—</p>
     </div>
     <div class="sheet-body">
       <div class="field">
@@ -394,6 +409,19 @@ function load(k, fb){ try{ return JSON.parse(localStorage.getItem(k)) || fb; }ca
 function save(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
 
 function entry(id){ return state.items[id] || {}; }
+/* Scraped move.nl values are defaults; anything you set in the Edit panel wins,
+   including deliberately clearing a field. */
+function eff(id){
+  const e = entry(id), l = byId.get(id);
+  return {
+    energy:  e.energy  !== undefined ? e.energy  : (l.energy || ''),
+    garden:  e.garden  !== undefined ? e.garden  : !!l.garden,
+    terrace: e.terrace !== undefined ? e.terrace : !!l.terrace,
+    note:    e.note || '',
+    edited:  e.energy !== undefined || e.garden !== undefined || e.terrace !== undefined,
+  };
+}
+const SOLD = /verkocht|onder bod|ingetrokken/i;
 function stageOf(id){ return entry(id).stage || byId.get(id).defaultStage; }
 function patch(id, changes){
   state.items[id] = Object.assign({}, entry(id), changes, {ts: Date.now()});
@@ -407,9 +435,10 @@ const hoodOf = l => (PC4[l.postcode.slice(0,4)] || [l.postcode.slice(0,4)])[0];
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 /* ====== filters ====== */
-const F = {q:'', price:null, m2:null, beds:null, hood:'', g:false, t:false};
+const F = {q:'', price:null, m2:null, beds:null, hood:'', energy:'', g:false, t:false};
+const E_RANK = {'A+++':0,'A++':0,'A+':0,'A':0,'B':1,'C':2,'D':3,'E':4,'F':5,'G':6};
 function passes(l){
-  const e = entry(l.id);
+  const e = eff(l.id);
   if (F.q){
     const hay = (l.address + ' ' + l.postcode + ' ' + hoodOf(l) + ' ' + l.type).toLowerCase();
     if (!hay.includes(F.q)) return false;
@@ -418,6 +447,10 @@ function passes(l){
   if (F.m2 != null && l.m2 < F.m2) return false;
   if (F.beds != null && (l.bedrooms || 0) < F.beds) return false;
   if (F.hood && l.postcode.slice(0,4) !== F.hood) return false;
+  if (F.energy){
+    const r = E_RANK[e.energy];
+    if (r === undefined || r > E_RANK[F.energy]) return false;
+  }
   if (F.g && !e.garden) return false;
   if (F.t && !e.terrace) return false;
   return true;
@@ -427,15 +460,16 @@ function passes(l){
 const board = document.getElementById('board');
 
 function cardHTML(l){
-  const e = entry(l.id);
+  const e = eff(l.id);
   const st = stageOf(l.id);
   const ppm = Math.round(l.price / l.m2);
   const energy = e.energy;
   const eColor = energy ? ENERGY[energy] : null;
   const eStyle = energy ? `background:${eColor};color:${DARK_TEXT.has(energy)?'#14181F':'#fff'}` : '';
   const rooms = l.bedrooms != null ? `${l.rooms}/${l.bedrooms}` : `${l.rooms}`;
+  const gone = l.status && SOLD.test(l.status);
   return `
-  <article class="card" draggable="true" data-id="${l.id}" tabindex="0" aria-label="${esc(l.address)}">
+  <article class="card${gone ? ' gone' : ''}" draggable="true" data-id="${l.id}" tabindex="0" aria-label="${esc(l.address)}">
     <span class="card-stripe" style="background:${STAGE_HEX[st]}"></span>
     ${l.image ? `<img class="card-img" src="${esc(l.image)}" alt="" loading="lazy" onerror="this.remove()">` : ''}
     <div class="card-body">
@@ -449,13 +483,14 @@ function cardHTML(l){
       <div class="chips">
         <span class="chip rooms" title="${l.rooms} rooms${l.bedrooms!=null?', '+l.bedrooms+' bedrooms':''}">${rooms}</span>
         <span class="chip energy ${energy?'':'unset'}" style="${eStyle}" title="Energielabel">${energy ? 'Energy '+esc(energy) : 'Energy —'}</span>
-        ${e.garden  ? '<span class="chip gt" title="Garden">G</span>'  : ''}
-        ${e.terrace ? '<span class="chip gt" title="Terrace">T</span>' : ''}
+        ${e.garden  ? `<span class="chip gt" title="Garden${l.garden_size ? ' — ' + esc(l.garden_size) : ''}">G</span>`  : ''}
+        ${e.terrace ? '<span class="chip gt" title="Balcony or roof terrace">T</span>' : ''}
+        ${l.tenure && /erfpacht/i.test(l.tenure) ? '<span class="chip lease" title="'+esc(l.tenure)+'">erfpacht</span>' : ''}
         <span class="chip muted" title="Property type">${esc(l.type)}</span>
       </div>
       ${e.note ? `<div class="card-note">${esc(e.note)}</div>` : ''}
       <div class="card-foot">
-        <span class="seen">seen ${esc(l.first_seen)}</span>
+        <span class="seen">${gone ? esc(l.status) : 'seen ' + esc(l.first_seen)}</span>
         <select class="mv" data-mv="${l.id}" aria-label="Move ${esc(l.address)} to another column">
           ${STAGES.map(s => `<option value="${s.id}"${s.id===st?' selected':''}>${s.name}</option>`).join('')}
         </select>
@@ -558,12 +593,14 @@ function paintEditor(){
 }
 function openEditor(id){
   editing = id;
-  const l = byId.get(id), e = entry(id);
-  draft = {energy:e.energy || '', garden:!!e.garden, terrace:!!e.terrace};
+  const l = byId.get(id), e = eff(id);
+  draft = {energy:e.energy, garden:e.garden, terrace:e.terrace};
   document.getElementById('ed-title').textContent = l.address;
   document.getElementById('ed-sub').textContent =
     `${hoodOf(l)} · ${l.postcode} · ${l.m2} m² · ${l.rooms}${l.bedrooms!=null?'/'+l.bedrooms:''} · ${money(l.price)} k.k.`;
-  document.getElementById('ed-note').value = e.note || '';
+  document.getElementById('ed-note').value = e.note;
+  document.getElementById('ed-src').textContent =
+    e.edited ? 'edited by you' : (l.enriched ? 'from move.nl, ' + l.enriched : 'not filled in yet');
   document.getElementById('ed-open').href = l.url;
   paintEditor();
   dlg.showModal();
@@ -576,8 +613,8 @@ document.getElementById('ed-g').addEventListener('click', () => { draft.garden =
 document.getElementById('ed-t').addEventListener('click', () => { draft.terrace = !draft.terrace; paintEditor(); });
 dlg.addEventListener('close', () => {
   if (dlg.returnValue === 'save' && editing){
-    patch(editing, {energy:draft.energy || undefined, garden:draft.garden,
-                    terrace:draft.terrace, note:document.getElementById('ed-note').value.trim() || undefined});
+    patch(editing, {energy:draft.energy || '', garden:draft.garden, terrace:draft.terrace,
+                    note:document.getElementById('ed-note').value.trim() || undefined});
     render(); toast('Saved');
   }
   editing = null;
@@ -624,7 +661,7 @@ function syncMarkers(visible){
       radius:r, color:'#fff', weight:2, opacity:.95,
       fillColor:STAGE_HEX[st], fillOpacity: st === 'archived' ? .5 : .92
     });
-    const e = entry(l.id);
+    const e = eff(l.id);
     m.bindPopup(`<div class="pop"><b>${esc(l.address)}</b>
       <span class="pm">${money(l.price)} · ${l.m2} m² · ${l.rooms}${l.bedrooms!=null?'/'+l.bedrooms:''}${e.energy?' · '+esc(e.energy):''}</span>
       <span class="pm">${esc(hoodOf(l))}</span>
@@ -722,15 +759,16 @@ document.getElementById('f-price').oninput = e => { F.price = num(e.target.value
 document.getElementById('f-m2').oninput    = e => { F.m2 = num(e.target.value); render(); };
 document.getElementById('f-beds').onchange = e => { F.beds = num(e.target.value); render(); };
 document.getElementById('f-hood').onchange = e => { F.hood = e.target.value; render(); };
+document.getElementById('f-energy').onchange = e => { F.energy = e.target.value; render(); };
 for (const k of ['g','t']){
   document.getElementById('f-' + k).onclick = e => {
     F[k] = !F[k]; e.currentTarget.setAttribute('aria-pressed', String(F[k])); render();
   };
 }
 document.getElementById('f-clear').onclick = () => {
-  Object.assign(F, {q:'', price:null, m2:null, beds:null, hood:'', g:false, t:false});
+  Object.assign(F, {q:'', price:null, m2:null, beds:null, hood:'', energy:'', g:false, t:false});
   ['f-q','f-price','f-m2'].forEach(id => document.getElementById(id).value = '');
-  ['f-beds','f-hood'].forEach(id => document.getElementById(id).value = '');
+  ['f-beds','f-hood','f-energy'].forEach(id => document.getElementById(id).value = '');
   ['f-g','f-t'].forEach(id => document.getElementById(id).setAttribute('aria-pressed','false'));
   render();
 };
